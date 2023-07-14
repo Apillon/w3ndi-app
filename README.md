@@ -14,3 +14,4 @@
 | Urban Kovač  | urban.kovac@kalmia.si  | Developer |
 | Luka Golinar | luka.golinar@kalmia.si | Developer |
 | Simon Šenk   | simon.senk@kalmia.si   | Developer |
+
