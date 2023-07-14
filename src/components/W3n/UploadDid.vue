@@ -1,0 +1,48 @@
+<template>
+  <div>
+    <Input id="mnemonic" label="User Mnemonic" placeholder="Type text here" v-model="mnemonic" />
+    <Btn
+      :loading="loading"
+      :disabled="disabled"
+      v-tooltip:top.tooltip="disabled ? 'Upload digital identity and provide Mnemonic' : ''"
+      @click="verifyDid()"
+    >
+      Proceed
+    </Btn>
+  </div>
+</template>
+
+<script lang="ts" setup>
+import { toast } from 'vue3-toastify';
+import { useState } from '~/composables/useState';
+import { useDid } from '~/composables/useDid';
+import { LsKeys } from '~/types';
+
+const emit = defineEmits(['proceed']);
+const { setMnemonic } = useState();
+const { getDidDocumentFromMnemonic } = useDid();
+
+const mnemonic = ref<string>('');
+const loading = ref<boolean>(false);
+const disabled = ref<boolean>(false);
+
+async function verifyDid() {
+  if (!mnemonic.value) {
+    toast('Enter mnemonic!', { type: 'warning' });
+    return;
+  }
+
+  const { web3Name } = await getDidDocumentFromMnemonic(mnemonic.value);
+
+  /** Check if user has Web3Name */
+  if (web3Name) {
+    setMnemonic(mnemonic.value);
+
+    /** Save Mnemonic to LS */
+    localStorage.setItem(LsKeys.MNEMONIC, mnemonic.value);
+    emit('proceed');
+  } else {
+    toast('Missing Web3Name', { type: 'warning' });
+  }
+}
+</script>

@@ -1,0 +1,16 @@
+{
+  "name": "Apillon-Oauth",
+  "short_name": "Apillon-Oauth",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "theme_color": "#141721",
+  "background_color": "#141721",
+  "start_url": "/",
+  "display": "standalone"
+}

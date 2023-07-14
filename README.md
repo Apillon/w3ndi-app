@@ -1,29 +1,16 @@
-# README #
+# Apillon - Kilt asset recipient
 
-This README would normally document whatever steps are necessary to get your application up and running.
+## Stack
 
-### What is this repository for? ###
+- Vite
+- Vue 3 w/ TypeScript
+- TailwindCSS
+- PostCSS
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+## Team
 
-### How do I get set up? ###
-
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
-
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
+| Person       | Email                  | Role      |
+| ------------ | ---------------------- | --------- |
+| Luka Golinar | luka.golinar@kalmia.si | Developer |
+| Simon Šenk   | simon.senk@kalmia.si   | Developer |
+| Urban Kovač  | urban.kovac@kalmia.si  | Developer |

@@ -1,0 +1,24 @@
+{
+  "@context": "https://identity.foundation/.well-known/did-configuration/v1",
+  "linked_dids": [
+    {
+      "@context": [
+        "https://www.w3.org/2018/credentials/v1",
+        "https://identity.foundation/.well-known/did-configuration/v1"
+      ],
+      "issuer": "did:kilt:4qmtTAYdPnk1zfbzafXw57hFk5CyNJ1o7zT5vFEjycF8w4za",
+      "issuanceDate": "2023-06-19T12:08:24.371Z",
+      "type": ["VerifiableCredential", "DomainLinkageCredential", "ApillonCredential2023"],
+      "credentialSubject": {
+        "id": "did:kilt:4qmtTAYdPnk1zfbzafXw57hFk5CyNJ1o7zT5vFEjycF8w4za",
+        "origin": "http://localhost:5173",
+        "rootHash": "0xf1e114ec61d4806718b6c39988fcf1dd408a8114ee49cb413d7f97c0b6670a40"
+      },
+      "proof": {
+        "proofPurpose": "assertionMethod",
+        "verificationMethod": "did:kilt:4qmtTAYdPnk1zfbzafXw57hFk5CyNJ1o7zT5vFEjycF8w4za#0xaa38d7f9a7c9d676240b72593c66d3e7fecde4e5343f6e61c28ee5cc19ecf957",
+        "signature": "0x1a84ca0592076d8e0c110e0008fcdcc7af14a70f5ad00d50a230d9f8816d0b0d7bf5e034d5a636423ff981ef0d02b447a84a362936b65864d41f852ece807f83"
+      }
+    }
+  ]
+}
