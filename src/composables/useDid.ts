@@ -42,7 +42,7 @@ export const useDid = () => {
       return didInfo;
     } catch (error) {
       console.warn('Load DID document error: ', error);
-      // toast('Load DID document error', { type: 'error' });
+      toast('Load DID document error', { type: 'error' });
     }
     return {
       document: {} as DidDocument,
@@ -52,17 +52,7 @@ export const useDid = () => {
 
   async function getDidDocumentFromMnemonic(mnemonic: string): Promise<DidInfo> {
     const didUri = await getDidUriFromMnemonic(mnemonic);
-    const didInfo = await getDidDocument(didUri);
-
-    if (!didInfo?.document?.uri) {
-      const didUriSR = await getDidUriFromMnemonic(mnemonic);
-      return await getDidDocument(didUriSR);
-    }
-
-    return {
-      document: {} as DidDocument,
-      accounts: [],
-    };
+    return await getDidDocument(didUri);
   }
 
   async function getDidUriFromMnemonic(mnemonic: string) {

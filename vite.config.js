@@ -8,6 +8,7 @@ import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 import { ViteWebfontDownload } from 'vite-plugin-webfont-dl';
 
+import rollupNodePolyFill from 'rollup-plugin-node-polyfills';
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
 import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill';
 
@@ -28,7 +29,7 @@ export default defineConfig(({ command, mode }) => {
     },
     build: {
       rollupOptions: {
-        plugins: [],
+        plugins: [rollupNodePolyFill()],
       },
     },
     optimizeDeps: {
