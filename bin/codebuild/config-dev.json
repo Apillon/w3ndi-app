@@ -32,7 +32,7 @@
     "cache": {
       "type": "NO_CACHE"
     },
-    "sourceVersion": "feature/aws-integration",
+    "sourceVersion": "develop",
     "source": {
       "insecureSsl": false,
       "gitSubmodulesConfig": {
