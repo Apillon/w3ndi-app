@@ -1,4 +1,6 @@
-import { blake2AsU8a } from '@polkadot/util-crypto';
+import { blake2AsU8a, decodeAddress, encodeAddress } from '@polkadot/util-crypto';
+import { hexToU8a, isHex } from '@polkadot/util';
+import { ethers } from 'ethers';
 import { base64urlpad } from 'multiformats/bases/base64';
 import canonicalize from 'canonicalize';
 import { Chains } from '~/types';
@@ -23,5 +25,32 @@ export const chainIdToName = (chainId: string) => {
       return 'Polkadot';
     default:
       return '';
+  }
+};
+
+export function validateAddress(address: string, chain: string): boolean {
+  switch (chain) {
+    case Chains.ETHEREUM:
+      return isValidEthereumAddress(address);
+    default:
+      return isValidPolkadotAddress(address);
+  }
+}
+
+export const isValidPolkadotAddress = (address: string) => {
+  try {
+    encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address));
+
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+export const isValidEthereumAddress = (address: string) => {
+  try {
+    return ethers.utils.isAddress(address);
+  } catch (error) {
+    return false;
   }
 };
