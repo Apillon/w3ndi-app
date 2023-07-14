@@ -1,7 +1,6 @@
 import { blake2AsU8a } from '@polkadot/util-crypto';
 import { base64urlpad } from 'multiformats/bases/base64';
 import canonicalize from 'canonicalize';
-import { Buffer } from 'buffer';
 import { Chains } from '~/types';
 
 export const hashKiltTransferAssetRecipient = (doc: any) => {
