@@ -29,7 +29,7 @@
       />
     </div>
     <div class="flex gap-8">
-      <Btn type="secondary" class="!text-red" locked @click="emit('cancel')">Cancel</Btn>
+      <Btn type="secondary" class="!text-red" locked @click="cancel">Cancel</Btn>
       <Btn type="primary" @click="handleSubmit">Save</Btn>
     </div>
   </form>
@@ -47,6 +47,7 @@ const emit = defineEmits(['cancel', 'success']);
 
 const { state, setAssetRecipients } = useState();
 const { userAccount, walletProvider } = useProvider();
+import { toast } from 'vue3-toastify';
 
 const formWallet = reactive({
   chain: '',
@@ -95,8 +96,22 @@ const addresses = computed<Array<SelectOption>>(() => {
   });
 });
 
+function cancel(e: Event | MouseEvent) {
+  e.preventDefault();
+
+  emit('cancel');
+}
+
 async function handleSubmit(e: Event | MouseEvent) {
   e.preventDefault();
+
+  if (!validateAddress(formWallet.address, formWallet.chain)) {
+    toast('Wallet address is invalid!', { type: 'error' });
+    return;
+  } else if (!formWallet.chain) {
+    toast('Please select Chain', { type: 'error' });
+    return;
+  }
 
   const allAssetRecipients = pushRecipientToAccounts(
     state.assetRecipients,
@@ -104,7 +119,9 @@ async function handleSubmit(e: Event | MouseEvent) {
     formWallet.address,
     { description: formWallet.tag }
   );
+  toast('New account added to Asset recipient', { type: 'success' });
   setAssetRecipients(allAssetRecipients);
+  resetForm();
   emit('success');
 }
 
@@ -128,5 +145,11 @@ function pushRecipientToAccounts(
       [chain]: { [address]: data },
     };
   }
+}
+
+function resetForm() {
+  formWallet.chain = '';
+  formWallet.tag = '';
+  formWallet.address = '';
 }
 </script>

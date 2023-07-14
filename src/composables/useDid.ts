@@ -91,7 +91,7 @@ export const useDid = () => {
       throw Error('Duplicate ID');
     }
 
-    const ipfsDomain = DEV ? 'https://ipfs-dev.apillon.io/ipfs/' : 'https://ipfs2.apillon.io/ipfs';
+    const ipfsDomain = DEV ? 'https://ipfs-dev.apillon.io/ipfs/' : 'https://ipfs2.apillon.io/ipfs/';
 
     return api.tx.did.addServiceEndpoint({
       id: Did.resourceIdToChain(`#${hash}`),
@@ -114,10 +114,10 @@ export const useDid = () => {
   }
 
   function prepareServiceEndpointTXs(api: ApiPromiseType, fileCid: string): Extrinsic[] {
-    const exsistingService = prepareExistingServiceEndpointTx(api);
+    const existingService = prepareExistingServiceEndpointTx(api);
 
-    if (exsistingService) {
-      return [exsistingService, prepareNewServiceEndpointTx(api, fileCid)];
+    if (existingService) {
+      return [existingService, prepareNewServiceEndpointTx(api, fileCid)];
     }
     return [prepareNewServiceEndpointTx(api, fileCid)];
   }

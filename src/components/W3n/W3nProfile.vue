@@ -80,7 +80,10 @@
         </Btn>
       </div>
 
-      <table v-if="state.assetRecipients && Object.keys(state.assetRecipients).length > 0">
+      <div v-if="loadingAssetRecipients" class="flex justify-center align-middle">
+        <Spinner />
+      </div>
+      <table v-else-if="state.assetRecipients && Object.keys(state.assetRecipients).length > 0">
         <thead>
           <tr>
             <th>Chain</th>
@@ -140,7 +143,7 @@
     </div>
 
     <Modal :show="isAddNewWalletVisible" title="Add new wallet">
-      <WalletAdd @cancel="isAddNewWalletVisible = false" @success="isAddNewWalletVisible = false" />
+      <WalletAdd @cancel="isAddNewWalletVisible = false" />
     </Modal>
   </div>
 </template>
@@ -178,6 +181,7 @@ const {
 } = useDid();
 
 const loading = ref<boolean>(false);
+const loadingAssetRecipients = ref<boolean>(false);
 const editWallets = ref<boolean>(false);
 const isAddNewWalletVisible = ref<boolean>(false);
 const loadedAssetRecipients = ref<KiltTransferAssetRecipientV2>({});
@@ -208,6 +212,8 @@ const showModalAddNewWallet = () => {
 };
 
 const parseAssetRecipients = async () => {
+  loadingAssetRecipients.value = true;
+
   if (state.didDocument?.service) {
     const service = state.didDocument.service.find(item =>
       item.type.includes(KILT_TRANSFER_ASSET_RECIPIENT_V2)
@@ -224,6 +230,8 @@ const parseAssetRecipients = async () => {
           if (data) {
             loadedAssetRecipients.value = { ...loadedAssetRecipients.value, ...data };
             setAssetRecipients(loadedAssetRecipients.value);
+
+            loadingAssetRecipients.value = false;
           }
         } catch (error) {
           console.log(error);
@@ -231,11 +239,19 @@ const parseAssetRecipients = async () => {
       });
     }
   }
+  setTimeout(() => (loadingAssetRecipients.value = false), 20000);
 };
 
 async function saveWallets() {
   loading.value = true;
-  await uploadAccountsToIpfs();
+
+  const hash = hashKiltTransferAssetRecipient(state.assetRecipients);
+  const service = state.didDocument?.service?.find(item => item.id === `#${hash}`);
+  if (service) {
+    toast('Service with this ID already exists! Please make some changes.', { type: 'warning' });
+  } else {
+    await uploadAccountsToIpfs();
+  }
 }
 
 async function uploadAccountsToIpfs() {
@@ -279,7 +295,6 @@ async function getFilePoll(fileUuid: string) {
 }
 
 async function submitTransaction(fileCid: string) {
-  toast('Transaction has been submitted', { type: 'info' });
   try {
     if (window?.kilt?.sporran && state.sporranAccount.address) {
       await updateFullDidWithSporran(fileCid);
@@ -318,7 +333,13 @@ async function updateFullDidWithSporran(fileCid: string) {
     await api
       .tx(extrinsic.signed)
       .signAndSend(account.address, { signer: injector.signer }, ({ status }) => {
-        if (status.isInBlock) {
+        console.log(status);
+        if (status.isBroadcast) {
+          toast('Deleting old service endpoint', {
+            type: 'info',
+            autoClose: 15000,
+          });
+        } else if (status.isInBlock) {
           toast('Old service is successfully removed', { type: 'success' });
 
           /** Create new service endpoint */
@@ -363,7 +384,12 @@ async function createNewServiceEndpointWithSporran(fileCid: string) {
   await api
     .tx(signed)
     .signAndSend(account.address, { signer: injector.signer }, ({ status }) => {
-      if (status.isInBlock) {
+      if (status.isBroadcast) {
+        toast('Creating new service endpoint', {
+          type: 'info',
+          autoClose: 15000,
+        });
+      } else if (status.isInBlock) {
         toast('New service is successfully added to DID', { type: 'success' });
         loading.value = false;
       }
