@@ -20,7 +20,12 @@
           "type": "PLAINTEXT",
           "name": "CLOUDFRONT_ID",
           "value": "E3K889SGGIMDD2"
-        }
+        },
+        {
+            "type": "PLAINTEXT",
+            "name": "NODE_OPTIONS",
+            "value": "--max_old_space_size=4096"
+          }
       ],
       "type": "LINUX_CONTAINER"
     },
