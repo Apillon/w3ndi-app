@@ -83,7 +83,10 @@
       <div v-if="loadingAssetRecipients" class="flex justify-center align-middle">
         <Spinner />
       </div>
-      <table v-else-if="state.assetRecipients && Object.keys(state.assetRecipients).length > 0">
+      <div v-else-if="!state.assetRecipients || Object.keys(state.assetRecipients).length === 0">
+        You don't have any account
+      </div>
+      <table v-else>
         <thead>
           <tr>
             <th>Chain</th>
@@ -121,7 +124,6 @@
           </template>
         </tbody>
       </table>
-      <div v-else-if="!state.account">You don't have any account</div>
 
       <div class="mt-8">
         <Btn
@@ -213,6 +215,7 @@ const showModalAddNewWallet = () => {
 };
 
 const parseAssetRecipients = async () => {
+  loadedAssetRecipients.value = {};
   loadingAssetRecipients.value = true;
 
   if (state.didDocument?.service) {
@@ -236,11 +239,15 @@ const parseAssetRecipients = async () => {
           }
         } catch (error) {
           console.log(error);
+          toast('Error while fetching asset recipients, please refresh page.', { type: 'error' });
+          loadingAssetRecipients.value = false;
         }
       });
     }
+    setTimeout(() => (loadingAssetRecipients.value = false), 20000);
+  } else {
+    loadingAssetRecipients.value = false;
   }
-  setTimeout(() => (loadingAssetRecipients.value = false), 20000);
 };
 
 async function saveWallets() {
