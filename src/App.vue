@@ -14,11 +14,13 @@
 </template>
 
 <script lang="ts" setup>
+import { Buffer } from 'buffer';
 import { $api } from '~/lib/api';
 import { API_URL } from './config';
 
 $api.setBaseUrl(API_URL);
 
+window.Buffer = window.Buffer || Buffer;
 window.kilt = {};
 Object.defineProperty(window.kilt, 'meta', {
   value: {

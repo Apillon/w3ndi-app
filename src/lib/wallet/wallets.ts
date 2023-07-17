@@ -35,6 +35,15 @@ const PREDEFINED_WALLETS: WalletInfo[] = [
     },
     icon: SvgNames.WalletTalisman,
   },
+  {
+    type: 'desktop',
+    extensionName: 'Sporran',
+    title: 'Sporran',
+    installUrl: {
+      default: 'https://chrome.google.com/webstore/detail/sporran/djdnajgjcbjhhbdblkegbcgodlkkfhcl',
+    },
+    icon: '',
+  },
 ];
 
 const walletList: Wallet[] = [];
@@ -53,7 +62,7 @@ PREDEFINED_WALLETS.forEach(walletInfo => {
 
 // Get all wallet
 export function getWallets(): Wallet[] {
-  return walletList;
+  return walletList.filter(item => item.extensionName !== 'Sporran');
 }
 
 export function getWalletBySource(source: string | unknown): Wallet | undefined {
