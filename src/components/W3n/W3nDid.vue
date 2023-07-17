@@ -3,14 +3,13 @@
     <div class="card-dark p-16 text-center max-w-xl">
       <h2 class="mb-2">Do you have a DID?</h2>
       <p>
-        Please connect or upload ollis velit risus et est facilisis arcu feugiat dolor. Imperdiet
-        proin sit nibh commodo. Nisi habitant nibh ultrices pellentesque. Brisus et est facilisis
-        arcu feugiat dolor. Imperdiet proin sit nibh.
+        Please connect Sporran or upload your digital identity.
       </p>
       <div class="actions mt-8 flex gap-8 justify-between">
         <Btn type="blue" @click="showModalSporran"> Connect Sporran </Btn>
         <Btn type="secondary" class="bg-bg-dark" @click="showModalUploadDid"> Use Mnemonic </Btn>
       </div>
+      <!-- TODO: Currently not used
       <div class="mt-12">
         <h3>Don’t have a DID?</h3>
         <Btn
@@ -20,7 +19,7 @@
           target="_blank"
           >Create DID</Btn
         >
-      </div>
+      </div> -->
     </div>
   </div>
 
