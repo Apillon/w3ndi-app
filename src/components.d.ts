@@ -29,7 +29,6 @@ declare module 'vue' {
     UploadDid: typeof import('./components/W3n/UploadDid.vue')['default']
     W3nDid: typeof import('./components/W3n/W3nDid.vue')['default']
     W3nProfile: typeof import('./components/W3n/W3nProfile.vue')['default']
-    W3nStart: typeof import('./components/W3n/W3nStart.vue')['default']
     WalletAdd: typeof import('./components/Wallet/WalletAdd.vue')['default']
     WalletConnect: typeof import('./components/Wallet/WalletConnect.vue')['default']
     WalletConnectSporran: typeof import('./components/Wallet/WalletConnectSporran.vue')['default']
