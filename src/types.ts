@@ -97,8 +97,8 @@ declare global {
 }
 
 export enum W3nPageStep {
-  DID = 2,
-  PROFILE = 3,
+  DID = 1,
+  PROFILE = 2,
 }
 
 export enum CommonErrors {
