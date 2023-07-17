@@ -8,7 +8,7 @@
                 "excludeMatchedPattern": false
             },
             {
-                "pattern": "refs/heads/develop$",
+                "pattern": "refs/heads/staging$",
                 "type": "HEAD_REF",
                 "excludeMatchedPattern": false
             }
