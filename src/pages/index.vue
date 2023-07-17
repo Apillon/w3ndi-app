@@ -55,7 +55,3 @@ onMounted(async () => {
   }
 });
 </script>
-
-<route lang="json">
-{ "meta": { "layout": "w3n" } }
-</route>

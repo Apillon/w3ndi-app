@@ -13,7 +13,11 @@
       </div>
       <div class="mt-12">
         <h3>Don’t have a DID?</h3>
-        <Btn type="builders" class="bg-bg-dark" @click="router.push('/registration')"
+        <Btn
+          type="builders"
+          class="bg-bg-dark"
+          :href="`${OAUTH_APP_URL}/registration`"
+          target="_blank"
           >Create DID</Btn
         >
       </div>
@@ -30,7 +34,8 @@
 </template>
 
 <script lang="ts" setup>
-const router = useRouter();
+import { OAUTH_APP_URL } from '~/config';
+
 const emit = defineEmits(['proceed']);
 
 const isSporranConnectVisible = ref<boolean>(false);
