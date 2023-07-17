@@ -11,7 +11,7 @@
         </thead>
         <tbody>
           <tr v-for="(account, accountKey) in accounts" :key="accountKey">
-            <td>{{ account.meta.name }}</td>
+            <td>{{ account.name }}</td>
             <td class="whitespace-nowrap">
               {{ truncateWallet(account.address) }}
             </td>
@@ -56,7 +56,6 @@
 </template>
 
 <script lang="ts" setup>
-import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { useState } from '~/composables/useState';
 import { useSporran } from '~/composables/useSporran';
 import { truncateWallet } from '~/lib/misc-utils';
@@ -81,7 +80,7 @@ onMounted(async () => {
   initSporran();
 });
 
-async function connect(account: InjectedAccountWithMeta) {
+async function connect(account: WalletAccount) {
   if (await connectSporranAccount(account)) {
     emit('proceed');
   }

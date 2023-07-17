@@ -43,12 +43,12 @@ export async function generateKeypairs(mnemonic: string) {
     type: 'sr25519',
   } as KiltKeyringPair;
 
-  // Key used to attest transacations
+  // Key used to attest transactions
   const assertionMethod = {
     ...account.derive('//did//assertion//0'),
     type: 'sr25519',
   } as KiltKeyringPair;
-  // Key used for authority delgation
+  // Key used for authority delegation
   const capabilityDelegation = {
     ...account.derive('//did//delegation//0'),
     type: 'sr25519',
