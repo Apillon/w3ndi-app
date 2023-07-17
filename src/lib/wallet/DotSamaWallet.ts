@@ -7,7 +7,7 @@ import {
 } from '@polkadot/extension-inject/types';
 import { Signer } from '@polkadot/types/types';
 
-const DAPP_NAME = 'ApillonAuth_Wallet_Connect';
+const DAPP_NAME = 'ApillonAuth_W3n';
 
 export class DotSamaWallet implements Wallet {
   type: WalletDeviceType;

@@ -119,7 +119,7 @@ async function handleSubmit(e: Event | MouseEvent) {
     formWallet.address,
     { description: formWallet.tag }
   );
-  toast('New account added to Asset recipient', { type: 'success' });
+  toast('New account added to Asset recipient', { type: 'info' });
   setAssetRecipients(allAssetRecipients);
   resetForm();
   emit('success');
