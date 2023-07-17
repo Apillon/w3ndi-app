@@ -1,7 +1,7 @@
 {
     "name": "apillon-asset-recipient-dev",
     "environment": {
-      "computeType": "BUILD_GENERAL1_SMALL",
+      "computeType": "BUILD_GENERAL1_MEDIUM",
       "imagePullCredentialsType": "CODEBUILD",
       "privilegedMode": false,
       "image": "aws/codebuild/amazonlinux2-x86_64-standard:4.0",
@@ -25,7 +25,7 @@
             "type": "PLAINTEXT",
             "name": "NODE_OPTIONS",
             "value": "--max_old_space_size=4096"
-          }
+        }
       ],
       "type": "LINUX_CONTAINER"
     },
