@@ -14,9 +14,11 @@ phases:
       - npm install
       - mkdir -p ./public/.well-known/
       - cp ./bin/deploy/$ENV/did-configuration.json ./public/.well-known/did-configuration.json
+
   build:
     commands:
       - npm run build
+
   post_build:
     commands:
       - echo Deploying to bucket $S3_BUCKET
