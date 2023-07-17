@@ -39,18 +39,20 @@ onMounted(async () => {
     setTimeout(async () => {
       await initSporran();
 
-      console.log(accounts.value);
       /** Find account saved in LS */
       const account = accounts.value.find(item => item.address === accountAddress);
-      console.log(account);
 
       /** If account exists, connect it with Sporran */
       if (account && (await connectSporranAccount(account))) {
         pageStep.value = W3nPageStep.PROFILE;
       }
       loading.value = false;
-    }, 300);
+    }, 500);
   } else {
+    localStorage.removeItem(LsKeys.ACCOUNT_ADDRESS);
+    localStorage.removeItem(LsKeys.DID_URI);
+    localStorage.removeItem(LsKeys.MNEMONIC);
+
     loading.value = false;
   }
 });

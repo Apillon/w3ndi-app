@@ -1,6 +1,5 @@
 import { DidDocument, KiltAddress } from '@kiltprotocol/types';
 import {
-  InjectedAccountWithMeta,
   InjectedExtension,
   InjectedMetadata,
   InjectedProvider,
@@ -91,8 +90,7 @@ declare global {
     mnemonic: string;
     wallet?: Wallet;
     w3Name: string;
-    sporranAccount: InjectedAccountWithMeta;
-    sporranMessage: SporranMessage;
+    sporranAccount: WalletAccount;
   }
 }
 

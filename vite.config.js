@@ -20,12 +20,12 @@ export default defineConfig(({ command, mode }) => {
     resolve: {
       alias: {
         '~/': `${path.resolve(__dirname, 'src')}/`,
+        buffer: 'rollup-plugin-node-polyfills/polyfills/buffer-es6',
+        process: 'rollup-plugin-node-polyfills/polyfills/process-es6',
+        util: 'rollup-plugin-node-polyfills/polyfills/util',
+        stream: 'rollup-plugin-node-polyfills/polyfills/stream',
+        events: 'rollup-plugin-node-polyfills/polyfills/events',
       },
-      buffer: 'rollup-plugin-node-polyfills/polyfills/buffer-es6',
-      process: 'rollup-plugin-node-polyfills/polyfills/process-es6',
-      util: 'rollup-plugin-node-polyfills/polyfills/util',
-      stream: 'rollup-plugin-node-polyfills/polyfills/stream',
-      events: 'rollup-plugin-node-polyfills/polyfills/events',
     },
     build: {
       rollupOptions: {
@@ -39,7 +39,7 @@ export default defineConfig(({ command, mode }) => {
             process: true,
             buffer: true,
           }),
-          NodeModulesPolyfillPlugin(),
+          NodeModulesPolyfillPlugin(), 
         ],
       },
     },

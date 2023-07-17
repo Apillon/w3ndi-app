@@ -1,6 +1,6 @@
-import { DidDocument, DidResourceUri } from '@kiltprotocol/types';
+import { DidDocument } from '@kiltprotocol/types';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
-import { reactive, readonly, isProxy, toRaw } from 'vue';
+import { reactive, readonly } from 'vue';
 import { getWalletBySource } from '~/lib/wallet/wallets';
 
 export const AuthLsKeys = {
@@ -16,8 +16,7 @@ const state = reactive<StateInterface>({
   mnemonic: '',
   wallet: getWalletBySource(localStorage.getItem(AuthLsKeys.WALLET)),
   w3Name: '',
-  sporranAccount: {} as InjectedAccountWithMeta,
-  sporranMessage: {} as SporranMessage,
+  sporranAccount: {} as WalletAccount,
 });
 
 export function useState() {
@@ -75,10 +74,6 @@ export function useState() {
     state.sporranAccount = account;
   };
 
-  const setSporranMessage = (message: SporranMessage) => {
-    state.sporranMessage = message;
-  };
-
   async function getMessageSignature(address: string, msg: string) {
     const signer = state.wallet?.signer || null;
 
@@ -114,6 +109,5 @@ export function useState() {
     removeAssetRecipients,
     setMnemonic,
     setSporranAccount,
-    setSporranMessage,
   };
 }

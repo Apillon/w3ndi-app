@@ -160,7 +160,6 @@ import {
   disconnect,
 } from '@kiltprotocol/sdk-js';
 import { ApiPromise } from '@polkadot/api';
-import { web3FromAddress } from '@polkadot/extension-dapp';
 import { toast } from 'vue3-toastify';
 
 import { KILT_NETWORK } from '~/config';
@@ -169,8 +168,10 @@ import { truncateWallet } from '~/lib/misc-utils';
 import { chainIdToName } from '~/lib/kilt/w3n';
 import { useDid } from '~/composables/useDid';
 import { useState } from '~/composables/useState';
+import { useSporran } from '~/composables/useSporran';
 
 const emit = defineEmits(['back']);
+const { sporranErrorMsg } = useSporran();
 const { state, setAssetRecipients, removeAssetRecipients } = useState();
 const {
   getDidDocument,
@@ -260,7 +261,7 @@ async function uploadAccountsToIpfs() {
   });
 
   if (error) {
-    toast(error);
+    toast('Error during file upload, please try again later.', { type: 'error' });
     loading.value = false;
     return null;
   }
@@ -311,10 +312,6 @@ async function updateFullDidWithSporran(fileCid: string) {
   /** Account from Sporran wallet */
   const account = state.sporranAccount;
 
-  // to be able to retrieve the signer interface from this account
-  // we can use web3FromSource which will return an InjectedExtension type
-  const injector = await web3FromAddress(account.address);
-
   /** Sporran extension */
   const sporranExtension: SporranExtension<PubSubSession> = window.kilt.sporran;
 
@@ -332,7 +329,7 @@ async function updateFullDidWithSporran(fileCid: string) {
     /** Submit transaction with sporran wallet */
     await api
       .tx(extrinsic.signed)
-      .signAndSend(account.address, { signer: injector.signer }, ({ status }) => {
+      .signAndSend(account.address, { signer: account.signer }, ({ status }) => {
         console.log(status);
         if (status.isBroadcast) {
           toast('Deleting old service endpoint', {
@@ -348,7 +345,7 @@ async function updateFullDidWithSporran(fileCid: string) {
       })
       .catch((error: any) => {
         console.log('Transaction failed', error);
-        toast('Transaction failed', { type: 'error' });
+        sporranErrorMsg(error);
         loading.value = false;
       });
   } else {
@@ -359,10 +356,6 @@ async function updateFullDidWithSporran(fileCid: string) {
 async function createNewServiceEndpointWithSporran(fileCid: string) {
   /** Account from Sporran wallet */
   const account = state.sporranAccount;
-
-  // to be able to retrieve the signer interface from this account
-  // we can use web3FromSource which will return an InjectedExtension type
-  const injector = await web3FromAddress(account.address);
 
   /** Sporran extension */
   const sporranExtension: SporranExtension<PubSubSession> = window.kilt.sporran;
@@ -383,7 +376,7 @@ async function createNewServiceEndpointWithSporran(fileCid: string) {
   /** Submit transaction with sporran wallet */
   await api
     .tx(signed)
-    .signAndSend(account.address, { signer: injector.signer }, ({ status }) => {
+    .signAndSend(account.address, { signer: account.signer }, ({ status }) => {
       if (status.isBroadcast) {
         toast('Creating new service endpoint', {
           type: 'info',
@@ -396,7 +389,7 @@ async function createNewServiceEndpointWithSporran(fileCid: string) {
     })
     .catch((error: any) => {
       console.log('Transaction failed', error);
-      toast('Transaction failed', { type: 'error' });
+      sporranErrorMsg(error);
       loading.value = false;
     });
 
@@ -450,8 +443,9 @@ async function updateFullDid(fileCid: string) {
     toast('Service has been successfully created', { type: 'success' });
   }
 
-  loading.value = false;
   refreshDidDocument();
+  loading.value = false;
+  editWallets.value = false;
 }
 
 async function refreshDidDocument() {
