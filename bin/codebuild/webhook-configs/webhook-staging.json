@@ -1,0 +1,18 @@
+{
+    "projectName": "apillon-asset-recipient-staging",
+    "filterGroups": [
+        [
+            {
+                "pattern": "PUSH",
+                "type": "EVENT",
+                "excludeMatchedPattern": false
+            },
+            {
+                "pattern": "refs/heads/staging$",
+                "type": "HEAD_REF",
+                "excludeMatchedPattern": false
+            }
+        ]
+    ],
+    "buildType": "BUILD"
+}
