@@ -83,7 +83,7 @@
       <div v-if="loadingAssetRecipients" class="flex justify-center align-middle">
         <Spinner />
       </div>
-      <div v-else-if="!state.assetRecipients || Object.keys(state.assetRecipients).length === 0">
+      <div v-else-if="!loadedAssetRecipients || Object.keys(loadedAssetRecipients).length === 0">
         You don't have any account
       </div>
       <table v-else>
@@ -251,6 +251,10 @@ const parseAssetRecipients = async () => {
 };
 
 async function saveWallets() {
+  if (!state.assetRecipients || Object.keys(state.assetRecipients).length === 0) {
+    toast('You need to add at least one wallet.', { type: 'warning' });
+    return;
+  }
   loading.value = true;
 
   const hash = hashKiltTransferAssetRecipient(state.assetRecipients);
