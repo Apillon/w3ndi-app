@@ -83,9 +83,6 @@
       <div v-if="loadingAssetRecipients" class="flex justify-center align-middle">
         <Spinner />
       </div>
-      <div v-else-if="!loadedAssetRecipients || Object.keys(loadedAssetRecipients).length === 0">
-        You don't have any account
-      </div>
       <table v-else>
         <thead>
           <tr>
@@ -95,7 +92,7 @@
             <th />
           </tr>
         </thead>
-        <tbody>
+        <tbody v-if="state.assetRecipients && Object.keys(state.assetRecipients).length">
           <template v-for="(recipients, chainId) in state.assetRecipients" :key="chainId">
             <tr v-for="(data, recipientAddress) in recipients" :key="recipientAddress">
               <td>{{ chainIdToName(chainId) }}</td>
@@ -122,6 +119,14 @@
               </td>
             </tr>
           </template>
+        </tbody>
+        <tbody
+          v-else-if="!loadedAssetRecipients || Object.keys(loadedAssetRecipients).length === 0"
+        >
+          <div class="p-3">You don't have any account yet</div>
+        </tbody>
+        <tbody v-else>
+          <div class="p-3">You removed all accounts, please add some</div>
         </tbody>
       </table>
 
@@ -243,6 +248,8 @@ const parseAssetRecipients = async () => {
           loadingAssetRecipients.value = false;
         }
       });
+    } else {
+      loadingAssetRecipients.value = false;
     }
     setTimeout(() => (loadingAssetRecipients.value = false), 20000);
   } else {
