@@ -58,6 +58,8 @@ export const useSporran = () => {
       localStorage.setItem(LsKeys.ACCOUNT_ADDRESS, address);
       localStorage.setItem(LsKeys.DID_URI, document.uri);
       localStorage.setItem(LsKeys.W3NAME, web3Name);
+    } else {
+      toast('Your account doesn`t have web3name!', { type: 'error' });
     }
     return web3Name;
   }
@@ -98,6 +100,7 @@ export const useSporran = () => {
         .signAndSend(account.address, { signer: account.signer }, ({ status }) => {
           if (status.isInBlock) {
             toast('DID and account are successfully connected', { type: 'success' });
+          } else if (status.isFinalized) {
             getW3NamePool(account.address);
           }
         })
