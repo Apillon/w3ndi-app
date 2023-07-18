@@ -36,7 +36,7 @@ declare global {
     avatar?: string;
     name?: string;
     wallet?: Wallet;
-    signer?: unknown;
+    signer?: Signer;
   }
 
   interface WalletInfo {

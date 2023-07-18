@@ -70,7 +70,7 @@ export function useState() {
     state.mnemonic = mnemonic;
   };
 
-  const setSporranAccount = (account: InjectedAccountWithMeta) => {
+  const setSporranAccount = (account: WalletAccount) => {
     state.sporranAccount = account;
   };
 
