@@ -33,7 +33,7 @@ async function verifyDid() {
   }
 
   try {
-    const { web3Name } = await getDidDocumentFromMnemonic(mnemonic.value);
+    const { web3Name, document } = await getDidDocumentFromMnemonic(mnemonic.value);
 
     /** Check if user has Web3Name */
     if (web3Name) {
@@ -42,8 +42,10 @@ async function verifyDid() {
       /** Save Mnemonic to LS */
       localStorage.setItem(LsKeys.MNEMONIC, mnemonic.value);
       emit('proceed');
+    } else if (document && document?.uri) {
+      toast('Please create web3name in sporran to continue.', { type: 'info' });
     } else {
-      toast('Missing Web3Name', { type: 'warning' });
+      toast('Invalid identity, please use another mnemonic.', { type: 'warning' });
     }
   } catch (error) {
     console.log('Mnemonic error: ', error);

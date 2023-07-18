@@ -60,6 +60,8 @@ export const useSporran = () => {
       localStorage.setItem(LsKeys.ACCOUNT_ADDRESS, address);
       localStorage.setItem(LsKeys.DID_URI, document.uri);
       localStorage.setItem(LsKeys.W3NAME, web3Name);
+    } else if(document && document?.uri){      
+      toast('Please create web3name in sporran to continue.', { type: 'info' });
     } else if(errorMsg){      
       toast('Your account doesn`t have web3name!', { type: 'error' });
     }
