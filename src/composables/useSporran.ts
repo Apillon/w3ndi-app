@@ -30,7 +30,7 @@ export const useSporran = () => {
     }
   }
 
-  async function getW3Name(address: string) {
+  async function getW3Name(address: string, errorMsg: boolean = true) {
     /** Remove data from LS */
     localStorage.removeItem(LsKeys.ACCOUNT_ADDRESS);
     localStorage.removeItem(LsKeys.DID_URI);
@@ -43,7 +43,9 @@ export const useSporran = () => {
 
     if (didDetails.isNone) {
       accountLinked.value = false;
-      toast('This account is not linked to DID', { type: 'info' });
+      if(errorMsg){        
+        toast('This account is not linked to DID', { type: 'info' });
+      }
       return;
     } else {
       accountLinked.value = true;
@@ -58,6 +60,10 @@ export const useSporran = () => {
       localStorage.setItem(LsKeys.ACCOUNT_ADDRESS, address);
       localStorage.setItem(LsKeys.DID_URI, document.uri);
       localStorage.setItem(LsKeys.W3NAME, web3Name);
+    } else if(document && document?.uri){      
+      toast('Please create web3name in sporran to continue.', { type: 'info' });
+    } else if(errorMsg){      
+      toast('Your account doesn`t have web3name!', { type: 'error' });
     }
     return web3Name;
   }
@@ -98,7 +104,8 @@ export const useSporran = () => {
         .signAndSend(account.address, { signer: account.signer }, ({ status }) => {
           if (status.isInBlock) {
             toast('DID and account are successfully connected', { type: 'success' });
-            getW3NamePool(account.address);
+          } else if (status.isFinalized) {
+            getW3NamePool(account.address, false);
           }
         })
         .catch((error: any) => {
@@ -112,9 +119,9 @@ export const useSporran = () => {
     }
   }
 
-  function getW3NamePool(address: string) {
+  function getW3NamePool(address: string, errorMsg: boolean) {
     const getW3NameInterval = setInterval(async () => {
-      const w3Name = await getW3Name(address);
+      const w3Name = await getW3Name(address, errorMsg);
 
       if (w3Name) {
         clearInterval(getW3NameInterval);
@@ -125,7 +132,7 @@ export const useSporran = () => {
 
   function sporranErrorMsg(error: ReferenceError | TypeError | any){
     if (error?.message === 'Rejected') {
-      toast('You rejected action', { type: 'warning' });
+      toast('Request was rejected in Sporran', { type: 'info' });
     } else if (error?.message.includes('account balance too low')) {
       toast('Your account balance is too low', { type: 'warning' });
     } else if (error?.message.includes('transaction')) {

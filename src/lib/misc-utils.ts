@@ -72,3 +72,24 @@ export function truncateWallet(source: string, partLength: number = 4): string {
     ? source.slice(0, partLength) + '…' + source.slice(source.length - partLength, source.length)
     : source;
 }
+
+
+/**
+ * Enum
+ */
+export function enumKeys(E: any): string[] {
+  return Object.keys(E).filter(k => isNaN(Number(k)));
+}
+export function enumValues(E: any): string[] | number[] {
+  return enumKeys(E).map(k => E[k as any]);
+}
+export function enumKeyValues(E: any): KeyValue[] {
+  return enumKeys(E).map(k => {
+    return { key: k, value: E[k as any] };
+  });
+}
+
+export const checkIfKeyExist = (objectName: object, keyName: string) => {
+    let keyExist = Object.keys(objectName).some(key => key === keyName);
+    return keyExist;
+};

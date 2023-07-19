@@ -21,12 +21,12 @@
       <!-- W3Name -->
       <p class="mb-4">
         <small>w3n</small><br />
-        <strong class="text-white">{{ state.w3Name }}</strong>
+        <strong class="text-white">w3n:{{ state.w3Name }}</strong>
       </p>
 
       <!-- DID uri -->
       <p>
-        <small>Identity address</small><br />
+        <small>DID address</small><br />
         <strong class="text-white">
           {{ state.didDocument.uri }}
         </strong>
@@ -83,7 +83,7 @@
       <div v-if="loadingAssetRecipients" class="flex justify-center align-middle">
         <Spinner />
       </div>
-      <table v-else-if="state.assetRecipients && Object.keys(state.assetRecipients).length > 0">
+      <table v-else>
         <thead>
           <tr>
             <th>Chain</th>
@@ -92,7 +92,7 @@
             <th />
           </tr>
         </thead>
-        <tbody>
+        <tbody v-if="state.assetRecipients && Object.keys(state.assetRecipients).length">
           <template v-for="(recipients, chainId) in state.assetRecipients" :key="chainId">
             <tr v-for="(data, recipientAddress) in recipients" :key="recipientAddress">
               <td>{{ chainIdToName(chainId) }}</td>
@@ -120,8 +120,15 @@
             </tr>
           </template>
         </tbody>
+        <tbody
+          v-else-if="!loadedAssetRecipients || Object.keys(loadedAssetRecipients).length === 0"
+        >
+          <div class="p-3">You don't have any accounts yet</div>
+        </tbody>
+        <tbody v-else>
+          <div class="p-3">You removed all accounts, please add some</div>
+        </tbody>
       </table>
-      <div v-else-if="!state.account">You don't have any account</div>
 
       <div class="mt-8">
         <Btn
@@ -213,6 +220,7 @@ const showModalAddNewWallet = () => {
 };
 
 const parseAssetRecipients = async () => {
+  loadedAssetRecipients.value = {};
   loadingAssetRecipients.value = true;
 
   if (state.didDocument?.service) {
@@ -236,14 +244,24 @@ const parseAssetRecipients = async () => {
           }
         } catch (error) {
           console.log(error);
+          toast('Error while fetching asset recipients, please refresh page.', { type: 'error' });
+          loadingAssetRecipients.value = false;
         }
       });
+    } else {
+      loadingAssetRecipients.value = false;
     }
+    setTimeout(() => (loadingAssetRecipients.value = false), 60000);
+  } else {
+    loadingAssetRecipients.value = false;
   }
-  setTimeout(() => (loadingAssetRecipients.value = false), 20000);
 };
 
 async function saveWallets() {
+  if (!state.assetRecipients || Object.keys(state.assetRecipients).length === 0) {
+    toast('You need to add at least one wallet.', { type: 'warning' });
+    return;
+  }
   loading.value = true;
 
   const hash = hashKiltTransferAssetRecipient(state.assetRecipients);

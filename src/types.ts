@@ -25,6 +25,10 @@ declare global {
     value: String | Number;
     label: String;
   };
+  type KeyValue = {
+    key: string | number;
+    value: string | number;
+  };
 
   /** Wallet */
   type SubscriptionFn = (accounts: WalletAccount[] | undefined) => void | Promise<void>;
@@ -36,7 +40,7 @@ declare global {
     avatar?: string;
     name?: string;
     wallet?: Wallet;
-    signer?: unknown;
+    signer?: Signer;
   }
 
   interface WalletInfo {
@@ -117,7 +121,7 @@ export enum Chains {
   POLKADOT = 'polkadot:91b171bb158e2d3848fa23a9f1c25182/slip44:354',
   KILT = 'polkadot:411f057b9107718c9624d6aa4a3f23c1/slip44:2086',
   KUSAMA = 'polkadot:b0a8d493285c2df73290dfb7e61f870f/slip44:434',
-  ETHEREUM = 'eip:1/slip44:60',
+  ETHEREUM = 'eip155:1/slip44:60',
 }
 
 /** Local storage keys */
@@ -126,4 +130,32 @@ export enum LsKeys {
   MNEMONIC = 'apillon_oauth_mnemonic',
   ACCOUNT_ADDRESS = 'apillon_oauth_account_address',
   W3NAME = 'apillon_oauth_w3name',
+}
+
+type ChainData = {
+  name: string,
+  caip: string,
+  ss58Prefix?: number,
+}
+
+export const CHAINS_DATA: Record<string, ChainData> = {
+  [Chains.POLKADOT]: {
+    name: 'Polkadot',
+    caip: Chains.POLKADOT,
+    ss58Prefix: 0,
+  },
+  [Chains.KILT]: {
+    name: 'Kilt',
+    caip: Chains.KILT,
+    ss58Prefix: 38,
+  },
+  [Chains.KUSAMA]: {
+    name: 'Kusama',
+    caip: Chains.KUSAMA,
+    ss58Prefix: 2,
+  },
+  [Chains.ETHEREUM]: {
+    name: 'Ethereum',
+    caip: Chains.ETHEREUM,
+  },
 }
