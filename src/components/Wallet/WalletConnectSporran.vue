@@ -38,7 +38,7 @@
       </div>
     </div>
     <div v-else class="p-4 text-center">
-      <h5>You don't have any account, create account first.</h5>
+      <h5>You don't have any accounts, create account first.</h5>
     </div>
   </div>
   <div v-else class="p-4 text-center">

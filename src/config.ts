@@ -8,3 +8,4 @@ export const BASE_URL = CONFIG.value.VITE_BASE_URL;
 export const API_URL = CONFIG.value.VITE_API_URL;
 export const OAUTH_APP_URL = CONFIG.value.VITE_OAUTH_APP_URL;
 export const KILT_NETWORK = CONFIG.value.VITE_KILT_NETWORK;
+export const IPFS_HOST = CONFIG.value.VITE_IPFS_HOST;
