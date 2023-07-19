@@ -88,3 +88,8 @@ export function enumKeyValues(E: any): KeyValue[] {
     return { key: k, value: E[k as any] };
   });
 }
+
+export const checkIfKeyExist = (objectName: object, keyName: string) => {
+    let keyExist = Object.keys(objectName).some(key => key === keyName);
+    return keyExist;
+};

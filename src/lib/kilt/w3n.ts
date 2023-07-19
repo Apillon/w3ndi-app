@@ -14,7 +14,7 @@ export const hashKiltTransferAssetRecipient = (doc: any) => {
 };
 
 export const chainIdToName = (chainId: string) => {
-  return CHAINS_DATA[chainId].name;
+  return checkIfKeyExist(CHAINS_DATA, chainId) ? CHAINS_DATA[chainId]?.name : '';
 };
 
 export function validateAddress(address: string, chain: string): boolean {
