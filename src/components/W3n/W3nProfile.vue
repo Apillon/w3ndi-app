@@ -21,12 +21,12 @@
       <!-- W3Name -->
       <p class="mb-4">
         <small>w3n</small><br />
-        <strong class="text-white">{{ state.w3Name }}</strong>
+        <strong class="text-white">w3n:{{ state.w3Name }}</strong>
       </p>
 
       <!-- DID uri -->
       <p>
-        <small>Identity address</small><br />
+        <small>DID address</small><br />
         <strong class="text-white">
           {{ state.didDocument.uri }}
         </strong>

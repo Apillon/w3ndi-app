@@ -55,12 +55,12 @@ const formWallet = reactive({
   address: '',
 });
 
-const chains = ref([
-  { label: 'Polkadot', value: Chains.POLKADOT },
-  { label: 'Kilt', value: Chains.KILT },
-  { label: 'Kusama', value: Chains.KUSAMA },
-  { label: 'Ethereum', value: Chains.ETHEREUM },
-]);
+const chains = enumValues(Chains).map(item => {
+  return {
+    label: chainIdToName(`${item}`),
+    value: item,
+  };
+});
 
 const tags = computed<Array<SelectOption>>(() => {
   if (userAccount.value) {
@@ -116,7 +116,7 @@ async function handleSubmit(e: Event | MouseEvent) {
   const allAssetRecipients = pushRecipientToAccounts(
     state.assetRecipients,
     formWallet.chain,
-    formWallet.address,
+    convertAddressForChain(formWallet.address, formWallet.chain),
     { description: formWallet.tag }
   );
   toast('New account added to Asset recipient', { type: 'info' });

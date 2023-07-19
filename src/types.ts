@@ -25,6 +25,10 @@ declare global {
     value: String | Number;
     label: String;
   };
+  type KeyValue = {
+    key: string | number;
+    value: string | number;
+  };
 
   /** Wallet */
   type SubscriptionFn = (accounts: WalletAccount[] | undefined) => void | Promise<void>;
@@ -126,4 +130,32 @@ export enum LsKeys {
   MNEMONIC = 'apillon_oauth_mnemonic',
   ACCOUNT_ADDRESS = 'apillon_oauth_account_address',
   W3NAME = 'apillon_oauth_w3name',
+}
+
+type ChainData = {
+  name: string,
+  caip: string,
+  ss58Prefix?: number,
+}
+
+export const CHAINS_DATA: Record<string, ChainData> = {
+  [Chains.POLKADOT]: {
+    name: 'Polkadot',
+    caip: Chains.POLKADOT,
+    ss58Prefix: 0,
+  },
+  [Chains.KILT]: {
+    name: 'Kilt',
+    caip: Chains.KILT,
+    ss58Prefix: 38,
+  },
+  [Chains.KUSAMA]: {
+    name: 'Kusama',
+    caip: Chains.KUSAMA,
+    ss58Prefix: 2,
+  },
+  [Chains.ETHEREUM]: {
+    name: 'Ethereum',
+    caip: Chains.ETHEREUM,
+  },
 }
