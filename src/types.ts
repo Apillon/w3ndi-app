@@ -117,7 +117,7 @@ export enum Chains {
   POLKADOT = 'polkadot:91b171bb158e2d3848fa23a9f1c25182/slip44:354',
   KILT = 'polkadot:411f057b9107718c9624d6aa4a3f23c1/slip44:2086',
   KUSAMA = 'polkadot:b0a8d493285c2df73290dfb7e61f870f/slip44:434',
-  ETHEREUM = 'eip:1/slip44:60',
+  ETHEREUM = 'eip155:1/slip44:60',
 }
 
 /** Local storage keys */
