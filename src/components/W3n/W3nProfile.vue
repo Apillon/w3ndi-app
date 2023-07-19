@@ -123,7 +123,7 @@
         <tbody
           v-else-if="!loadedAssetRecipients || Object.keys(loadedAssetRecipients).length === 0"
         >
-          <div class="p-3">You don't have any account yet</div>
+          <div class="p-3">You don't have any accounts yet</div>
         </tbody>
         <tbody v-else>
           <div class="p-3">You removed all accounts, please add some</div>
@@ -251,7 +251,7 @@ const parseAssetRecipients = async () => {
     } else {
       loadingAssetRecipients.value = false;
     }
-    setTimeout(() => (loadingAssetRecipients.value = false), 20000);
+    setTimeout(() => (loadingAssetRecipients.value = false), 60000);
   } else {
     loadingAssetRecipients.value = false;
   }
