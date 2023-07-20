@@ -1,7 +1,9 @@
 <template>
-  <div class="max-w-7xl w-screen px-8 py-4 mx-auto flex gap-8">
+  <div
+    class="sm:max-w-[90vw] lg:max-w-7xl w-screen px-8 py-4 mx-auto flex flex-col md:flex-row gap-8"
+  >
     <!-- Profile -->
-    <div class="card-dark p-16 w-1/2">
+    <div class="card-dark p-4 sm:p-8 md:p-10 lg:p-16 w-full md:w-1/2">
       <div class="flex gap-8 justify-between">
         <h2 class="mb-2">My DID</h2>
         <Btn
@@ -20,16 +22,20 @@
 
       <!-- W3Name -->
       <p class="mb-4">
-        <small>w3n</small><br />
-        <strong class="text-white">w3n:{{ state.w3Name }}</strong>
+        <small>w3n</small>
+        <span class="block overflow-x-auto">
+          <strong class="text-white">w3n:{{ state.w3Name }}</strong>
+        </span>
       </p>
 
       <!-- DID uri -->
       <p>
-        <small>DID address</small><br />
-        <strong class="text-white">
-          {{ state.didDocument.uri }}
-        </strong>
+        <small>DID address</small>
+        <span class="block overflow-x-auto">
+          <strong class="text-white">
+            {{ state.didDocument.uri }}
+          </strong>
+        </span>
       </p>
 
       <!-- Validity -->
@@ -46,13 +52,15 @@
 
       <!-- Address -->
       <p v-if="accountAddress">
-        <small>Kilt address</small><br />
-        <strong class="text-white">{{ accountAddress }}</strong>
+        <small>Kilt address</small>
+        <span class="block overflow-x-auto">
+          <strong class="text-white">{{ accountAddress }}</strong>
+        </span>
       </p>
     </div>
 
     <!-- Wallets -->
-    <div class="card-dark p-16 w-1/2">
+    <div class="card-dark p-4 sm:p-8 md:p-10 lg:p-16 w-full md:w-1/2">
       <div class="flex gap-8 justify-between mb-8">
         <h2 class="mb-2">My wallets</h2>
 
@@ -83,52 +91,54 @@
       <div v-if="loadingAssetRecipients" class="flex justify-center align-middle">
         <Spinner />
       </div>
-      <table v-else>
-        <thead>
-          <tr>
-            <th>Chain</th>
-            <th>Properties</th>
-            <th>Address</th>
-            <th />
-          </tr>
-        </thead>
-        <tbody v-if="state.assetRecipients && Object.keys(state.assetRecipients).length">
-          <template v-for="(recipients, chainId) in state.assetRecipients" :key="chainId">
-            <tr v-for="(data, recipientAddress) in recipients" :key="recipientAddress">
-              <td>{{ chainIdToName(chainId) }}</td>
-              <td>
-                <ul>
-                  <li v-for="(dataItem, dataId) in data" :key="dataId">
-                    <strong>{{ dataId }}:</strong>
-                    {{ dataItem }}
-                  </li>
-                </ul>
-              </td>
-              <td class="whitespace-nowrap">
-                {{ truncateWallet(recipientAddress) }}
-              </td>
-              <td>
-                <button
-                  v-if="editWallets"
-                  class="p-1 text-white text-base"
-                  @click="removeAssetRecipients(chainId, recipientAddress)"
-                >
-                  <SvgInclude :name="SvgNames.Trash" class="w-4 h-4" />
-                </button>
-                <div v-else class="w-6 h-6"></div>
-              </td>
+      <div v-else class="overflow-x-auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Chain</th>
+              <th>Properties</th>
+              <th>Address</th>
+              <th />
             </tr>
-          </template>
-        </tbody>
-        <tbody
-          v-else-if="!loadedAssetRecipients || Object.keys(loadedAssetRecipients).length === 0"
-        >
-          <div class="p-3">You don't have any accounts yet</div>
-        </tbody>
-        <tbody v-else>
-          <div class="p-3">You removed all accounts, please add some</div>
-        </tbody>
-      </table>
+          </thead>
+          <tbody v-if="state.assetRecipients && Object.keys(state.assetRecipients).length">
+            <template v-for="(recipients, chainId) in state.assetRecipients" :key="chainId">
+              <tr v-for="(data, recipientAddress) in recipients" :key="recipientAddress">
+                <td>{{ chainIdToName(chainId) }}</td>
+                <td>
+                  <ul>
+                    <li v-for="(dataItem, dataId) in data" :key="dataId">
+                      <strong>{{ dataId }}:</strong>
+                      {{ dataItem }}
+                    </li>
+                  </ul>
+                </td>
+                <td class="whitespace-nowrap">
+                  {{ truncateWallet(recipientAddress) }}
+                </td>
+                <td>
+                  <button
+                    v-if="editWallets"
+                    class="p-1 text-white text-base"
+                    @click="removeAssetRecipients(chainId, recipientAddress)"
+                  >
+                    <SvgInclude :name="SvgNames.Trash" class="w-4 h-4" />
+                  </button>
+                  <div v-else class="w-6 h-6"></div>
+                </td>
+              </tr>
+            </template>
+          </tbody>
+          <tbody
+            v-else-if="!loadedAssetRecipients || Object.keys(loadedAssetRecipients).length === 0"
+          >
+            <div class="p-3">You don't have any accounts yet</div>
+          </tbody>
+          <tbody v-else>
+            <div class="p-3">You removed all accounts, please add some</div>
+          </tbody>
+        </table>
+      </div>
 
       <div class="mt-8">
         <Btn

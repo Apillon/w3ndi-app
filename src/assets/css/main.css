@@ -70,7 +70,8 @@ select:autofill:focus {
  */
 /* width */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 4px;
+  height: 4px;
 }
 
 /* Track */
@@ -81,6 +82,7 @@ select:autofill:focus {
 /* Handle */
 ::-webkit-scrollbar-thumb {
   background: theme('colors.bodyDark');
+  border-radius: 2px;
 }
 
 /* Handle on hover */
