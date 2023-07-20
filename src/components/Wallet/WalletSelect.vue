@@ -101,7 +101,7 @@ import metamask from '~/assets/icons/metamask.svg';
 import coinbase from '~/assets/icons/coinbase.svg';
 import walletconnect from '~/assets/icons/walletconnect.svg';
 
-import { isWeb3Injected, web3Accounts, web3Enable, packageInfo } from '@polkadot/extension-dapp';
+import { isWeb3Injected, web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 import { toast } from 'vue3-toastify';
 import useScreen from '~/composables/useScreen';
 import { useState } from '~/composables/useState';
@@ -138,18 +138,19 @@ onMounted(() => {
 });
 
 async function onSelectWallet(wallet: Wallet) {
+  toast(isWeb3Injected ? 'True' : 'false');
+  const enabled = await web3Enable('Alexa');
+  console.log(enabled);
+  const extensions = enabled.map(item => item.name);
+  toast(extensions.join());
+
+  const accounts = await web3Accounts();
+  console.log(accounts);
+  const users = accounts.map(item => item.meta.source + ': ' + item.meta.name);
+  toast(users.join());
+
   if (wallet.installed) {
     setWallet(wallet);
-  } else {
-    const enabled = await web3Enable('Alexa');
-    console.log(enabled);
-    const extensions = enabled.map(item => item.name);
-    toast(extensions.join());
-
-    const accounts = await web3Accounts();
-    console.log(accounts);
-    const users = accounts.map(item => item.meta.source + ': ' + item.meta.name);
-    toast(users.join());
   }
 }
 function connectAccount(account: WalletAccount) {
