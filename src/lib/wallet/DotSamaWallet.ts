@@ -6,6 +6,7 @@ import {
   InjectedWindow,
 } from '@polkadot/extension-inject/types';
 import { Signer } from '@polkadot/types/types';
+import { toast } from 'vue3-toastify';
 
 const DAPP_NAME = 'ApillonAuth_W3n';
 
@@ -66,6 +67,13 @@ export class DotSamaWallet implements Wallet {
 
   enable = async () => {
     if (!this.installed) {
+      console.log(this)
+      toast(this.extensionName)
+      toast(JSON.stringify(this.extension))
+      toast(JSON.stringify(this.metadata))
+      toast(JSON.stringify(this.provider))
+      toast(JSON.stringify(this.signer))
+      toast(JSON.stringify(this))
       return;
     }
 
