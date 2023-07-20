@@ -3,7 +3,7 @@
     <div v-for="(wallet, key) in wallets" :key="key">
       <div
         class="h-14 card flex items-center px-4 py-1"
-        :class="{ 'cursor-pointer': wallet.installed }"
+        :class="{ 'cursor-pointer': wallet.installed || true }"
         @click="onSelectWallet(wallet)"
       >
         <SvgInclude v-if="wallet.icon" :name="wallet.icon" class="w-5 mr-2" />
@@ -66,7 +66,7 @@
       </div>
     </div>
     <div class="w-full">
-      <h3 class="mb-4 tracking-initial">Or select etherium wallet</h3>
+      <h3 class="mb-4 tracking-initial">Or select ethereum wallet</h3>
 
       <div class="flex flex-wrap items-center justify-center">
         <div v-if="loading || waLoading" class="mt-4">
@@ -137,8 +137,8 @@ onMounted(() => {
 });
 
 async function onSelectWallet(wallet: Wallet) {
-  if (wallet.installed) {
-    setWallet(wallet);
+  setWallet(wallet);
+  if (wallet.installed || wallet.extensionName === 'nova') {
   }
 }
 function connectAccount(account: WalletAccount) {

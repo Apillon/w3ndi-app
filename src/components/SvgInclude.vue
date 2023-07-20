@@ -10,6 +10,7 @@ export const SvgNames = {
   Success: 'success',
   Trash: 'trash',
   Upload: 'upload',
+  NovaWallet: 'novaWallet',
   WalletPolkadot: 'walletPolkadot',
   WalletSubwallet: 'walletSubwallet',
   WalletTalisman: 'walletTalisman',
@@ -219,6 +220,45 @@ export default defineComponent({
     <path
       d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2ZM13.5 16V19H10.5V16H8L12 12L16 16H13.5ZM13 9V3.5L18.5 9H13Z"
       fill="currentColor"
+    />
+  </svg>
+
+  <!-- Nova wallet -->
+  <svg
+    v-else-if="name === SvgNames.NovaWallet"
+    v-bind="$attrs"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    version="1.1"
+    id="Layer_1"
+    x="0px"
+    y="0px"
+    viewBox="0 0 324 324"
+    style="enable-background: new 0 0 324 324"
+    xml:space="preserve"
+  >
+    <radialGradient
+      id="SVGID_1_"
+      cx="8.15"
+      cy="19.93"
+      r="372.6356"
+      gradientTransform="matrix(1 0 0 -1 0 326)"
+      gradientUnits="userSpaceOnUse"
+    >
+      <stop offset="5.331913e-02" style="stop-color: #d7d3e9" />
+      <stop offset="0.1933" style="stop-color: #a19cde" />
+      <stop offset="0.3834" style="stop-color: #696bd9" />
+      <stop offset="0.54" style="stop-color: #3a5ae7" />
+      <stop offset="0.7735" style="stop-color: #225fe7" />
+      <stop offset="1" style="stop-color: #0883d1" />
+    </radialGradient>
+    <path
+      fill="url(#SVGID_1_)"
+      d="M84.1,0h155.8C286.3,0,324,37.7,324,84.1v155.8c0,46.5-37.7,84.1-84.1,84.1H84.1C37.7,324,0,286.3,0,239.9V84.1  C0,37.7,37.7,0,84.1,0z"
+    />
+    <path
+      fill="#ffffff"
+      d="M275,166.7v3c-18.4,2.9-58,9.8-77.5,17.2c-7,2.7-12.5,8.1-15.2,15.1c-7.4,19.4-14.4,59.2-17.3,77.7h-6  c-2.9-18.5-9.9-58.4-17.3-77.7c-2.7-6.9-8.2-12.4-15.2-15.1c-19.5-7.5-59-14.3-77.5-17.2v-6c18.4-2.9,58-9.8,77.5-17.2  c7-2.7,12.5-8.1,15.2-15.1c7.5-19.4,14.4-59.2,17.3-77.7h6c2.9,18.5,9.9,58.3,17.3,77.7c2.7,6.9,8.2,12.4,15.2,15.1  c19.5,7.4,59.1,14.3,77.5,17.2L275,166.7z"
     />
   </svg>
 
