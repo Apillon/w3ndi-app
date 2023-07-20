@@ -138,16 +138,25 @@ onMounted(() => {
 });
 
 async function onSelectWallet(wallet: Wallet) {
+  toast(JSON.stringify(window.injectedWeb3));
   toast(isWeb3Injected ? 'True' : 'false');
-  const enabled = await web3Enable('Alexa');
-  console.log(enabled);
-  const extensions = enabled.map(item => item.name);
-  toast(extensions.join());
+  web3Enable('ApillonAuth_W3n').then(ext => {
+    if (ext.length) {
+      toast(JSON.stringify(ext), { type: 'info' });
+    } else {
+      toast(JSON.stringify(ext), { type: 'error' });
+    }
+  });
 
-  const accounts = await web3Accounts();
-  console.log(accounts);
-  const users = accounts.map(item => item.meta.source + ': ' + item.meta.name);
-  toast(users.join());
+  // const enabled = web3Enable('ApillonAuth_W3n');
+  // console.log(enabled);
+  // const extensions = enabled.map(item => item.name);
+  // toast(extensions.join());
+
+  // const accounts = await web3Accounts();
+  // console.log(accounts);
+  // const users = accounts.map(item => item.meta.source + ': ' + item.meta.name);
+  // toast(users.join());
 
   if (wallet.installed) {
     setWallet(wallet);

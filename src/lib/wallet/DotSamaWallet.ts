@@ -6,7 +6,6 @@ import {
   InjectedWindow,
 } from '@polkadot/extension-inject/types';
 import { Signer } from '@polkadot/types/types';
-import { toast } from 'vue3-toastify';
 
 const DAPP_NAME = 'ApillonAuth_W3n';
 
