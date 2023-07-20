@@ -44,7 +44,7 @@ const contentMaxStyle = computed(() => {
   };
 });
 
-onMounted(() => {
+onMounted(async () => {
   console.log(window.walletExtension);
   console.log(window.walletExtension.isNovaWallet);
   const response = window.walletExtension.onAppResponse(
