@@ -43,24 +43,6 @@ const contentMaxStyle = computed(() => {
     maxHeight: `calc(100vh - ${headerRef.value?.clientHeight || 0}px)`,
   };
 });
-
-onMounted(async () => {
-  console.log(window.walletExtension);
-  console.log(window.walletExtension.isNovaWallet);
-  const response = window.walletExtension.onAppResponse(
-    'pub(accounts.list)',
-    null,
-    new Error('Nova wallllllet')
-  );
-  console.log(response);
-
-  const response2 = window.walletExtension.onAppResponse(
-    'pub(extrinsic.sign)',
-    { data: 'test', id: 'aicnaos' },
-    new Error('Nova extrinsic')
-  );
-  console.log(response2);
-});
 </script>
 
 <style lang="postcss" module>

@@ -44,17 +44,6 @@ const PREDEFINED_WALLETS: WalletInfo[] = [
     },
     icon: '',
   },
-  {
-    type: 'mobile',
-    extensionName: 'nova',
-    title: 'Nova wallet',
-    installUrl: {
-      android: 'https://play.google.com/store/apps/details?id=io.novafoundation.nova.market',
-      ios: 'https://apps.apple.com/app/nova-polkadot-kusama-wallet/id1597119355',
-      default: 'https://novawallet.io/',
-    },
-    icon: SvgNames.NovaWallet,
-  },
 ];
 
 const walletList: Wallet[] = [];
