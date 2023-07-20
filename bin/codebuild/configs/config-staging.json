@@ -9,7 +9,7 @@
         {
           "type": "PLAINTEXT",
           "name": "ENV",
-          "value": "development"
+          "value": "staging"
         },
         {
           "type": "PLAINTEXT",
