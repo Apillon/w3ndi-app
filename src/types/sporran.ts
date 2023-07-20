@@ -1,6 +1,6 @@
 import { DidUri } from '@kiltprotocol/sdk-js';
 import { DidResourceUri, IEncryptedMessage, KiltAddress } from '@kiltprotocol/types';
-import { CommonErrors } from '~/types';
+import { CommonErrors } from './index';
 
 /**
  * Apillon supported (public + internal) Sporran versions: 2022.12.13, 2023.1.23;

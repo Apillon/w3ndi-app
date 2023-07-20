@@ -48,7 +48,7 @@ export default defineConfig(({ command, mode }) => {
       Pages(),
       AutoImport({
         imports: ['vue', 'vue-router', '@vueuse/head', '@vueuse/core'],
-        dirs: ['./src/lib/**'],
+        dirs: ['./src/types', './src/lib/**'],
         dts: 'src/auto-imports.d.ts',
       }),
       Components({
