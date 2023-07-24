@@ -3,7 +3,7 @@
     <div v-for="(wallet, key) in wallets" :key="key">
       <div
         class="h-14 card flex items-center px-4 py-1"
-        :class="{ 'cursor-pointer': wallet.installed || true }"
+        :class="{ 'cursor-pointer': wallet.installed }"
         @click="onSelectWallet(wallet)"
       >
         <SvgInclude v-if="wallet.icon" :name="wallet.icon" class="w-5 mr-2" />
@@ -138,26 +138,6 @@ onMounted(() => {
 });
 
 async function onSelectWallet(wallet: Wallet) {
-  toast(JSON.stringify(window.injectedWeb3));
-  toast(isWeb3Injected ? 'True' : 'false');
-  web3Enable('ApillonAuth_W3n').then(ext => {
-    if (ext.length) {
-      toast(JSON.stringify(ext), { type: 'info' });
-    } else {
-      toast(JSON.stringify(ext), { type: 'error' });
-    }
-  });
-
-  // const enabled = web3Enable('ApillonAuth_W3n');
-  // console.log(enabled);
-  // const extensions = enabled.map(item => item.name);
-  // toast(extensions.join());
-
-  // const accounts = await web3Accounts();
-  // console.log(accounts);
-  // const users = accounts.map(item => item.meta.source + ': ' + item.meta.name);
-  // toast(users.join());
-
   if (wallet.installed) {
     setWallet(wallet);
   }
