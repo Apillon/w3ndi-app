@@ -13,7 +13,8 @@ import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfil
 import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill';
 
 export default defineConfig(({ command, mode }) => {
-  const envMode = command === 'serve' ? mode : process.env.NODE_ENV || mode || 'production';
+  const env = process.env.ENV || process.env.RUN_ENV || process.env.NODE_ENV;
+  const envMode = command === 'serve' ? mode : env || mode || 'production';
   process.env = { ...process.env, ...loadEnv(envMode.trim().toLowerCase(), process.cwd()) };
 
   const config = {
@@ -48,7 +49,7 @@ export default defineConfig(({ command, mode }) => {
       Pages(),
       AutoImport({
         imports: ['vue', 'vue-router', '@vueuse/head', '@vueuse/core'],
-        dirs: ['./src/lib/**'],
+        dirs: ['./src/types', './src/lib/**'],
         dts: 'src/auto-imports.d.ts',
       }),
       Components({

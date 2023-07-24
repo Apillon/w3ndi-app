@@ -66,7 +66,7 @@
       </div>
     </div>
     <div class="w-full">
-      <h3 class="mb-4 tracking-initial">Or select etherium wallet</h3>
+      <h3 class="mb-4 tracking-initial">Or select ethereum wallet</h3>
 
       <div class="flex flex-wrap items-center justify-center">
         <div v-if="loading || waLoading" class="mt-4">
@@ -101,6 +101,7 @@ import metamask from '~/assets/icons/metamask.svg';
 import coinbase from '~/assets/icons/coinbase.svg';
 import walletconnect from '~/assets/icons/walletconnect.svg';
 
+import { isWeb3Injected, web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 import { toast } from 'vue3-toastify';
 import useScreen from '~/composables/useScreen';
 import { useState } from '~/composables/useState';

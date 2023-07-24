@@ -12,7 +12,7 @@ import { DEV, IPFS_HOST, KILT_NETWORK } from '~/config';
 import { LsKeys } from '~/types';
 import { getDidUriFromKeypair } from '~/lib/kilt/did';
 import { generateKeypairs } from '~/lib/kilt/utils';
-import { KILT_TRANSFER_ASSET_RECIPIENT_V2 } from '~/lib/kilt/types';
+import { KILT_TRANSFER_ASSET_RECIPIENT_V2 } from '~/types/kilt';
 import { hashKiltTransferAssetRecipient } from '~/lib/kilt/w3n';
 
 export const useDid = () => {

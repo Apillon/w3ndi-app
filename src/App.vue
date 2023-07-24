@@ -47,7 +47,7 @@ const contentMaxStyle = computed(() => {
 
 <style lang="postcss" module>
 .wrapperW3n {
-  @apply overflow-auto;
+  @apply overflow-auto overflow-x-hidden overflow-y-auto;
 }
 .containerW3n {
   @apply flex justify-center items-center;
