@@ -3,7 +3,12 @@
   <template v-else>
     <Transition name="fade" :duration="1000">
       <W3nProfile v-if="pageStep === W3nPageStep.PROFILE" @back="pageStep = W3nPageStep.DID" />
-      <W3nDid v-else @proceed="pageStep = W3nPageStep.PROFILE"></W3nDid>
+      <W3nDid
+        v-else-if="pageStep === W3nPageStep.DID"
+        @back="pageStep = W3nPageStep.START"
+        @proceed="pageStep = W3nPageStep.PROFILE"
+      />
+      <W3nStart v-else @proceed="pageStep = W3nPageStep.DID" />
     </Transition>
   </template>
 </template>
@@ -19,7 +24,7 @@ const { getDidDocumentFromMnemonic } = useDid();
 const { accounts, initSporran, connectSporranAccount } = useSporran();
 
 const loading = ref<boolean>(true);
-const pageStep = ref<number>(W3nPageStep.DID);
+const pageStep = ref<number>(W3nPageStep.START);
 
 onMounted(async () => {
   const accountAddress = localStorage.getItem(LsKeys.ACCOUNT_ADDRESS);

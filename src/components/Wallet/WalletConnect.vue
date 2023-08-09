@@ -6,7 +6,7 @@
     @click="disconnectWallet"
     >Disconnect wallet</Btn
   >
-  <Btn v-else type="blue" @click="showModalWalletSelect">Connect wallet</Btn>
+  <Btn v-else type="blue" size="small" @click="showModalWalletSelect">Connect wallet</Btn>
 
   <Modal :show="isWalletSelectVisible" title="Connect wallet">
     <WalletSelect @connect="isWalletSelectVisible = false" />

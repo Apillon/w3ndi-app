@@ -59,7 +59,7 @@ export default defineConfig(({ command, mode }) => {
         targets: ['defaults', 'not IE 11'],
       }),
       ViteWebfontDownload([
-        'https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@700&family=IBM+Plex+Sans:wght@400;700&display=swap',
+        'https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap',
       ]),
     ]
   };

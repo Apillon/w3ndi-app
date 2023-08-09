@@ -61,10 +61,7 @@ const isFieldEmpty = computed(() => {
 
 <style lang="postcss" module>
 .select {
-  @apply w-full h-12 py-3 px-5 text-sm bg-bg-light border-1 border-bg-lighter rounded-none transition-all duration-300 outline-none placeholder:text-body;
-  -webkit-border-radius: 0px;
-  -moz-border-radius: 0px;
-  border-radius: 0px;
+  @apply w-full h-12 py-3 px-5 text-sm bg-bg-light border-1 border-bg-lighter rounded-lg transition-all duration-300 outline-none placeholder:text-body;
 
   &:not([multiple]) {
     outline: none; /* remove focus ring from Webkit */
@@ -80,14 +77,5 @@ const isFieldEmpty = computed(() => {
   &:hover {
     @apply border-body;
   }
-}
-</style>
-
-<style lang="postcss">
-.field.select select {
-  border-radius: 0;
-}
-.field.select select > option {
-  border-radius: 0;
 }
 </style>

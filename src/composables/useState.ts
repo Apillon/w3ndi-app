@@ -1,5 +1,4 @@
 import { DidDocument } from '@kiltprotocol/types';
-import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { reactive, readonly } from 'vue';
 import { getWalletBySource } from '~/lib/wallet/wallets';
 

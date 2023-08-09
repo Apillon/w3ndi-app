@@ -33,8 +33,9 @@ declare global {
 }
 
 export enum W3nPageStep {
-  DID = 1,
-  PROFILE = 2,
+  START = 1,
+  DID = 2,
+  PROFILE = 3,
 }
 
 export enum CommonErrors {

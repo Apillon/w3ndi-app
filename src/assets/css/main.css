@@ -38,22 +38,6 @@ select:autofill:focus {
   -webkit-box-shadow: 0 0 0px 1000px theme('colors.bg.light') inset;
 }
 
-/* Scrollbar */
-@screen lg {
-  html {
-    -ms-overflow-style: none; /* for Internet Explorer, Edge */
-    scrollbar-width: none; /* for Firefox */
-  }
-
-  ::-webkit-scrollbar {
-    display: none;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: theme('colors.bg.DEFAULT');
-  }
-}
-
 /* Text selection */
 ::selection {
   color: theme('colors.body');

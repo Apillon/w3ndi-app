@@ -1,12 +1,11 @@
 <template>
-  <div
-    class="sm:max-w-[90vw] lg:max-w-7xl w-screen px-8 py-4 mx-auto flex flex-col md:flex-row gap-8"
-  >
+  <div class="flex flex-col lg:flex-row gap-8">
     <!-- Profile -->
-    <div class="card-dark p-4 sm:p-8 md:p-10 lg:p-16 w-full md:w-1/2">
+    <div class="card-dark p-4 sm:p-8 w-full lg:w-1/2 lg:max-w-xs">
       <div class="flex gap-8 justify-between">
-        <h2 class="mb-2">My DID</h2>
+        <h2 class="mb-8">My DID</h2>
         <Btn
+          v-if="false"
           type="secondary"
           class="w-auto bg-bg-dark"
           @click="openAccountOnBlockChain(accountAddress)"
@@ -31,8 +30,8 @@
       <!-- DID uri -->
       <p>
         <small>DID address</small>
-        <span class="block overflow-x-auto">
-          <strong class="text-white">
+        <span class="block overflow-x-auto scrollbar">
+          <strong class="text-white text-xs">
             {{ state.didDocument.uri }}
           </strong>
         </span>
@@ -54,106 +53,119 @@
       <p v-if="accountAddress">
         <small>Kilt address</small>
         <span class="block overflow-x-auto">
-          <strong class="text-white">{{ accountAddress }}</strong>
+          <strong class="text-white text-xs">{{ accountAddress }}</strong>
         </span>
       </p>
     </div>
 
     <!-- Wallets -->
-    <div class="card-dark p-4 sm:p-8 md:p-10 lg:p-16 w-full md:w-1/2">
-      <div class="flex gap-8 justify-between mb-8">
-        <h2 class="mb-2">My wallets</h2>
-
-        <!-- Edit Wallets -->
-        <Btn
-          v-if="editWallets"
-          type="secondary"
-          class="w-auto !text-green bg-bg-dark"
-          locked
-          :loading="loading"
-          @click="saveWallets()"
-        >
-          <span class="font-sans font-normal">Save and deploy</span>
-          <SvgInclude :name="SvgNames.Success" class="ml-2" />
-        </Btn>
-        <Btn
-          v-else
-          type="secondary"
-          class="w-auto text-yellow bg-bg-dark"
-          locked
-          @click="editWallets = true"
-        >
-          <span class="font-sans font-normal">Edit wallets</span>
-          <SvgInclude :name="SvgNames.Pencil" class="ml-2" />
-        </Btn>
-      </div>
-
+    <div class="card-dark p-4 sm:p-8 md:p-10 lg:p-16 w-full lg:flex-auto">
       <div v-if="loadingAssetRecipients" class="flex justify-center align-middle">
         <Spinner />
       </div>
-      <div v-else class="overflow-x-auto">
-        <table>
-          <thead>
-            <tr>
-              <th>Chain</th>
-              <th>Properties</th>
-              <th>Address</th>
-              <th />
-            </tr>
-          </thead>
-          <tbody v-if="state.assetRecipients && Object.keys(state.assetRecipients).length">
-            <template v-for="(recipients, chainId) in state.assetRecipients" :key="chainId">
-              <tr v-for="(data, recipientAddress) in recipients" :key="recipientAddress">
-                <td>{{ chainIdToName(chainId) }}</td>
-                <td>
-                  <ul>
-                    <li v-for="(dataItem, dataId) in data" :key="dataId">
-                      <strong>{{ dataId }}:</strong>
-                      {{ dataItem }}
-                    </li>
-                  </ul>
-                </td>
-                <td class="whitespace-nowrap">
-                  {{ truncateWallet(recipientAddress) }}
-                </td>
-                <td>
-                  <button
-                    v-if="editWallets"
-                    class="p-1 text-white text-base"
-                    @click="removeAssetRecipients(chainId, recipientAddress)"
-                  >
-                    <SvgInclude :name="SvgNames.Trash" class="w-4 h-4" />
-                  </button>
-                  <div v-else class="w-6 h-6"></div>
-                </td>
-              </tr>
-            </template>
-          </tbody>
-          <tbody
-            v-else-if="!loadedAssetRecipients || Object.keys(loadedAssetRecipients).length === 0"
-          >
-            <div class="p-3">You don't have any accounts yet</div>
-          </tbody>
-          <tbody v-else>
-            <div class="p-3">You removed all accounts, please add some</div>
-          </tbody>
-        </table>
+
+      <div v-else-if="!loadedAssetRecipients || Object.keys(loadedAssetRecipients).length === 0">
+        <div class="max-w-md p-8 mx-auto text-center">
+          <h2>No wallet added.</h2>
+          <p class="my-4">
+            Morbi malesuada nulla lobortis commodo risus mattis eu. Metus proin nibh scelerisque ac.
+            Est commodo in neque feugiat amet eget sed placerat. Urna quis.
+          </p>
+          <Btn class="w-auto" type="blue" @click="showModalAddNewWallet()">
+            <span class="flex gap-2 items-center">
+              <SvgInclude :name="SvgNames.Plus" />
+              <span>Add new wallet</span>
+            </span>
+          </Btn>
+        </div>
       </div>
 
-      <div class="mt-8">
-        <Btn
-          v-if="editWallets"
-          type="secondary"
-          class="w-auto text-yellow bg-bg-dark"
-          locked
-          @click="showModalAddNewWallet"
-        >
-          <SvgInclude :name="SvgNames.Plus" class="mr-2" />
-          <span class="font-sans font-normal">Add new wallet</span>
-        </Btn>
-      </div>
+      <template v-else>
+        <div class="flex gap-8 justify-between mb-8">
+          <h2 class="mb-2">My wallets</h2>
+
+          <!-- Edit Wallets -->
+          <Btn
+            v-if="editWallets"
+            type="secondary"
+            class="w-auto !text-green bg-bg-dark"
+            locked
+            :loading="loading"
+            @click="saveWallets()"
+          >
+            <span class="font-sans font-normal">Save and deploy</span>
+            <SvgInclude :name="SvgNames.Success" class="ml-2" />
+          </Btn>
+          <Btn
+            v-else
+            type="secondary"
+            class="w-auto text-yellow bg-bg-dark"
+            locked
+            @click="editWallets = true"
+          >
+            <span class="font-sans font-normal">Edit wallets</span>
+            <SvgInclude :name="SvgNames.Pencil" class="ml-2" />
+          </Btn>
+        </div>
+        <div class="overflow-x-auto">
+          <table>
+            <thead>
+              <tr>
+                <th>Chain</th>
+                <th>Properties</th>
+                <th>Address</th>
+                <th />
+              </tr>
+            </thead>
+            <tbody v-if="state.assetRecipients && Object.keys(state.assetRecipients).length">
+              <template v-for="(recipients, chainId) in state.assetRecipients" :key="chainId">
+                <tr v-for="(data, recipientAddress) in recipients" :key="recipientAddress">
+                  <td>{{ chainIdToName(chainId) }}</td>
+                  <td>
+                    <ul>
+                      <li v-for="(dataItem, dataId) in data" :key="dataId">
+                        <strong>{{ dataId }}:</strong>
+                        {{ dataItem }}
+                      </li>
+                    </ul>
+                  </td>
+                  <td class="whitespace-nowrap">
+                    {{ truncateWallet(recipientAddress) }}
+                  </td>
+                  <td>
+                    <button
+                      v-if="editWallets"
+                      class="p-1 text-white text-base"
+                      @click="removeAssetRecipients(chainId, recipientAddress)"
+                    >
+                      <SvgInclude :name="SvgNames.Trash" class="w-4 h-4" />
+                    </button>
+                    <div v-else class="w-6 h-6"></div>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+            <tbody v-else>
+              <div class="p-3">You removed all accounts, please add some</div>
+            </tbody>
+          </table>
+        </div>
+        <div class="mt-8">
+          <Btn
+            v-if="editWallets"
+            type="secondary"
+            class="w-auto text-yellow bg-bg-dark"
+            locked
+            @click="showModalAddNewWallet"
+          >
+            <SvgInclude :name="SvgNames.Plus" class="mr-2" />
+            <span class="font-sans font-normal">Add new wallet</span>
+          </Btn>
+        </div>
+      </template>
     </div>
-    <div class="absolute left-0 top-1/2 -translate-y-1/2">
+
+    <div class="absolute -left-1 lg:-left-2 xl:-left-4 top-1/2 -translate-x-full -translate-y-1/2">
       <button @click="emit('back')">
         <SvgInclude :name="SvgNames.Arrow" />
       </button>

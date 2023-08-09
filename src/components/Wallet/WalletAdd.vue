@@ -16,7 +16,11 @@
         class="w-full"
         label="Tag"
         placeholder="Type text here"
+        clearable
       />
+    </div>
+    <div class="flex flex-gap-8">
+      <RadioButtons v-model="formWallet.inputType" :options="inputTypes" name="inputType" />
     </div>
     <div class="flex flex-gap-8">
       <SelectInput
@@ -52,8 +56,20 @@ import { toast } from 'vue3-toastify';
 const formWallet = reactive({
   chain: '',
   tag: '',
+  inputType: '',
   address: '',
 });
+
+const inputTypes = [
+  {
+    value: 'address',
+    label: 'Type address',
+  },
+  {
+    value: 'wallet',
+    label: 'Connect wallet',
+  },
+];
 
 const chains = enumValues(Chains).map(item => {
   return {

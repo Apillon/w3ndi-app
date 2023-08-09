@@ -39,8 +39,8 @@ module.exports = {
     },
 
     fontFamily: {
-      sans: ['IBM Plex Sans', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-      mono: ['IBM Plex Mono', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+      heading: ['New Spirit', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+      sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
     },
 
     container: {

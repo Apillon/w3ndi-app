@@ -59,7 +59,7 @@ const isFieldEmpty = computed(() => {
 
 <style lang="postcss" module>
 .input {
-  @apply w-full h-12 py-3 px-5 text-sm bg-bg-light border-1 border-bg-lighter rounded-none transition-all duration-300 outline-none placeholder:text-body;
+  @apply w-full h-12 py-3 px-5 text-sm bg-bg-light border-1 border-bg-lighter rounded-lg transition-all duration-300 outline-none placeholder:text-body;
 
   &:focus {
     @apply border-white;

@@ -51,13 +51,15 @@ const btnClass = computed(() => {
       'opacity-60': props.disabled,
       [$style.depressed]: props.loading,
       hidden: props.hidden,
-      'bg-primary text-bg': props.type === 'primary',
+      'h-10 px-5': props.size === 'small',
+      'h-12 py-3 px-6': props.size === 'medium',
+      'bg-primary text-bg rounded-lg': props.type === 'primary',
       'bg-bg text-primary border-1 border-bg-lighter': props.type === 'secondary',
       'hover-bounce': !props.href && !props.to && props.type !== 'builders',
       locked: isBtnLocked.value || props.locked,
-      'inline-block w-auto h-auto p-0 bg-transparent text-yellow hover:bg-yellow hover:text-bg transition-all duration-300':
+      'inline-block w-auto h-auto p-0 bg-transparent text-sm text-yellow hover:bg-yellow hover:text-bg transition-all duration-300':
         props.type === 'builders',
-      'bg-blue text-bg': props.type === 'blue',
+      'bg-blue text-bg rounded-lg': props.type === 'blue',
       'h-auto p-0 text-yellow font-sans font-normal underline locked': props.type === 'link',
     },
   ];
@@ -75,7 +77,7 @@ function onClick(ev: MouseEvent) {
 
 <style lang="postcss" module>
 .btn {
-  @apply w-full relative inline-flex justify-center items-center h-12 p-2  font-bold cursor-pointer;
+  @apply w-full relative inline-flex justify-center items-center p-2  font-bold cursor-pointer;
 }
 
 .depressed {
