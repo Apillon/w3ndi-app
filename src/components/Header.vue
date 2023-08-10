@@ -6,7 +6,7 @@
       </RouterLink>
     </div>
     <div class="py-2">
-      <WalletConnect v-if="state.w3Name" />
+      <!-- <WalletConnect v-if="state.w3Name" /> -->
     </div>
   </nav>
 </template>

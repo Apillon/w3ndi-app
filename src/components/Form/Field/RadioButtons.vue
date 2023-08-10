@@ -1,13 +1,14 @@
 <template>
-  <fieldset class="radio-group">
-    <div v-for="option in options" :key="`${option.value}`" class="field radio relative mb-7">
+  <fieldset class="radio-group relative">
+    <div v-for="option in options" :key="`${option.value}`" class="field radio relative">
       <input
-        :checked="modelValue === option.value"
+        class="invisible absolute"
         type="radio"
         :name="name"
+        :value="option.value"
         :id="name + '_' + option.value"
-        class="invisible absolute"
-        @input="$emit('update:modelValue', ($event.target as HTMLInputElement).checked)"
+        :checked="modelValue === option.value"
+        @change="$event => $emit('update:modelValue', ($event.target as HTMLInputElement).value)"
       />
       <label
         :for="name + '_' + option.value"
@@ -17,6 +18,8 @@
         {{ option.label }}
       </label>
     </div>
+    <div class="radio-selected" :style="radioSelectedStyle"></div>
+
     <div class="absolute">
       <transition name="slide-fade">
         <Alert :value="error" />
@@ -26,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
+const props = defineProps({
   options: { type: Array<SelectOption>, default: [] },
   name: { type: String, required: true },
   labelClass: { type: [String, Array, Object], default: null },
@@ -34,47 +37,60 @@ defineProps({
   error: { type: String, default: '' },
 });
 
-const emit = defineEmits(['change:modelValue']);
+const emit = defineEmits(['update:modelValue']);
+watch(
+  () => props.modelValue,
+  val => {
+    console.log(val);
+  }
+);
+
+const selectedIndex = computed<number>(() => {
+  return props.options.findIndex(item => item.value === props.modelValue);
+});
+const radioSelectedStyle = computed(() => {
+  const numItems = props.options.length;
+  const itemWidth = 100 / numItems;
+
+  return {
+    left: selectedIndex.value * itemWidth + '%',
+    width: itemWidth + '%',
+  };
+});
 </script>
 
 <style lang="postcss" scoped>
-label {
-  @apply relative flex w-full cursor-pointer items-center;
-  line-height: 1.2;
-
-  &:before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: calc(50% - 10px);
-    display: block;
-    width: 18px;
-    height: 18px;
-    border: 2px solid theme('colors.bodyDark');
-  }
-  &:hover:before {
-    border-color: theme('colors.white');
-  }
+.radio-group {
+  @apply flex items-center w-full border-1 border-bg-light rounded-[20px] bg-bg-light mb-8 overflow-hidden;
 }
 
-input:checked + label:before {
-  border-color: theme('colors.white');
-  background-color: theme('colors.white');
+.radio-selected {
+  @apply absolute top-0 bottom-0 rounded-[20px] bg-bg-dark transition-all;
 }
-input:checked + label:after {
-  content: '';
+
+.field {
+  @apply w-full rounded-[20px] overflow-hidden;
+}
+
+input[type='radio'] {
   position: absolute;
-  top: calc(50% - 9px);
-  left: 1px;
-  display: block;
-  width: 16px;
-  height: 16px;
-  color: theme('colors.bg.DEFAULT');
-  background-image: url("data:image/svg+xml, %3Csvg width='16' height='16' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M9.99999 15.172L19.192 5.979L20.607 7.393L9.99999 18L3.63599 11.636L5.04999 10.222L9.99999 15.172Z' fill='currentColor' stroke='currentColor' stroke-width='1'/%3E%3C/svg%3E");
+  visibility: hidden;
+  display: none;
 }
-
 input:disabled + label {
   opacity: 0.7;
   cursor: default;
+}
+
+label {
+  @apply relative w-full py-2 px-6 mb-0 cursor-pointer text-center text-body z-1;
+
+  &:hover {
+    @apply text-white;
+  }
+}
+
+input[type='radio']:checked + label {
+  @apply text-white;
 }
 </style>

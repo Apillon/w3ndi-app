@@ -1,17 +1,16 @@
 <template>
-  <form @submit.prevent="handleSubmit">
+  <div>
     <div class="flex gap-8">
       <Select
-        v-model="formWallet.chain"
-        :options="chains"
-        id="chainId"
+        v-model="formWallet.chainType"
+        :options="chainTypes"
+        id="chainType"
         class="w-full"
-        label="Chain"
-        placeholder="Select chain"
+        label="Chain type"
+        placeholder="Select chain type"
       />
-      <SelectInput
+      <Input
         v-model="formWallet.tag"
-        :options="tags"
         id="walletTag"
         class="w-full"
         label="Tag"
@@ -19,46 +18,103 @@
         clearable
       />
     </div>
-    <div class="flex flex-gap-8">
+
+    <div class="flex gap-8">
       <RadioButtons v-model="formWallet.inputType" :options="inputTypes" name="inputType" />
     </div>
-    <div class="flex flex-gap-8">
-      <SelectInput
+
+    <!-- WALLET ADDRESS -->
+    <div v-if="formWallet.inputType === 'address'" class="flex gap-8">
+      <Input
+        v-model="formWallet.address"
+        id="walletAddress"
+        class="w-full"
+        placeholder="Type wallet address here"
+      />
+    </div>
+    <div v-else class="flex gap-4">
+      <WalletConnect class="w-auto whitespace-nowrap" />
+      <Select
         v-model="formWallet.address"
         :options="addresses"
         id="walletAddress"
         class="w-full"
-        label="Address"
-        placeholder="Type text here"
+        placeholder="Select wallet"
       />
     </div>
-    <div class="flex gap-8">
-      <Btn type="secondary" class="!text-red" locked @click="cancel">Cancel</Btn>
-      <Btn type="primary" @click="handleSubmit">Save</Btn>
+
+    <!-- MULTIPLE CHAINS -->
+    <div class="flex flex-col gap-8 mb-8">
+      <Checkbox
+        v-model="formWallet.multipleChains"
+        id="multipleChains"
+        name="multipleChains"
+        label="I want to use this address on multiple chains"
+      />
+      <div
+        v-if="formWallet.multipleChains"
+        class="flex flex-col gap-4 py-3 px-5 max-h-52 card-border rounded-lg overflow-auto"
+      >
+        <template v-if="formWallet.chainType && formWallet.chains[formWallet.chainType]">
+          <Checkbox
+            v-for="(chain, key) in additionalChains"
+            v-model="formWallet.chains[formWallet.chainType][chain.label].selected"
+            :id="'substrateChains_' + key"
+            name="substrateChains"
+            :disabled="key === 0"
+            :labelHtml="chainLabelHtml(chain)"
+          />
+        </template>
+      </div>
     </div>
-  </form>
+
+    <div class="flex gap-8">
+      <Btn type="secondary" @click="save">Save</Btn>
+      <Btn type="primary" @click="handleSubmit">Save and add another</Btn>
+    </div>
+  </div>
 </template>
 
 <script lang="ts" setup>
-import { Chains } from '~/types';
 import { useState } from '~/composables/useState';
 import { useProvider } from '~/composables/useProvider';
 
 defineProps({
   actionText: { type: String, default: '' },
 });
-const emit = defineEmits(['cancel', 'success']);
+const emit = defineEmits(['close']);
 
 const { state, setAssetRecipients } = useState();
 const { userAccount, walletProvider } = useProvider();
 import { toast } from 'vue3-toastify';
 
 const formWallet = reactive({
-  chain: '',
+  chainType: '',
   tag: '',
-  inputType: '',
+  inputType: 'address',
   address: '',
+  multipleChains: false,
+  chains: {
+    [ChainsNamespaces.BITCOIN]: createSubChainsValues(ChainsNamespaces.BITCOIN),
+    [ChainsNamespaces.COSMOS]: createSubChainsValues(ChainsNamespaces.COSMOS),
+    [ChainsNamespaces.ETHEREUM]: createSubChainsValues(ChainsNamespaces.ETHEREUM),
+    [ChainsNamespaces.POLKADOT]: createSubChainsValues(ChainsNamespaces.POLKADOT),
+  },
 });
+
+function createSubChainsValues(chainType: string) {
+  if (!checkIfKeyExist(CHAINS_DATA, chainType)) {
+    return {};
+  }
+  const chains = Object.values(CHAINS_DATA[chainType]) as ChainData[];
+  return chains.reduce((acc, item) => {
+    acc[item.name] = {
+      ...item,
+      selected: Object.keys(acc).length === 0,
+    };
+    return acc;
+  }, {} as Record<string, object>);
+}
 
 const inputTypes = [
   {
@@ -71,27 +127,23 @@ const inputTypes = [
   },
 ];
 
-const chains = enumValues(Chains).map(item => {
+const chainTypes = enumKeyValues(ChainsNamespaces).map(item => {
   return {
-    label: chainIdToName(`${item}`),
-    value: item,
-  };
+    label: item.key,
+    value: item.value,
+  } as SelectOption;
 });
 
-const tags = computed<Array<SelectOption>>(() => {
-  if (userAccount.value) {
-    return [
-      {
-        label: walletProvider.value,
-        value: walletProvider.value,
-      },
-    ];
+const additionalChains = computed<Array<SelectOption>>(() => {
+  if (!checkIfKeyExist(CHAINS_DATA, formWallet.chainType)) {
+    return [];
   }
-  return state.accounts.map(account => {
+  const chains = Object.values(CHAINS_DATA[formWallet.chainType]);
+  return chains.map(item => {
     return {
-      label: account.name as string,
-      value: account.name as string,
-    };
+      label: item.name,
+      value: convertAddressForChain(formWallet.chainType, item.caip, formWallet.address),
+    } as SelectOption;
   });
 });
 
@@ -99,46 +151,52 @@ const addresses = computed<Array<SelectOption>>(() => {
   if (userAccount.value) {
     return [
       {
-        label: walletProvider.value,
+        label: walletProvider.value + ': ' + userAccount.value,
         value: userAccount.value,
       },
     ];
   }
   return state.accounts.map(account => {
     return {
-      label: account.name as string,
+      label: account.name + ': ' + account.address,
       value: account.address as string,
     };
   });
 });
 
-function cancel(e: Event | MouseEvent) {
-  e.preventDefault();
-
-  emit('cancel');
+async function save() {
+  const walletAdded = await handleSubmit();
+  console.log(walletAdded);
+  if (walletAdded) {
+    emit('close');
+  }
 }
 
-async function handleSubmit(e: Event | MouseEvent) {
-  e.preventDefault();
-
-  if (!validateAddress(formWallet.address, formWallet.chain)) {
-    toast('Wallet address is invalid!', { type: 'error' });
-    return;
-  } else if (!formWallet.chain) {
+async function handleSubmit() {
+  if (!formWallet.chainType) {
     toast('Please select Chain', { type: 'error' });
-    return;
+    return false;
+  } else if (!formWallet.tag) {
+    toast('Please enter tag', { type: 'error' });
+    return false;
+  } else if (!formWallet.address) {
+    toast('Please enter wallet address', { type: 'error' });
+    return false;
+  } else if (!validateAddress(formWallet.chainType, formWallet.address)) {
+    toast('Wallet address is invalid!', { type: 'error' });
+    return false;
   }
 
   const allAssetRecipients = pushRecipientToAccounts(
     state.assetRecipients,
-    formWallet.chain,
-    convertAddressForChain(formWallet.address, formWallet.chain),
+    formWallet.chainType,
+    convertAddressForChain(formWallet.chainType, ChainsPolkadot.POLKADOT, formWallet.address),
     { description: formWallet.tag }
   );
   toast('New account added to Asset recipient', { type: 'info' });
   setAssetRecipients(allAssetRecipients);
   resetForm();
-  emit('success');
+  return true;
 }
 
 function pushRecipientToAccounts(
@@ -164,8 +222,17 @@ function pushRecipientToAccounts(
 }
 
 function resetForm() {
-  formWallet.chain = '';
+  formWallet.chainType = '';
   formWallet.tag = '';
   formWallet.address = '';
+}
+
+function chainLabelHtml(chain: SelectOption) {
+  return `
+    <div class="flex gap-4 justify-between">
+      <strong>${chain.label}</strong>
+      <span class="text-body text-xs">${chain.value}</span>
+    </div>
+  `;
 }
 </script>

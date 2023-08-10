@@ -172,7 +172,7 @@
     </div>
 
     <Modal :show="isAddNewWalletVisible" title="Add new wallet">
-      <WalletAdd @cancel="isAddNewWalletVisible = false" />
+      <WalletAdd @close="isAddNewWalletVisible = false" />
     </Modal>
   </div>
 </template>

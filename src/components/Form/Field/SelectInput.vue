@@ -1,5 +1,5 @@
 <template>
-  <div class="field relative mb-7" :class="type">
+  <div class="field relative mb-8" :class="type">
     <label v-if="label" :for="id" :class="labelClass">
       {{ label }}
     </label>

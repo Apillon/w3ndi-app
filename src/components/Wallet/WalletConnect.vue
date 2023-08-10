@@ -1,12 +1,14 @@
 <template>
   <Btn
     v-if="(state.account && state.account.address) || isWalletReady"
+    v-bind="$attrs"
     type="secondary"
     class="bg-bg-dark !text-blue"
     @click="disconnectWallet"
-    >Disconnect wallet</Btn
   >
-  <Btn v-else type="blue" size="small" @click="showModalWalletSelect">Connect wallet</Btn>
+    Disconnect wallet
+  </Btn>
+  <Btn v-else v-bind="$attrs" type="secondary" @click="showModalWalletSelect">Connect wallet</Btn>
 
   <Modal :show="isWalletSelectVisible" title="Connect wallet">
     <WalletSelect @connect="isWalletSelectVisible = false" />

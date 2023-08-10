@@ -3,7 +3,7 @@ import { hexToU8a, isHex } from '@polkadot/util';
 import { ethers } from 'ethers';
 import { base64urlpad } from 'multiformats/bases/base64';
 import canonicalize from 'canonicalize';
-import { CHAINS_DATA, Chains } from '~/types';
+import { CHAINS_DATA, ChainsNamespaces } from '~/types';
 
 export const hashKiltTransferAssetRecipient = (doc: any) => {
   const canonicalJson = canonicalize(doc);
@@ -13,16 +13,18 @@ export const hashKiltTransferAssetRecipient = (doc: any) => {
   return Buffer.from(encoded).toString('utf-8');
 };
 
-export const chainIdToName = (chainId: string) => {
-  return checkIfKeyExist(CHAINS_DATA, chainId) ? CHAINS_DATA[chainId]?.name : '';
+export const chainIdToName = (chainType: string, chainId: string) => {
+  return checkIfKeyExist(CHAINS_DATA, chainType) && checkIfKeyExist(CHAINS_DATA[chainType], chainId) ? CHAINS_DATA[chainType][chainId]?.name : '';
 };
 
-export function validateAddress(address: string, chain: string): boolean {
-  switch (chain) {
-    case Chains.ETHEREUM:
+export function validateAddress(chainType: string, address: string): boolean {
+  switch (chainType) {
+    case ChainsNamespaces.ETHEREUM:
       return isValidEthereumAddress(address);
-    default:
+    case ChainsNamespaces.POLKADOT:
       return isValidPolkadotAddress(address);
+    default:
+      return true;
   }
 }
 
@@ -63,8 +65,11 @@ export function convertToSS58(text: string, prefix: number, isShort = false): st
   }
 }
 
-export function convertAddressForChain(address: string, chainId: string) {
-  const ss58Prefix = CHAINS_DATA[chainId].ss58Prefix;
+export function convertAddressForChain(chainType: string, chainId: string, address: string) {
+  if(!checkIfKeyExist(CHAINS_DATA, chainType) || !checkIfKeyExist(CHAINS_DATA[chainType], chainId)){
+    return address;
+  }
+  const ss58Prefix = CHAINS_DATA[chainType][chainId].ss58Prefix;
 
   if (ss58Prefix === undefined || ss58Prefix < 0) {
     return address;

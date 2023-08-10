@@ -1,5 +1,5 @@
 <template>
-  <div class="field relative mb-7 select">
+  <div class="field relative mb-8 select">
     <label v-if="label" :for="id" :class="labelClass">
       {{ label }}
     </label>
@@ -8,6 +8,7 @@
       :id="id"
       :value="modelValue"
       :disabled="disabled"
+      :placeholder="placeholder"
       class="h-12 py-3 pl-4 pr-6 bg-bg-light border-1 border-bg-lighter"
       :class="[
         selectClass,
@@ -15,7 +16,9 @@
       ]"
       @change="$event => $emit('update:modelValue', ($event.target as HTMLInputElement).value)"
     >
-      <option v-if="placeholder" class="hidden" value="" disabled>{{ placeholder }}</option>
+      <option v-if="placeholder" class="hidden" value="" disabled :selected="!modelValue">
+        {{ placeholder }}
+      </option>
       <option v-for="(chain, i) in options" :value="chain.value" :key="i">
         {{ chain.label }}
       </option>

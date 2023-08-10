@@ -20,12 +20,7 @@ const state = reactive<StateInterface>({
 
 export function useState() {
   const setAccount = async (newAccount: WalletAccount) => {
-    const signature = await getMessageSignature(newAccount.address, 'Connect wallet');
-    if (signature) {
-      state.account = newAccount;
-    } else {
-      state.account = {} as WalletAccount;
-    }
+    state.account = newAccount;    
   };
 
   const setName = (walletName: string) => {
