@@ -1,6 +1,10 @@
+@import 'vue3-toastify/dist/index.css';
+@import './vue-next-select.css';
+
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+
 @import './typography';
 @import './tooltip';
 @import './transitions';
@@ -121,4 +125,9 @@ table {
   td {
     @apply text-sm text-body;
   }
+}
+
+/** Vue select */
+.vue-dropdown {
+  @apply bg-bg z-20;
 }

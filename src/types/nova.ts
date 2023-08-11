@@ -1,32 +1,31 @@
 declare global {
   interface WindowNova {
-    send: (path: string, data: any) => void
+    send: (path: string, data: any) => void;
     walletExtension: {
-      onAppResponse: (msgType: string, response: any, error: Error) => void
-      onAppSubscription: (requestId: string, subscriptionString: string) => void
-      isNovaWallet: boolean
-    },
+      onAppResponse: (msgType: string, response: any, error: Error) => void;
+      onAppSubscription: (requestId: string, subscriptionString: string) => void;
+      isNovaWallet: boolean;
+    };
     injectedWeb3: {
-      [key: string]: {}
-    }
+      [key: string]: {};
+    };
   }
 
   type FormWallet = {
-    chainType: string,
-    tag: string,
-    inputType: string,
-    address: string,
-    multipleChains: boolean,
-    chains: Record<string, Record<string, ChainDataRadio>>;
-  }
+    chain: ChainOption;
+    tag: string;
+    inputType: string;
+    address: string;
+    multipleChains: boolean;
+  };
 }
 
 export type MessageData = {
-  id: string
-  message: string
-  request: object
-  origin: string
-}
+  id: string;
+  message: string;
+  request: object;
+  origin: string;
+};
 
 export type Handler = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -34,11 +33,9 @@ export type Handler = {
   reject: (error: Error) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   subscriber?: (data: any) => void;
-}
+};
 
 export type Handlers = Map<string, Handler>;
-
-
 
 export interface SignerPayloadRawBase {
   /**

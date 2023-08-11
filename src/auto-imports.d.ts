@@ -8,6 +8,7 @@ declare global {
   const $api: typeof import('./lib/api')['$api']
   const APISettings: typeof import('./lib/api')['APISettings']
   const CHAINS_DATA: typeof import('./types/index')['CHAINS_DATA']
+  const ChainType: typeof import('./types/index')['ChainType']
   const Chains: typeof import('./types/index')['Chains']
   const ChainsBitcoin: typeof import('./types/index')['ChainsBitcoin']
   const ChainsCosmos: typeof import('./types/index')['ChainsCosmos']

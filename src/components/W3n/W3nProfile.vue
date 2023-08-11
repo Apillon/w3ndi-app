@@ -109,8 +109,8 @@
                     </span>
                   </td>
                   <td class="whitespace-nowrap">
-                    <span class="md:hidden">{{ truncateWallet(recipientAddress) }}</span>
-                    <span class="hidden md:inline-block">{{ recipientAddress }}</span>
+                    <span class="xl:hidden">{{ truncateWallet(recipientAddress) }}</span>
+                    <span class="hidden xl:inline-block">{{ recipientAddress }}</span>
                   </td>
                   <td>
                     <Tag

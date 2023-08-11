@@ -1,14 +1,17 @@
 <template>
   <div>
     <div class="flex gap-8">
-      <Select
-        v-model="formWallet.chainType"
-        :options="chainTypes"
-        id="chainType"
-        class="w-full"
-        label="Chain type"
-        placeholder="Select chain type"
-      />
+      <div class="field relative mb-8 select">
+        <label for="chainType"> Chain </label>
+        <vue-select
+          v-model="formWallet.chain"
+          :options="chainList"
+          label-by="label"
+          id="chainType"
+          class="h-12 py-3 pl-4 pr-6 bg-bg-light border-1 border-bg-lighter"
+          placeholder="Select chain type"
+        ></vue-select>
+      </div>
       <Input
         v-model="formWallet.tag"
         id="walletTag"
@@ -33,7 +36,7 @@
       />
     </div>
     <div v-else class="flex gap-4">
-      <WalletConnect class="w-auto whitespace-nowrap" />
+      <WalletConnect class="w-auto whitespace-nowrap" :type="formWallet.chain.chainType" />
       <Select
         v-model="formWallet.address"
         :options="addresses"
@@ -44,7 +47,7 @@
     </div>
 
     <!-- MULTIPLE CHAINS -->
-    <div class="flex flex-col gap-8 mb-8">
+    <div v-if="allowAdditionalChains" class="flex flex-col gap-8 mb-8">
       <Checkbox
         v-model="formWallet.multipleChains"
         id="multipleChains"
@@ -55,16 +58,14 @@
         v-if="formWallet.multipleChains"
         class="flex flex-col gap-4 py-3 px-5 max-h-52 card-border rounded-lg overflow-auto"
       >
-        <template v-if="formWallet.chainType && formWallet.chains[formWallet.chainType]">
-          <Checkbox
-            v-for="(chain, key) in additionalChains"
-            v-model="formWallet.chains[formWallet.chainType][chain.label].selected"
-            :id="'substrateChains_' + key"
-            name="substrateChains"
-            :disabled="key === 0"
-            :labelHtml="chainLabelHtml(chain)"
-          />
-        </template>
+        <Checkbox
+          v-for="(chain, key) in additionalChains"
+          v-model="chain.selected"
+          :id="'substrateChains_' + key"
+          name="substrateChains"
+          :disabled="chain.disabled"
+          :labelHtml="chainLabelHtml(chain)"
+        />
       </div>
     </div>
 
@@ -76,75 +77,67 @@
 </template>
 
 <script lang="ts" setup>
+import chains from '~/lib/data/chains.json';
 import { useState } from '~/composables/useState';
 import { useProvider } from '~/composables/useProvider';
+import { toast } from 'vue3-toastify';
 
-defineProps({
-  actionText: { type: String, default: '' },
-});
 const emit = defineEmits(['close']);
 
 const { state, setAssetRecipients } = useState();
 const { userAccount, walletProvider } = useProvider();
-import { toast } from 'vue3-toastify';
 
 const formWallet = reactive<FormWallet>({
-  chainType: '',
+  chain: {} as ChainOption,
   tag: '',
   inputType: 'address',
   address: '',
   multipleChains: false,
-  chains: {
-    [ChainsNamespaces.BITCOIN]: createSubChainsValues(ChainsNamespaces.BITCOIN),
-    [ChainsNamespaces.COSMOS]: createSubChainsValues(ChainsNamespaces.COSMOS),
-    [ChainsNamespaces.ETHEREUM]: createSubChainsValues(ChainsNamespaces.ETHEREUM),
-    [ChainsNamespaces.POLKADOT]: createSubChainsValues(ChainsNamespaces.POLKADOT),
-  },
 });
 
-function createSubChainsValues(chainType: string): Record<string, ChainDataRadio> {
-  if (!checkIfKeyExist(CHAINS_DATA, chainType)) {
-    return {};
-  }
-  const chains = Object.values(CHAINS_DATA[chainType]) as ChainData[];
-  return chains.reduce((acc, item) => {
-    acc[item.name] = {
-      ...item,
-      selected: Object.keys(acc).length === 0,
-    };
-    return acc;
-  }, {} as Record<string, ChainDataRadio>);
-}
-
-const inputTypes = [
-  {
-    value: 'address',
-    label: 'Type address',
-  },
-  {
-    value: 'wallet',
-    label: 'Connect wallet',
-  },
-];
-
-const chainTypes = enumKeyValues(ChainsNamespaces).map(item => {
+const chainList: ChainOption[] = chains.map(item => {
   return {
-    label: item.key,
-    value: item.value,
-  } as SelectOption;
+    ...item,
+    label: item.name,
+    value: item.caip19,
+  };
 });
 
-const additionalChains = computed<Array<SelectOption>>(() => {
-  if (!checkIfKeyExist(CHAINS_DATA, formWallet.chainType)) {
-    return [];
-  }
-  const chains = Object.values(CHAINS_DATA[formWallet.chainType]);
-  return chains.map(item => {
-    return {
-      label: item.name,
-      value: convertAddressForChain(formWallet.chainType, item.caip, formWallet.address),
-    } as SelectOption;
-  });
+const inputTypes = computed(() => {
+  return [
+    {
+      value: 'address',
+      label: 'Type address',
+      disabled: false,
+    },
+    {
+      value: 'wallet',
+      label: 'Connect wallet',
+      disabled: !allowAdditionalChains.value,
+    },
+  ];
+});
+
+const allowAdditionalChains = computed<boolean>(() => {
+  return (
+    formWallet.chain?.chainType === ChainType.EVM ||
+    formWallet.chain?.chainType === ChainType.SUBSTRATE
+  );
+});
+
+const additionalChains = computed<Array<ChainOption>>(() => {
+  const chainType = formWallet.chain?.chainType || ChainType.OTHER;
+  return chains
+    .filter(chain => chain.chainType === chainType)
+    .map(item => {
+      return {
+        ...item,
+        label: item.name,
+        value: convertAddressForChain(chainType, formWallet.address, item.ss58Prefix),
+        selected: item.caip19 === formWallet.chain.value,
+        disabled: item.caip19 === formWallet.chain.value,
+      } as ChainOption;
+    });
 });
 
 const addresses = computed<Array<SelectOption>>(() => {
@@ -164,17 +157,24 @@ const addresses = computed<Array<SelectOption>>(() => {
   });
 });
 
+watch(
+  () => formWallet.chain.chainType,
+  chainType => {
+    if (chainType === ChainType.OTHER) {
+      formWallet.inputType = 'address';
+    }
+  }
+);
+
 async function save() {
-  console.log(CHAINS_DATA);
   const walletAdded = await handleSubmit();
-  console.log(walletAdded);
   if (walletAdded) {
     emit('close');
   }
 }
 
 async function handleSubmit() {
-  if (!formWallet.chainType) {
+  if (!formWallet.chain.chainType) {
     toast('Please select Chain', { type: 'error' });
     return false;
   } else if (!formWallet.tag) {
@@ -183,20 +183,29 @@ async function handleSubmit() {
   } else if (!formWallet.address) {
     toast('Please enter wallet address', { type: 'error' });
     return false;
-  } else if (!validateAddress(formWallet.chainType, formWallet.address)) {
+  } else if (!validateAddress(formWallet.chain.chainType, formWallet.address)) {
     toast('Wallet address is invalid!', { type: 'error' });
     return false;
   }
-  const chains = Object.values(formWallet.chains[formWallet.chainType]);
-  chains.forEach(chain => {
-    if (chain.selected) {
-      const address =
-        additionalChains.value.find(item => item.label === chain.name)?.value || formWallet.address;
 
+  const allAssetRecipients = pushRecipientToAccounts(
+    state.assetRecipients,
+    formWallet.chain.caip19,
+    convertAddressForChain(
+      formWallet.chain.chainType,
+      formWallet.address,
+      formWallet.chain.ss58Prefix
+    ),
+    { description: formWallet.tag }
+  );
+  setAssetRecipients(allAssetRecipients);
+
+  additionalChains.value.forEach(chain => {
+    if (chain.selected) {
       const allAssetRecipients = pushRecipientToAccounts(
         state.assetRecipients,
-        chain.caip,
-        address.toString(),
+        chain.caip19,
+        chain.value.toString(),
         { description: formWallet.tag }
       );
       setAssetRecipients(allAssetRecipients);
@@ -207,7 +216,7 @@ async function handleSubmit() {
 }
 
 function resetForm() {
-  formWallet.chainType = '';
+  formWallet.chain = {} as ChainOption;
   formWallet.tag = '';
   formWallet.address = '';
   formWallet.multipleChains = false;

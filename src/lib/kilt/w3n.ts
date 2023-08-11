@@ -1,9 +1,9 @@
 import { blake2AsU8a, decodeAddress, encodeAddress } from '@polkadot/util-crypto';
-import { hexToU8a, isHex, objectEntries } from '@polkadot/util';
+import { hexToU8a, isHex } from '@polkadot/util';
 import { ethers } from 'ethers';
 import { base64urlpad } from 'multiformats/bases/base64';
 import canonicalize from 'canonicalize';
-import { CHAINS_DATA, ChainsNamespaces } from '~/types';
+import chains from '~/lib/data/chains.json';
 
 export const hashKiltTransferAssetRecipient = (doc: any) => {
   const canonicalJson = canonicalize(doc);
@@ -13,28 +13,16 @@ export const hashKiltTransferAssetRecipient = (doc: any) => {
   return Buffer.from(encoded).toString('utf-8');
 };
 
-export const chainIdToName = (chainId: string, chainNamespace?: string) => {
-  if (!chainNamespace) {
-    Object.keys(CHAINS_DATA).forEach(key => {
-      if (chainId.includes(key)) {
-        chainNamespace = key;
-      }
-    });
-  }
-  if (!chainNamespace) {
-    chainNamespace = '';
-  }
-  return checkIfKeyExist(CHAINS_DATA, chainNamespace) &&
-    checkIfKeyExist(CHAINS_DATA[chainNamespace], chainId)
-    ? CHAINS_DATA[chainNamespace][chainId]?.name
-    : '';
+export const chainIdToName = (chainCaip19: string) => {
+  const chain = chains.find(item => item && item?.caip19 === chainCaip19);
+  return chain?.name || '';
 };
 
-export function validateAddress(chainType: string, address: string): boolean {
+export function validateAddress(chainType: number, address: string): boolean {
   switch (chainType) {
-    case ChainsNamespaces.ETHEREUM:
+    case ChainType.EVM:
       return isValidEthereumAddress(address);
-    case ChainsNamespaces.POLKADOT:
+    case ChainType.SUBSTRATE:
       return isValidPolkadotAddress(address);
     default:
       return true;
@@ -78,14 +66,10 @@ export function convertToSS58(text: string, prefix: number, isShort = false): st
   }
 }
 
-export function convertAddressForChain(chainType: string, chainId: string, address: string) {
-  if (
-    !checkIfKeyExist(CHAINS_DATA, chainType) ||
-    !checkIfKeyExist(CHAINS_DATA[chainType], chainId)
-  ) {
+export function convertAddressForChain(chainType: number, address: string, ss58Prefix?: number) {
+  if (chainType !== ChainType.SUBSTRATE) {
     return address;
   }
-  const ss58Prefix = CHAINS_DATA[chainType][chainId].ss58Prefix;
 
   if (ss58Prefix === undefined || ss58Prefix < 0) {
     return address;

@@ -1,38 +1,41 @@
-{
-  "bitcoin": {
+[
+  {
+    "chainType": 0,
     "name": "Bitcoin",
     "caip19": "bip122:000000000019d6689c085ae165831e93/slip44:0"
   },
-  "ethereum": {
+  {
+    "chainType": 1,
     "name": "Ethereum",
-    "caip19": "eip155:1/slip44:60",
-    "compatibleChains": [
-      {
-        "name": "Polygon",
-        "caip19": "eip155:137/slip44:966"
-      }
-    ]
+    "caip19": "eip155:1/slip44:60"
   },
-  "polkadot": {
+  {
+    "chainType": 1,
+    "name": "Polygon",
+    "caip19": "eip155:137/slip44:966"
+  },
+  {
+    "chainType": 2,
     "name": "Polkadot",
     "caip19": "polkadot:91b171bb158e2d3848fa23a9f1c25182/slip44:354",
-    "ss58Prefix": 0,
-    "compatibleChains": [
-      {
-        "name": "Kusama",
-        "caip19": "polkadot:b0a8d493285c2df73290dfb7e61f870f/slip44:434",
-        "ss58Prefix": 2
-      },
-      {
-        "name": "Astar",
-        "caip19": "polkadot:9eb76c5184c4ab8679d2d5d819fdf90b/slip44:810",
-        "ss58Prefix": 5
-      },
-      {
-        "name": "Kilt",
-        "caip19": "polkadot:411f057b9107718c9624d6aa4a3f23c1/slip44:2086",
-        "ss58Prefix": 38
-      }
-    ]
+    "ss58Prefix": 0
+  },
+  {
+    "chainType": 2,
+    "name": "Kusama",
+    "caip19": "polkadot:b0a8d493285c2df73290dfb7e61f870f/slip44:434",
+    "ss58Prefix": 2
+  },
+  {
+    "chainType": 2,
+    "name": "Astar",
+    "caip19": "polkadot:9eb76c5184c4ab8679d2d5d819fdf90b/slip44:810",
+    "ss58Prefix": 5
+  },
+  {
+    "chainType": 2,
+    "name": "Kilt",
+    "caip19": "polkadot:411f057b9107718c9624d6aa4a3f23c1/slip44:2086",
+    "ss58Prefix": 38
   }
-}
+]

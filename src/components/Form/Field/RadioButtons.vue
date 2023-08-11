@@ -8,6 +8,7 @@
         :value="option.value"
         :id="name + '_' + option.value"
         :checked="modelValue === option.value"
+        :disabled="option.disabled"
         @change="$event => $emit('update:modelValue', ($event.target as HTMLInputElement).value)"
       />
       <label
@@ -81,13 +82,12 @@ input:disabled + label {
   opacity: 0.7;
   cursor: default;
 }
+input:not(:disabled) + label :hover {
+  @apply text-white;
+}
 
 label {
   @apply relative w-full py-2 px-6 mb-0 cursor-pointer text-center text-body z-1;
-
-  &:hover {
-    @apply text-white;
-  }
 }
 
 input[type='radio']:checked + label {
