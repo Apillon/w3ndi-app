@@ -54,7 +54,7 @@ const btnClass = computed(() => {
       'h-10 px-5': props.size === 'small',
       'h-12 py-3 px-6': props.size === 'medium',
       'bg-primary text-bg rounded-lg': props.type === 'primary',
-      'bg-bg text-primary border-1 border-bg-lighter': props.type === 'secondary',
+      'bg-bg text-primary border-1 border-bg-lighter rounded-lg': props.type === 'secondary',
       'hover-bounce': !props.href && !props.to && props.type !== 'builders',
       locked: isBtnLocked.value || props.locked,
       'inline-block w-auto h-auto p-0 bg-transparent text-sm text-yellow hover:bg-yellow hover:text-bg transition-all duration-300':

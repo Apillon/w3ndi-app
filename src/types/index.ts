@@ -10,8 +10,8 @@ declare global {
   }
 
   type SelectOption = {
-    value: String | Number;
-    label: String;
+    value: string | Number;
+    label: string;
   };
   type KeyValue = {
     key: string | number;
@@ -32,9 +32,13 @@ declare global {
   }
 
   type ChainData = {
-    name: string,
-    caip: string,
-    ss58Prefix?: number,
+    name: string;
+    caip: string;
+    ss58Prefix?: number;
+  };
+
+  interface ChainDataRadio extends ChainData {
+    selected: boolean;
   }
 }
 
@@ -44,12 +48,20 @@ export enum W3nPageStep {
   PROFILE = 3,
 }
 
+export enum DeployStep {
+  IDLE = 0,
+  FILE_GENERATION = 1,
+  FILE_UPLOAD = 2,
+  CONF_REMOVE = 3,
+  CONF_SAVE = 4,
+  COMPLETED = 5,
+}
+
 export enum CommonErrors {
   UNHANDLED_ERROR = 'An exception occurred. Please contact support',
   SPORRAN_NO_EXTENSION = 'Sporran extension was not detected',
   SPORRAN_UNHANDLED_EXCEPTION = 'An exception has occurred while establishing a session with Sporran. Please contact support for further information.',
 }
-
 
 export interface UserOptions {
   layoutsDirs?: string | string[];
@@ -158,5 +170,4 @@ export const CHAINS_DATA: Record<string, Record<string, ChainData>> = {
       ss58Prefix: 38,
     },
   },
-
-}
+};

@@ -88,7 +88,7 @@ const { state, setAssetRecipients } = useState();
 const { userAccount, walletProvider } = useProvider();
 import { toast } from 'vue3-toastify';
 
-const formWallet = reactive({
+const formWallet = reactive<FormWallet>({
   chainType: '',
   tag: '',
   inputType: 'address',
@@ -102,7 +102,7 @@ const formWallet = reactive({
   },
 });
 
-function createSubChainsValues(chainType: string) {
+function createSubChainsValues(chainType: string): Record<string, ChainDataRadio> {
   if (!checkIfKeyExist(CHAINS_DATA, chainType)) {
     return {};
   }
@@ -113,7 +113,7 @@ function createSubChainsValues(chainType: string) {
       selected: Object.keys(acc).length === 0,
     };
     return acc;
-  }, {} as Record<string, object>);
+  }, {} as Record<string, ChainDataRadio>);
 }
 
 const inputTypes = [
@@ -165,6 +165,7 @@ const addresses = computed<Array<SelectOption>>(() => {
 });
 
 async function save() {
+  console.log(CHAINS_DATA);
   const walletAdded = await handleSubmit();
   console.log(walletAdded);
   if (walletAdded) {
@@ -186,45 +187,30 @@ async function handleSubmit() {
     toast('Wallet address is invalid!', { type: 'error' });
     return false;
   }
+  const chains = Object.values(formWallet.chains[formWallet.chainType]);
+  chains.forEach(chain => {
+    if (chain.selected) {
+      const address =
+        additionalChains.value.find(item => item.label === chain.name)?.value || formWallet.address;
 
-  const allAssetRecipients = pushRecipientToAccounts(
-    state.assetRecipients,
-    formWallet.chainType,
-    convertAddressForChain(formWallet.chainType, ChainsPolkadot.POLKADOT, formWallet.address),
-    { description: formWallet.tag }
-  );
-  toast('New account added to Asset recipient', { type: 'info' });
-  setAssetRecipients(allAssetRecipients);
+      const allAssetRecipients = pushRecipientToAccounts(
+        state.assetRecipients,
+        chain.caip,
+        address.toString(),
+        { description: formWallet.tag }
+      );
+      setAssetRecipients(allAssetRecipients);
+    }
+  });
   resetForm();
   return true;
-}
-
-function pushRecipientToAccounts(
-  accounts: KiltTransferAssetRecipientV2,
-  chain: string,
-  address: string,
-  data: any
-) {
-  if (Object.keys(accounts).includes(chain)) {
-    return {
-      ...accounts,
-      [chain]: {
-        ...accounts[chain],
-        [address]: data,
-      },
-    };
-  } else {
-    return {
-      ...accounts,
-      [chain]: { [address]: data },
-    };
-  }
 }
 
 function resetForm() {
   formWallet.chainType = '';
   formWallet.tag = '';
   formWallet.address = '';
+  formWallet.multipleChains = false;
 }
 
 function chainLabelHtml(chain: SelectOption) {

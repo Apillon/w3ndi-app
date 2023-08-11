@@ -10,6 +10,15 @@ declare global {
       [key: string]: {}
     }
   }
+
+  type FormWallet = {
+    chainType: string,
+    tag: string,
+    inputType: string,
+    address: string,
+    multipleChains: boolean,
+    chains: Record<string, Record<string, ChainDataRadio>>;
+  }
 }
 
 export type MessageData = {

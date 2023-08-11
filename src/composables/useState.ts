@@ -20,7 +20,7 @@ const state = reactive<StateInterface>({
 
 export function useState() {
   const setAccount = async (newAccount: WalletAccount) => {
-    state.account = newAccount;    
+    state.account = newAccount;
   };
 
   const setName = (walletName: string) => {
@@ -48,14 +48,33 @@ export function useState() {
     state.assetRecipients = recipients;
   };
 
-  const removeAssetRecipients = (chainId: string, account: string) => {
+  /** Remove old wallet address and add new address with account data */
+  const editAssetRecipient = (
+    chainCaip19: string,
+    walletAddress: string,
+    newAddress: string,
+    accountData?: object
+  ) => {
+    const oldAccountData = state.assetRecipients[chainCaip19][walletAddress];
+    removeAssetRecipient(chainCaip19, walletAddress);
+
+    const allAssetRecipients = pushRecipientToAccounts(
+      state.assetRecipients,
+      chainCaip19,
+      newAddress,
+      accountData || oldAccountData
+    );
+    setAssetRecipients(allAssetRecipients);
+  };
+
+  const removeAssetRecipient = (chainCaip19: string, walletAddress: string) => {
     const recipients = JSON.parse(JSON.stringify(state.assetRecipients));
     // Remove account
-    delete recipients[chainId][account];
+    delete recipients[chainCaip19][walletAddress];
 
     // Remove chain if this was only account on chain
-    if (Object.values(recipients[chainId]).length === 0) {
-      delete recipients[chainId];
+    if (Object.values(recipients[chainCaip19]).length === 0) {
+      delete recipients[chainCaip19];
     }
     state.assetRecipients = recipients;
   };
@@ -68,30 +87,6 @@ export function useState() {
     state.sporranAccount = account;
   };
 
-  async function getMessageSignature(address: string, msg: string) {
-    const signer = state.wallet?.signer || null;
-
-    if (!signer) {
-      return;
-    }
-
-    if (signer && signer.signRaw) {
-      try {
-        const signPromise = await signer.signRaw({
-          address,
-          data: msg,
-          type: 'bytes',
-        });
-
-        return signPromise.signature;
-      } catch (e) {
-        console.error(e);
-      }
-    }
-
-    return '';
-  }
-
   return {
     state: readonly(state),
     setWallet,
@@ -100,7 +95,8 @@ export function useState() {
     setW3Name,
     setDidDocument,
     setAssetRecipients,
-    removeAssetRecipients,
+    editAssetRecipient,
+    removeAssetRecipient,
     setMnemonic,
     setSporranAccount,
   };
