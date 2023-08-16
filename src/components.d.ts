@@ -11,7 +11,6 @@ declare module 'vue' {
     Avatar: typeof import('./components/W3n/Avatar.vue')['default']
     Btn: typeof import('./components/Btn.vue')['default']
     Checkbox: typeof import('./components/Form/Field/Checkbox.vue')['default']
-    copy: typeof import('./components/Form/Field/Select copy.vue')['default']
     Deploy: typeof import('./components/Animation/Deploy.vue')['default']
     DropFile: typeof import('./components/Form/Field/DropFile.vue')['default']
     Header: typeof import('./components/Header.vue')['default']

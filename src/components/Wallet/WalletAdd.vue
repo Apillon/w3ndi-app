@@ -1,14 +1,17 @@
 <template>
   <div>
     <div class="flex gap-8">
-      <div class="field relative mb-8 select">
+      <div class="field relative w-full mb-8 select">
         <label for="chainType"> Chain </label>
         <vue-select
           v-model="formWallet.chain"
           :options="chainList"
           label-by="label"
+          track-by="name"
+          searchable
+          clear-on-select
+          close-on-select
           id="chainType"
-          class="h-12 py-3 pl-4 pr-6 bg-bg-light border-1 border-bg-lighter"
           placeholder="Select chain type"
         ></vue-select>
       </div>
@@ -158,9 +161,9 @@ const addresses = computed<Array<SelectOption>>(() => {
 });
 
 watch(
-  () => formWallet.chain.chainType,
-  chainType => {
-    if (chainType === ChainType.OTHER) {
+  () => formWallet.chain,
+  chain => {
+    if (chain.chainType === ChainType.OTHER) {
       formWallet.inputType = 'address';
     }
   }
