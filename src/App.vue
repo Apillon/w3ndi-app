@@ -50,9 +50,9 @@ const contentMaxStyle = computed(() => {
   @apply overflow-auto overflow-x-hidden overflow-y-auto;
 }
 .containerW3n {
-  @apply flex justify-center items-center;
+  @apply flex justify-center items-center max-w-7xl w-full px-8 mx-auto;
 }
 .innerW3n {
-  @apply relative py-10;
+  @apply relative w-full py-10;
 }
 </style>

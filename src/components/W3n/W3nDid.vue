@@ -1,25 +1,20 @@
 <template>
-  <div>
-    <div class="card-dark p-16 text-center max-w-xl">
-      <h2 class="mb-2">Do you have a DID?</h2>
-      <p>
-        Please connect Sporran or upload your digital identity.
-      </p>
-      <div class="actions mt-8 flex gap-8 justify-between">
-        <Btn type="blue" @click="showModalSporran"> Connect Sporran </Btn>
-        <Btn type="secondary" class="bg-bg-dark" @click="showModalUploadDid"> Use Mnemonic </Btn>
-      </div>
-      <!-- TODO: Currently not used
-      <div class="mt-12">
-        <h3>Don’t have a DID?</h3>
-        <Btn
-          type="builders"
-          class="bg-bg-dark"
-          :href="`${OAUTH_APP_URL}/registration`"
-          target="_blank"
-          >Create DID</Btn
-        >
-      </div> -->
+  <div class="w-full card-dark p-16 text-center max-w-[38rem] mx-auto">
+    <h2 class="mb-2">Do you have a DID?</h2>
+    <p>Please connect Sporran or upload your digital identity.</p>
+    <div class="actions mt-8 flex flex-col gap-8 justify-between">
+      <Btn type="primary" @click="showModalSporran"> Connect Sporran </Btn>
+      <Btn type="secondary" class="bg-bg-dark" @click="showModalUploadDid"> Use Mnemonic </Btn>
+    </div>
+    <!-- TODO: Currently not used -->
+    <div class="mt-6">
+      <Btn
+        type="builders"
+        class="bg-bg-dark"
+        :href="`${OAUTH_APP_URL}/registration`"
+        target="_blank"
+        >No I don’t have a DID</Btn
+      >
     </div>
   </div>
 
@@ -35,7 +30,7 @@
 <script lang="ts" setup>
 import { OAUTH_APP_URL } from '~/config';
 
-const emit = defineEmits(['proceed']);
+const emit = defineEmits(['proceed', 'back']);
 
 const isSporranConnectVisible = ref<boolean>(false);
 const showModalSporran = () => {

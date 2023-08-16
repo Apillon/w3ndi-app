@@ -31,6 +31,7 @@
     "multiformats": "^12.0.1",
     "query-string": "^7.1.1",
     "vue": "^3.3.4",
+    "vue-next-select": "^2.10.5",
     "vue-router": "^4.2.4",
     "vue3-tabs-component": "^1.3.2",
     "vue3-toastify": "^0.1.11"

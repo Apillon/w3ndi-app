@@ -1,0 +1,175 @@
+.icon.delete {
+  @apply flex items-center justify-center p-0 m-0 border-none bg-none w-2 h-2 cursor-pointer;
+}
+
+.icon.arrow-downward {
+  @apply mr-3 text-white cursor-pointer;
+  border-style: solid;
+  border-width: 6px 6px 0;
+  border-color: theme(colors.white) transparent transparent;
+  content: '';
+  transition: transform 0.2s linear;
+}
+
+.icon.arrow-downward.active {
+  transform: rotate(180deg);
+}
+
+.vue-select {
+  @apply relative flex items-center justify-center flex-col h-12 w-full pr-3 bg-bg-light border-1 border-bg-lighter rounded-lg outline-none;
+}
+
+.vue-select[aria-disabled='true'] {
+  @apply opacity-70;
+}
+
+.vue-select[aria-disabled='true'] * {
+  cursor: not-allowed;
+}
+
+.vue-select[aria-disabled='true'] input {
+  cursor: not-allowed;
+}
+
+.vue-select-header {
+  @apply flex items-center justify-between w-full;
+}
+
+.vue-select-header .icon.loading,
+.vue-select-header .icon.arrow-downward {
+  @apply mr-1;
+}
+
+.vue-select-input-wrapper {
+  @apply relative flex items-center justify-between w-full;
+}
+
+.vue-select-input-wrapper .icon.loading {
+  @apply mr-1;
+}
+
+.vue-input {
+  @apply inline-flex items-center bg-transparent rounded-lg text-sm outline-none max-w-full;
+}
+
+.vue-input input {
+  @apply pl-4 py-2 bg-transparent outline-none;
+}
+
+.vue-select[data-is-focusing='false'][aria-disabled='false'] .vue-input input,
+input[readonly] {
+  cursor: default;
+}
+
+.vue-input input[disabled] {
+  background-color: rgba(239, 239, 239);
+}
+
+.vue-input input[readonly] {
+  background-color: unset;
+}
+
+.vue-select-header .vue-input input[disabled] {
+  background-color: unset;
+}
+
+.vue-dropdown {
+  @apply hidden absolute -left-[1px] w-full min-w-0 bg-bg overflow-y-auto m-0 p-0 border-1 border-bg-lighter z-1 box-content;
+}
+
+.vue-select[aria-expanded='true'] .vue-dropdown {
+  display: unset;
+}
+
+.vue-dropdown[data-visible-length='0'] {
+  border: none;
+}
+
+.vue-dropdown-item {
+  list-style-type: none;
+  padding: 4px;
+  cursor: pointer;
+  min-height: 1rem;
+}
+
+.vue-dropdown-item.highlighted,
+.vue-dropdown-item.selected,
+.vue-dropdown-item.selected.highlighted {
+  @apply bg-bg-dark;
+}
+
+.vue-dropdown-item.disabled {
+  background-color: rgba(239, 239, 239);
+  cursor: not-allowed;
+}
+
+.vue-dropdown[data-removable='false'] .vue-dropdown-item.selected:hover {
+  cursor: not-allowed;
+}
+
+.vue-dropdown[data-addable='false'][data-multiple='true'] .vue-dropdown-item:not(.selected):hover {
+  cursor: not-allowed;
+}
+
+.icon.loading {
+  display: inline-block;
+  position: relative;
+  width: 8px;
+  min-width: 8px;
+  height: 8px;
+  min-height: 8px;
+}
+
+.icon.loading div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  border: 1px solid #999;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: loading 1s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: #999 transparent transparent transparent;
+}
+
+.icon.loading div:nth-child(1) {
+  animation-delay: -0.08s;
+}
+.icon.loading div:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+@keyframes loading {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.inline-flex {
+  display: inline-flex;
+}
+
+.vue-select[aria-expanded='true'].direction-bottom {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.vue-select[aria-expanded='true'].direction-top {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.vue-select.direction-top .vue-dropdown {
+  bottom: 100%;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+}
+
+.vue-select.direction-bottom .vue-dropdown {
+  top: 100%;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+}

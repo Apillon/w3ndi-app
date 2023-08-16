@@ -1,5 +1,5 @@
 <template>
-  <div v-if="sporranWallet" class="flex flex-col my-8">
+  <div v-if="sporranExtension && sporranWallet" class="flex flex-col my-8">
     <div v-if="accounts && accounts.length > 0">
       <table class="text-left">
         <thead>
@@ -79,6 +79,9 @@ const {
 onMounted(async () => {
   initSporran();
 });
+
+/** Sporran extension */
+const sporranExtension = ref<SporranExtension<PubSubSession>>(window.kilt.sporran);
 
 async function connect(account: WalletAccount) {
   if (await connectSporranAccount(account)) {

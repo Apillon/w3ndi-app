@@ -9,7 +9,7 @@
         ></div>
 
         <div
-          class="absolute top-1/2 left-1/2 w-full max-w-[90vw] md:max-w-xl -translate-x-1/2 -translate-y-1/2"
+          class="absolute top-1/2 left-1/2 w-full max-w-[90vw] md:max-w-2xl -translate-x-1/2 -translate-y-1/2"
         >
           <button
             class="absolute top-0 right-0 rounded-full p-[14px] border-1 border-white text-white translate-x-1/2 -translate-y-1/2 hover:bg-white hover:text-bg-dark transition-colors duration-300"
@@ -17,7 +17,7 @@
           >
             <SvgInclude :name="SvgNames.Close" />
           </button>
-          <div class="max-h-[85vh] overflow-auto bg-bg p-10 lg:p-16" v-bind="$attrs">
+          <div class="max-h-[85vh] overflow-auto card p-10 lg:p-16" v-bind="$attrs">
             <div v-if="title" class="mb-8">
               <h3>{{ title }}</h3>
             </div>

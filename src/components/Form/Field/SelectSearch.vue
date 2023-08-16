@@ -3,26 +3,11 @@
     <label v-if="label" :for="id" :class="labelClass">
       {{ label }}
     </label>
-    <select
+    <vue-select
       v-bind="$attrs"
-      :id="id"
-      :value="modelValue"
-      :disabled="disabled"
-      :placeholder="placeholder"
       class="h-12 py-3 pl-4 pr-6 bg-bg-light border-1 border-bg-lighter"
-      :class="[
-        selectClass,
-        { empty: isFieldEmpty, '!border-pink !text-pink': error, 'text-body': !modelValue },
-      ]"
-      @change="$event => $emit('update:modelValue', ($event.target as HTMLInputElement).value)"
-    >
-      <option v-if="placeholder" class="hidden" value="" disabled :selected="!modelValue">
-        {{ placeholder }}
-      </option>
-      <option v-for="(chain, i) in options" :value="chain.value" :key="i">
-        {{ chain.label }}
-      </option>
-    </select>
+      :class="[selectClass]"
+    ></vue-select>
     <div class="absolute">
       <transition name="slide-fade">
         <Alert :value="error" />
@@ -33,7 +18,6 @@
 
 <script lang="ts" setup>
 const props = defineProps({
-  options: { type: Array<SelectOption>, default: [] },
   id: { type: String, required: true },
   disabled: { type: Boolean, default: false },
   error: { type: String, default: '' },
@@ -41,7 +25,6 @@ const props = defineProps({
   label: { type: [String, Number], default: '' },
   selectClass: { type: [String, Array, Object], default: null },
   labelClass: { type: [String, Array, Object], default: null },
-  modelValue: { type: [String, Number], default: '' },
 });
 
 const emit = defineEmits(['update:modelValue']);
@@ -55,10 +38,6 @@ const selectClass = computed(() => {
         props.disabled,
     },
   ];
-});
-
-const isFieldEmpty = computed(() => {
-  return !(props.modelValue && props.modelValue.toString().length > 0);
 });
 </script>
 
@@ -82,3 +61,4 @@ const isFieldEmpty = computed(() => {
   }
 }
 </style>
+<style lang="postcss"></style>

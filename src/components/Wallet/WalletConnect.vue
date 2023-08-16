@@ -1,20 +1,26 @@
 <template>
   <Btn
     v-if="(state.account && state.account.address) || isWalletReady"
+    v-bind="$attrs"
     type="secondary"
     class="bg-bg-dark !text-blue"
     @click="disconnectWallet"
-    >Disconnect wallet</Btn
   >
-  <Btn v-else type="blue" @click="showModalWalletSelect">Connect wallet</Btn>
+    Disconnect wallet
+  </Btn>
+  <Btn v-else v-bind="$attrs" type="secondary" @click="showModalWalletSelect">Connect wallet</Btn>
 
   <Modal :show="isWalletSelectVisible" title="Connect wallet">
-    <WalletSelect @connect="isWalletSelectVisible = false" />
+    <WalletSelect @connect="isWalletSelectVisible = false" :type="type" />
   </Modal>
 </template>
 <script lang="ts" setup>
 import { useState } from '~/composables/useState';
 import useWalletAccounts from '~/composables/useWalletAccounts';
+
+defineProps({
+  type: { type: Number, default: 0 },
+});
 
 const { isReady: isWalletReady, disconnectAccount } = useWalletAccounts();
 const { state, setAccount } = useState();

@@ -10,13 +10,16 @@ declare global {
   }
 
   type SelectOption = {
-    value: String | Number;
-    label: String;
+    value: string | Number;
+    label: string;
+    selected?: boolean;
+    disabled?: boolean;
   };
   type KeyValue = {
     key: string | number;
     value: string | number;
   };
+  interface ChainOption extends SelectOption, ChainData {}
 
   /** State */
   interface StateInterface {
@@ -30,11 +33,32 @@ declare global {
     w3Name: string;
     sporranAccount: WalletAccount;
   }
+
+  type ChainData = {
+    chainType: number;
+    name: string;
+    caip19: string;
+    ss58Prefix?: number;
+  };
+
+  interface ChainDataRadio extends ChainData {
+    selected: boolean;
+  }
 }
 
 export enum W3nPageStep {
-  DID = 1,
-  PROFILE = 2,
+  START = 1,
+  DID = 2,
+  PROFILE = 3,
+}
+
+export enum DeployStep {
+  IDLE = 0,
+  FILE_GENERATION = 1,
+  FILE_UPLOAD = 2,
+  CONF_REMOVE = 3,
+  CONF_SAVE = 4,
+  COMPLETED = 5,
 }
 
 export enum CommonErrors {
@@ -43,19 +67,16 @@ export enum CommonErrors {
   SPORRAN_UNHANDLED_EXCEPTION = 'An exception has occurred while establishing a session with Sporran. Please contact support for further information.',
 }
 
-
 export interface UserOptions {
   layoutsDirs?: string | string[];
   exclude: string[];
   defaultLayout?: string;
 }
 
-/** Chains - CAIP-19 identifier */
-export enum Chains {
-  POLKADOT = 'polkadot:91b171bb158e2d3848fa23a9f1c25182/slip44:354',
-  KILT = 'polkadot:411f057b9107718c9624d6aa4a3f23c1/slip44:2086',
-  KUSAMA = 'polkadot:b0a8d493285c2df73290dfb7e61f870f/slip44:434',
-  ETHEREUM = 'eip155:1/slip44:60',
+export enum ChainType {
+  OTHER = 0,
+  EVM = 1,
+  SUBSTRATE = 2,
 }
 
 /** Local storage keys */
@@ -64,32 +85,4 @@ export enum LsKeys {
   MNEMONIC = 'apillon_oauth_mnemonic',
   ACCOUNT_ADDRESS = 'apillon_oauth_account_address',
   W3NAME = 'apillon_oauth_w3name',
-}
-
-type ChainData = {
-  name: string,
-  caip: string,
-  ss58Prefix?: number,
-}
-
-export const CHAINS_DATA: Record<string, ChainData> = {
-  [Chains.POLKADOT]: {
-    name: 'Polkadot',
-    caip: Chains.POLKADOT,
-    ss58Prefix: 0,
-  },
-  [Chains.KILT]: {
-    name: 'Kilt',
-    caip: Chains.KILT,
-    ss58Prefix: 38,
-  },
-  [Chains.KUSAMA]: {
-    name: 'Kusama',
-    caip: Chains.KUSAMA,
-    ss58Prefix: 2,
-  },
-  [Chains.ETHEREUM]: {
-    name: 'Ethereum',
-    caip: Chains.ETHEREUM,
-  },
 }

@@ -3,7 +3,7 @@ import { hexToU8a, isHex } from '@polkadot/util';
 import { ethers } from 'ethers';
 import { base64urlpad } from 'multiformats/bases/base64';
 import canonicalize from 'canonicalize';
-import { CHAINS_DATA, Chains } from '~/types';
+import chains from '~/lib/data/chains.json';
 
 export const hashKiltTransferAssetRecipient = (doc: any) => {
   const canonicalJson = canonicalize(doc);
@@ -13,16 +13,19 @@ export const hashKiltTransferAssetRecipient = (doc: any) => {
   return Buffer.from(encoded).toString('utf-8');
 };
 
-export const chainIdToName = (chainId: string) => {
-  return checkIfKeyExist(CHAINS_DATA, chainId) ? CHAINS_DATA[chainId]?.name : '';
+export const chainIdToName = (chainCaip19: string) => {
+  const chain = chains.find(item => item && item?.caip19 === chainCaip19);
+  return chain?.name || '';
 };
 
-export function validateAddress(address: string, chain: string): boolean {
-  switch (chain) {
-    case Chains.ETHEREUM:
+export function validateAddress(chainType: number, address: string): boolean {
+  switch (chainType) {
+    case ChainType.EVM:
       return isValidEthereumAddress(address);
-    default:
+    case ChainType.SUBSTRATE:
       return isValidPolkadotAddress(address);
+    default:
+      return true;
   }
 }
 
@@ -63,11 +66,35 @@ export function convertToSS58(text: string, prefix: number, isShort = false): st
   }
 }
 
-export function convertAddressForChain(address: string, chainId: string) {
-  const ss58Prefix = CHAINS_DATA[chainId].ss58Prefix;
+export function convertAddressForChain(chainType: number, address: string, ss58Prefix?: number) {
+  if (chainType !== ChainType.SUBSTRATE) {
+    return address;
+  }
 
   if (ss58Prefix === undefined || ss58Prefix < 0) {
     return address;
   }
   return convertToSS58(address, ss58Prefix);
+}
+
+export function pushRecipientToAccounts(
+  accounts: KiltTransferAssetRecipientV2,
+  chainCaip19: string,
+  walletAddress: string,
+  data: any
+) {
+  if (Object.keys(accounts).includes(chainCaip19)) {
+    return {
+      ...accounts,
+      [chainCaip19]: {
+        ...accounts[chainCaip19],
+        [walletAddress]: data,
+      },
+    };
+  } else {
+    return {
+      ...accounts,
+      [chainCaip19]: { [walletAddress]: data },
+    };
+  }
 }

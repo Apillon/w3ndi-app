@@ -1,12 +1,12 @@
 <template>
-  <nav class="max-w-7xl w-full px-8 py-4 mx-auto flex gap-8 justify-between items-center">
-    <div>
+  <nav class="max-w-7xl w-full px-8 py-5 mx-auto flex gap-8 justify-between items-center">
+    <div class="py-2">
       <RouterLink to="/">
         <SvgInclude :name="SvgNames.Logo" />
       </RouterLink>
     </div>
-    <div>
-      <WalletConnect v-if="state.w3Name" />
+    <div class="py-2">
+      <!-- <WalletConnect v-if="state.w3Name" /> -->
     </div>
   </nav>
 </template>
