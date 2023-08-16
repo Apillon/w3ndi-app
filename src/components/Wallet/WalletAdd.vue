@@ -177,7 +177,7 @@ async function save() {
 }
 
 async function handleSubmit() {
-  if (!formWallet.chain.chainType) {
+  if (!formWallet.chain.caip19) {
     toast('Please select Chain', { type: 'error' });
     return false;
   } else if (!formWallet.tag) {
