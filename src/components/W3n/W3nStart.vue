@@ -1,7 +1,7 @@
 <template>
   <div class="flex">
   <div class="max-w-xl flex flex-col justify-center">
-    <h1 class="mb-6">W3N Address Library</h1>
+    <h1 class="mb-6">w3ndi</h1>
     <p class="text-body text-base leading-6">
       Three easy steps:
       <ol class="list-decimal text-white pl-5 mb-6">
