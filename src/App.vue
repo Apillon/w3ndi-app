@@ -3,9 +3,9 @@
     <div ref="headerRef">
       <Header />
     </div>
-    <div :class="$style.wrapperW3n" :style="contentMaxStyle">
-      <div :class="$style.containerW3n" :style="contentMinStyle">
-        <div :class="$style.innerW3n">
+    <div class="overflow-auto overflow-x-hidden overflow-y-auto" :style="contentMaxStyle">
+      <div class="flex items-center max-w-7xl w-full px-8 mx-auto" :style="contentMinStyle">
+        <div class="relative w-full py-10">
           <router-view />
         </div>
       </div>
@@ -44,15 +44,3 @@ const contentMaxStyle = computed(() => {
   };
 });
 </script>
-
-<style lang="postcss" module>
-.wrapperW3n {
-  @apply overflow-auto overflow-x-hidden overflow-y-auto;
-}
-.containerW3n {
-  @apply flex justify-center items-center max-w-7xl w-full px-8 mx-auto;
-}
-.innerW3n {
-  @apply relative w-full py-10;
-}
-</style>
