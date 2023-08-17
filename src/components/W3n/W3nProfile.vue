@@ -67,10 +67,7 @@
       <div v-else-if="!hasLoadedAssetRecipients && !hasAssetRecipients">
         <div class="max-w-md p-8 mx-auto text-center">
           <h2>No wallet added.</h2>
-          <p class="my-4">
-            Morbi malesuada nulla lobortis commodo risus mattis eu. Metus proin nibh scelerisque ac.
-            Est commodo in neque feugiat amet eget sed placerat. Urna quis.
-          </p>
+          <p class="my-4"></p>
           <Btn class="w-auto" type="blue" @click="showModalAddNewWallet()">
             <span class="flex gap-2 items-center">
               <SvgInclude :name="SvgNames.Plus" />
@@ -396,8 +393,7 @@ async function submitTransaction(fileCid: string) {
       await updateFullDid(fileCid);
     }
   } catch (error) {
-    console.warn(error);
-    loading.value = false;
+    transactionErrorWrapper(error);
   }
 }
 
@@ -413,25 +409,29 @@ async function updateFullDidWithSporran(fileCid: string) {
 
   if (existingServiceTx) {
     deployStep.value = DeployStep.CONF_REMOVE;
-    const extrinsic = await sporranExtension.signExtrinsicWithDid(
-      existingServiceTx.toJSON() as HexString,
-      account.address as KiltAddress,
-      state.didDocument.uri
-    );
+    try {
+      const extrinsic = await sporranExtension.signExtrinsicWithDid(
+        existingServiceTx.toJSON() as HexString,
+        account.address as KiltAddress,
+        state.didDocument.uri
+      );
 
-    /** Submit transaction with sporran wallet */
-    await api
-      .tx(extrinsic.signed)
-      .signAndSend(account.address, { signer: account.signer }, ({ status }) => {
-        if (status.isInBlock) {
-          /** Create new service endpoint */
-          createNewServiceEndpointWithSporran(fileCid);
-        }
-      })
-      .catch((error: any) => {
-        sporranErrorMsg(error);
-        loading.value = false;
-      });
+      /** Submit transaction with sporran wallet */
+      await api
+        .tx(extrinsic.signed)
+        .signAndSend(account.address, { signer: account.signer }, ({ status }) => {
+          console.log(status);
+          if (status.isInBlock) {
+            /** Create new service endpoint */
+            createNewServiceEndpointWithSporran(fileCid);
+          }
+        })
+        .catch((error: any) => {
+          transactionErrorWrapper(error);
+        });
+    } catch (error) {
+      transactionErrorWrapper(error);
+    }
   } else {
     createNewServiceEndpointWithSporran(fileCid);
   }
@@ -452,26 +452,28 @@ async function createNewServiceEndpointWithSporran(fileCid: string) {
   /**
    * Sign extrinsic with DID
    */
-  const { signed } = await sporranExtension.signExtrinsicWithDid(
-    newServiceEndpointTx.toJSON() as HexString,
-    account.address as KiltAddress,
-    state.didDocument.uri
-  );
+  try {
+    const { signed } = await sporranExtension.signExtrinsicWithDid(
+      newServiceEndpointTx.toJSON() as HexString,
+      account.address as KiltAddress,
+      state.didDocument.uri
+    );
 
-  /** Submit transaction with sporran wallet */
-  await api
-    .tx(signed)
-    .signAndSend(account.address, { signer: account.signer }, ({ status }) => {
-      if (status.isInBlock) {
-        loading.value = false;
-        deployStep.value = DeployStep.COMPLETED;
-      }
-    })
-    .catch((error: any) => {
-      console.log('Transaction failed', error);
-      sporranErrorMsg(error);
-      loading.value = false;
-    });
+    /** Submit transaction with sporran wallet */
+    await api
+      .tx(signed)
+      .signAndSend(account.address, { signer: account.signer }, ({ status }) => {
+        if (status.isInBlock) {
+          loading.value = false;
+          deployStep.value = DeployStep.COMPLETED;
+        }
+      })
+      .catch((error: any) => {
+        transactionErrorWrapper(error);
+      });
+  } catch (error) {
+    transactionErrorWrapper(error);
+  }
 
   refreshDidDocument();
   setTimeout(() => hideModalDeploy(), 1000);
@@ -535,5 +537,12 @@ async function refreshDidDocument() {
   if (state.didDocument.uri) {
     getDidDocument(state.didDocument.uri);
   }
+}
+
+function transactionErrorWrapper(error: ReferenceError | TypeError | any = {}) {
+  console.log(error);
+  sporranErrorMsg(error);
+  hideModalDeploy();
+  loading.value = false;
 }
 </script>
