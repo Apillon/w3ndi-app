@@ -12,8 +12,6 @@ phases:
       - echo Build started on `date`
       - npm cache verify
       - npm install
-      - mkdir -p ./public/.well-known/
-      - cp ./bin/deploy/did-configuration-$ENV.json ./public/.well-known/did-configuration.json
     on-failure: ABORT
 
   build:
