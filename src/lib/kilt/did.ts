@@ -2,11 +2,8 @@ import {
   ConfigService,
   connect,
   Did,
-  KiltEncryptionKeypair,
   KiltKeyringPair,
-  Utils,
 } from '@kiltprotocol/sdk-js';
-import { u8aToHex } from '@polkadot/util';
 import * as kiltUtils from '~/lib/kilt/utils';
 import * as config from '~/config';
 

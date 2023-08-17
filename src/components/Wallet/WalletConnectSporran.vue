@@ -1,5 +1,5 @@
 <template>
-  <div v-if="sporranWallet" class="flex flex-col my-8">
+  <div v-if="sporranExtension && sporranWallet" class="flex flex-col my-8">
     <div v-if="accounts && accounts.length > 0">
       <table class="text-left">
         <thead>
@@ -11,7 +11,7 @@
         </thead>
         <tbody>
           <tr v-for="(account, accountKey) in accounts" :key="accountKey">
-            <td>{{ account.meta.name }}</td>
+            <td>{{ account.name }}</td>
             <td class="whitespace-nowrap">
               {{ truncateWallet(account.address) }}
             </td>
@@ -38,7 +38,7 @@
       </div>
     </div>
     <div v-else class="p-4 text-center">
-      <h5>You don't have any account, create account first.</h5>
+      <h5>You don't have any accounts, create account first.</h5>
     </div>
   </div>
   <div v-else class="p-4 text-center">
@@ -56,7 +56,6 @@
 </template>
 
 <script lang="ts" setup>
-import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { useState } from '~/composables/useState';
 import { useSporran } from '~/composables/useSporran';
 import { truncateWallet } from '~/lib/misc-utils';
@@ -81,7 +80,10 @@ onMounted(async () => {
   initSporran();
 });
 
-async function connect(account: InjectedAccountWithMeta) {
+/** Sporran extension */
+const sporranExtension = ref<SporranExtension<PubSubSession>>(window.kilt.sporran);
+
+async function connect(account: WalletAccount) {
   if (await connectSporranAccount(account)) {
     emit('proceed');
   }

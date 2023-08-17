@@ -32,17 +32,24 @@ async function verifyDid() {
     return;
   }
 
-  const { web3Name } = await getDidDocumentFromMnemonic(mnemonic.value);
+  try {
+    const { web3Name, document } = await getDidDocumentFromMnemonic(mnemonic.value);
 
-  /** Check if user has Web3Name */
-  if (web3Name) {
-    setMnemonic(mnemonic.value);
+    /** Check if user has Web3Name */
+    if (web3Name) {
+      setMnemonic(mnemonic.value);
 
-    /** Save Mnemonic to LS */
-    localStorage.setItem(LsKeys.MNEMONIC, mnemonic.value);
-    emit('proceed');
-  } else {
-    toast('Missing Web3Name', { type: 'warning' });
+      /** Save Mnemonic to LS */
+      localStorage.setItem(LsKeys.MNEMONIC, mnemonic.value);
+      emit('proceed');
+    } else if (document && document?.uri) {
+      toast('Please create web3name in sporran to continue.', { type: 'info' });
+    } else {
+      toast('Invalid identity, please use another mnemonic.', { type: 'warning' });
+    }
+  } catch (error) {
+    console.log('Mnemonic error: ', error);
+    toast('Wrong mnemonic, please provide a valid mnemonic.', { type: 'error' });
   }
 }
 </script>

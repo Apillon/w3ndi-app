@@ -8,11 +8,11 @@ import { ConfigService, Did, DidDocument, DidUri, connect } from '@kiltprotocol/
 import { toast } from 'vue3-toastify';
 
 import { useState } from './useState';
-import { DEV, KILT_NETWORK } from '~/config';
+import { DEV, IPFS_HOST, KILT_NETWORK } from '~/config';
 import { LsKeys } from '~/types';
 import { getDidUriFromKeypair } from '~/lib/kilt/did';
 import { generateKeypairs } from '~/lib/kilt/utils';
-import { KILT_TRANSFER_ASSET_RECIPIENT_V2 } from '~/lib/kilt/types';
+import { KILT_TRANSFER_ASSET_RECIPIENT_V2 } from '~/types/kilt';
 import { hashKiltTransferAssetRecipient } from '~/lib/kilt/w3n';
 
 export const useDid = () => {
@@ -42,7 +42,7 @@ export const useDid = () => {
       return didInfo;
     } catch (error) {
       console.warn('Load DID document error: ', error);
-      // toast('Load DID document error', { type: 'error' });
+      toast('Load DID document error', { type: 'error' });
     }
     return {
       document: {} as DidDocument,
@@ -52,17 +52,7 @@ export const useDid = () => {
 
   async function getDidDocumentFromMnemonic(mnemonic: string): Promise<DidInfo> {
     const didUri = await getDidUriFromMnemonic(mnemonic);
-    const didInfo = await getDidDocument(didUri);
-
-    if (!didInfo?.document?.uri) {
-      const didUriSR = await getDidUriFromMnemonic(mnemonic);
-      return await getDidDocument(didUriSR);
-    }
-
-    return {
-      document: {} as DidDocument,
-      accounts: [],
-    };
+    return await getDidDocument(didUri);
   }
 
   async function getDidUriFromMnemonic(mnemonic: string) {
@@ -91,12 +81,10 @@ export const useDid = () => {
       throw Error('Duplicate ID');
     }
 
-    const ipfsDomain = DEV ? 'https://ipfs-dev.apillon.io/ipfs/' : 'https://ipfs2.apillon.io/ipfs';
-
     return api.tx.did.addServiceEndpoint({
       id: Did.resourceIdToChain(`#${hash}`),
       serviceTypes: [KILT_TRANSFER_ASSET_RECIPIENT_V2],
-      urls: [`${ipfsDomain}${fileCid}`], // Only one URL is supported
+      urls: [`${IPFS_HOST}${fileCid}`], // Only one URL is supported
     });
   }
 
@@ -114,10 +102,10 @@ export const useDid = () => {
   }
 
   function prepareServiceEndpointTXs(api: ApiPromiseType, fileCid: string): Extrinsic[] {
-    const exsistingService = prepareExistingServiceEndpointTx(api);
+    const existingService = prepareExistingServiceEndpointTx(api);
 
-    if (exsistingService) {
-      return [exsistingService, prepareNewServiceEndpointTx(api, fileCid)];
+    if (existingService) {
+      return [existingService, prepareNewServiceEndpointTx(api, fileCid)];
     }
     return [prepareNewServiceEndpointTx(api, fileCid)];
   }

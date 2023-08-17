@@ -1,9 +1,10 @@
 <template>
-  <div class="field checkbox relative mb-7" :class="[$attrs.class]">
+  <div class="field checkbox relative" :class="[$attrs.class]">
     <input
       v-bind="$attrs"
       :checked="modelValue"
       :id="id"
+      :name="name"
       type="checkbox"
       class="invisible absolute"
       @input="$emit('update:modelValue', ($event.target as HTMLInputElement).checked)"
@@ -12,14 +13,14 @@
     <label
       v-if="labelHtml"
       :for="id"
-      class="body-md !block py-1 pl-7 font-normal text-left"
+      class="body-md !block py-1 pl-7 mb-0 font-normal text-left"
       :class="[labelClass]"
       v-html="labelHtml"
     />
     <label
       v-else
       :for="id"
-      class="body-md block py-1 pl-7 font-normal text-left"
+      class="body-md block py-1 pl-7 mb-0 font-normal text-left"
       :class="[labelClass]"
     >
       {{ label }}
@@ -36,6 +37,7 @@
 <script setup lang="ts">
 defineProps({
   id: { type: String, required: true },
+  name: { type: String, required: true },
   label: { type: [String, Number], default: '' },
   labelHtml: { type: String, required: false },
   inputClass: { type: [String, Array, Object], default: null },
@@ -62,6 +64,7 @@ label {
     width: 18px;
     height: 18px;
     border: 2px solid theme('colors.bodyDark');
+    border-radius: 4px;
   }
   &:hover:before {
     border-color: theme('colors.white');

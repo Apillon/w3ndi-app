@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col gap-8 my-8">
-    <div v-for="(wallet, key) in wallets" :key="key">
+    <div v-if="type === ChainType.SUBSTRATE" v-for="(wallet, key) in wallets" :key="key">
       <div
         class="h-14 card flex items-center px-4 py-1"
         :class="{ 'cursor-pointer': wallet.installed }"
@@ -60,14 +60,12 @@
             </tbody>
           </table>
           <div v-else-if="wallet.installed" class="p-4 text-center">
-            <h5>You don't have any account, create account first</h5>
+            <h5>You don't have any accounts, create account first</h5>
           </div>
         </transition>
       </div>
     </div>
-    <div class="w-full">
-      <h3 class="mb-4 tracking-initial">Or select etherium wallet</h3>
-
+    <div v-else-if="type === ChainType.EVM" class="w-full">
       <div class="flex flex-wrap items-center justify-center">
         <div v-if="loading || waLoading" class="mt-4">
           <Spinner />
@@ -108,8 +106,10 @@ import { ProviderConnectors, useProvider } from '~/composables/useProvider';
 import useWalletAccounts from '~/composables/useWalletAccounts';
 import { getWallets } from '~/lib/wallet/wallets';
 import { getBrowserName, getDeviceName, truncateWallet } from '~/lib/misc-utils';
+import { ChainType } from '~/types/index';
 
 defineProps({
+  type: { type: Number, default: 0 },
   actionText: { type: String, default: '' },
 });
 const emit = defineEmits(['connect']);

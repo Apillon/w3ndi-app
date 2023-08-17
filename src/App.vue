@@ -1,13 +1,26 @@
 <template>
-  <router-view />
+  <div>
+    <div ref="headerRef">
+      <Header />
+    </div>
+    <div :class="$style.wrapperW3n" :style="contentMaxStyle">
+      <div :class="$style.containerW3n" :style="contentMinStyle">
+        <div :class="$style.innerW3n">
+          <router-view />
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
+import { Buffer } from 'buffer';
 import { $api } from '~/lib/api';
+import { API_URL } from './config';
 
-const CONFIG = import.meta.env;
-$api.setBaseUrl(CONFIG.VITE_API_URL);
+$api.setBaseUrl(API_URL);
 
+window.Buffer = window.Buffer || Buffer;
 window.kilt = {};
 Object.defineProperty(window.kilt, 'meta', {
   value: {
@@ -18,4 +31,28 @@ Object.defineProperty(window.kilt, 'meta', {
   enumerable: false,
 });
 
+/** Heading height */
+const headerRef = ref<HTMLElement>();
+const contentMinStyle = computed(() => {
+  return {
+    minHeight: `calc(100vh - ${headerRef.value?.clientHeight || 0}px)`,
+  };
+});
+const contentMaxStyle = computed(() => {
+  return {
+    maxHeight: `calc(100vh - ${headerRef.value?.clientHeight || 0}px)`,
+  };
+});
 </script>
+
+<style lang="postcss" module>
+.wrapperW3n {
+  @apply overflow-auto overflow-x-hidden overflow-y-auto;
+}
+.containerW3n {
+  @apply flex justify-center items-center max-w-7xl w-full px-8 mx-auto;
+}
+.innerW3n {
+  @apply relative w-full py-10;
+}
+</style>

@@ -1,6 +1,10 @@
+@import 'vue3-toastify/dist/index.css';
+@import './vue-next-select.css';
+
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+
 @import './typography';
 @import './tooltip';
 @import './transitions';
@@ -38,22 +42,6 @@ select:autofill:focus {
   -webkit-box-shadow: 0 0 0px 1000px theme('colors.bg.light') inset;
 }
 
-/* Scrollbar */
-@screen lg {
-  html {
-    -ms-overflow-style: none; /* for Internet Explorer, Edge */
-    scrollbar-width: none; /* for Firefox */
-  }
-
-  ::-webkit-scrollbar {
-    display: none;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: theme('colors.bg.DEFAULT');
-  }
-}
-
 /* Text selection */
 ::selection {
   color: theme('colors.body');
@@ -70,7 +58,8 @@ select:autofill:focus {
  */
 /* width */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 4px;
+  height: 4px;
 }
 
 /* Track */
@@ -81,6 +70,7 @@ select:autofill:focus {
 /* Handle */
 ::-webkit-scrollbar-thumb {
   background: theme('colors.bodyDark');
+  border-radius: 2px;
 }
 
 /* Handle on hover */
@@ -135,4 +125,9 @@ table {
   td {
     @apply text-sm text-body;
   }
+}
+
+/** Vue select */
+.vue-dropdown {
+  @apply bg-bg z-20;
 }

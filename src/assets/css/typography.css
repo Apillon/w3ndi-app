@@ -1,16 +1,35 @@
+/* @font-face {
+  font-family: 'New Spirit Condensed';
+  src: url('../fonts/new-spirit/NewSpirit-MediumCondensed.woff2') format('woff2'),
+    url('../fonts/new-spirit/NewSpirit-MediumCondensed.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+} */
+@font-face {
+  font-family: 'New Spirit';
+  src: url('../fonts/new-spirit/72bc3c6b00e72d272eb79ee0d69ce103.eot');
+  src: url('../fonts/new-spirit/72bc3c6b00e72d272eb79ee0d69ce103.eot?#iefix')
+      format('embedded-opentype'),
+    url('../fonts/new-spirit/72bc3c6b00e72d272eb79ee0d69ce103.woff2') format('woff2'),
+    url('../fonts/new-spirit/72bc3c6b00e72d272eb79ee0d69ce103.woff') format('woff'),
+    url('../fonts/new-spirit/72bc3c6b00e72d272eb79ee0d69ce103.ttf') format('truetype'),
+    url('../fonts/new-spirit/72bc3c6b00e72d272eb79ee0d69ce103.svg#New Spirit Regular') format('svg');
+}
+
 @layer base {
   /* Headline 1 */
   h1 {
-    @apply font-bold mb-2;
-    font-size: 1.75rem;
-    line-height: 1.43;
+    @apply font-heading font-bold mb-2;
+    font-size: 3rem;
+    line-height: 1.1667;
   }
 
   /* Headline 2 */
   h2 {
     @apply font-bold mb-2;
     font-size: 1.5rem;
-    line-height: 1.5;
+    line-height: 1.15;
   }
 
   /* Headline 3 */
@@ -44,6 +63,7 @@
 
   p {
     @apply body-md mb-2 text-body;
+    line-height: 1.75;
   }
 
   small {
@@ -62,7 +82,7 @@
   [role='button'],
   [type='reset'],
   [type='submit'] {
-    @apply relative font-mono;
+    @apply relative font-sans;
     font-size: 0.875rem;
     line-height: 1.15;
   }

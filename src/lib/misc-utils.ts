@@ -1,108 +1,3 @@
-import { $api } from './api';
-import * as file from 'file-saver';
-
-export function getHeadMeta(title: string, description?: string, url?: string) {
-  const descriptions = !description
-    ? []
-    : [
-        { name: 'description', content: description },
-        { name: 'og:description', content: description },
-        { name: 'twitter:description', content: description },
-      ];
-
-  const urls = !url
-    ? []
-    : [
-        { name: 'og:url', content: url },
-        { name: 'twitter:url', content: url },
-      ];
-
-  return {
-    title,
-    meta: [
-      { name: 'og:title', content: title },
-      { name: 'twitter:title', content: title },
-      ...descriptions,
-      ...urls,
-    ],
-  };
-}
-
-export function scrollToOffset(offsetY: number, duration = 150, scrollingElementSelector = '') {
-  if (!document) {
-    return;
-  }
-
-  const scrollingElement = !scrollingElementSelector
-    ? document.documentElement
-    : document.querySelector(scrollingElementSelector);
-
-  if (!scrollingElement) {
-    return;
-  }
-
-  const startingY = scrollingElement.scrollTop;
-  const diff = offsetY - startingY;
-  let start = 0;
-
-  window.requestAnimationFrame(function step(timestamp) {
-    if (!start) start = timestamp;
-
-    // Elapsed milliseconds since start of scrolling.
-    const time = timestamp - start;
-
-    // Get percent of completion in range [0, 1].
-    const percent = Math.min(time / duration, 1);
-
-    scrollingElement.scrollTo(0, startingY + diff * percent);
-
-    // Proceed with animation as long as we wanted it to.
-    if (time < duration) {
-      window.requestAnimationFrame(step);
-    }
-  });
-}
-
-export async function sendEmail(email: string, type: string, captcha: any) {
-  let success = false;
-  let response: any = {};
-
-  try {
-    const { data, error } = await $api.post('/identity/verification/email', {
-      email: email,
-      type: type,
-      captcha: captcha,
-    });
-
-    if (data) {
-      success = true;
-      response = data;
-    } else {
-      success = false;
-      response = error;
-    }
-  } catch (err) {
-    success = false;
-    response = err;
-  }
-
-  return { success, response };
-}
-
-export async function saveIdentity(didDocument: any, credential: any) {
-  if (didDocument !== '') {
-    var blob = new Blob([didDocument], { type: 'text/plain;charset=utf-8' });
-    // Save as is apparently now natively supported
-    file.saveAs(blob, 'did.json');
-  }
-
-  if (credential !== '') {
-    var blob = new Blob([credential], { type: 'text/plain;charset=utf-8' });
-    // Save as is apparently now natively supported
-    file.saveAs(blob, 'credential.json');
-  }
-}
-
 export const copyToClipboard = (content: string, el?: HTMLElement, e?: MouseEvent) => {
   if (window.isSecureContext && navigator.clipboard) {
     navigator.clipboard.writeText(content);
@@ -177,3 +72,24 @@ export function truncateWallet(source: string, partLength: number = 4): string {
     ? source.slice(0, partLength) + '…' + source.slice(source.length - partLength, source.length)
     : source;
 }
+
+
+/**
+ * Enum
+ */
+export function enumKeys(E: any): string[] {
+  return Object.keys(E).filter(k => isNaN(Number(k)));
+}
+export function enumValues(E: any): string[] | number[] {
+  return enumKeys(E).map(k => E[k as any]);
+}
+export function enumKeyValues(E: any): KeyValue[] {
+  return enumKeys(E).map(k => {
+    return { key: k, value: E[k as any] };
+  });
+}
+
+export const checkIfKeyExist = (objectName: object, keyName: string) => {
+    let keyExist = Object.keys(objectName).some(key => key === keyName);
+    return keyExist;
+};

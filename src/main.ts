@@ -1,21 +1,19 @@
 import { createApp } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
-import { setupLayouts } from 'virtual:generated-layouts';
-import generatedRoutes from 'virtual:generated-pages';
 import { createHead } from '@vueuse/head';
-import { Tabs, Tab } from 'vue3-tabs-component';
 import Vue3Toastify, { type ToastContainerOptions } from 'vue3-toastify';
+import VueNextSelect from 'vue-next-select';
 
 import App from '~/App.vue';
+import routes from '~pages';
 import directives from './directives/';
 
 import './assets/css/main.css';
-import 'vue3-toastify/dist/index.css';
 
 const app = createApp(App);
 
 const router = createRouter({
-  routes: setupLayouts(generatedRoutes),
+  routes,
   history: createWebHistory(),
 });
 app.use(router);
@@ -28,9 +26,7 @@ app.use(Vue3Toastify, {
   position: 'bottom-right',
 } as ToastContainerOptions);
 
-// register additional components
-app.component('tabs', Tabs);
-app.component('tab', Tab);
+app.component('vue-select', VueNextSelect);
 
 // register all directives
 directives(app);

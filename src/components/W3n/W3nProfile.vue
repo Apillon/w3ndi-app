@@ -1,10 +1,11 @@
 <template>
-  <div class="max-w-7xl w-screen px-8 py-4 mx-auto flex gap-8">
+  <div class="flex flex-col lg:flex-row gap-8">
     <!-- Profile -->
-    <div class="card-dark p-16 w-1/2">
+    <div class="card-dark p-4 sm:p-8 w-full lg:w-1/2 lg:max-w-xs">
       <div class="flex gap-8 justify-between">
-        <h2 class="mb-2">My DID</h2>
+        <h2 class="mb-8">My DID</h2>
         <Btn
+          v-if="false"
           type="secondary"
           class="w-auto bg-bg-dark"
           @click="openAccountOnBlockChain(accountAddress)"
@@ -20,16 +21,20 @@
 
       <!-- W3Name -->
       <p class="mb-4">
-        <small>w3n</small><br />
-        <strong class="text-white">{{ state.w3Name }}</strong>
+        <small>w3n</small>
+        <span class="block overflow-x-auto">
+          <strong class="text-white">w3n:{{ state.w3Name }}</strong>
+        </span>
       </p>
 
       <!-- DID uri -->
       <p>
-        <small>Identity address</small><br />
-        <strong class="text-white">
-          {{ state.didDocument.uri }}
-        </strong>
+        <small>DID address</small>
+        <span class="block overflow-x-auto scrollbar">
+          <strong class="text-white text-xs">
+            {{ state.didDocument.uri }}
+          </strong>
+        </span>
       </p>
 
       <!-- Validity -->
@@ -46,101 +51,143 @@
 
       <!-- Address -->
       <p v-if="accountAddress">
-        <small>Kilt address</small><br />
-        <strong class="text-white">{{ accountAddress }}</strong>
+        <small>Kilt address</small>
+        <span class="block overflow-x-auto">
+          <strong class="text-white text-xs">{{ accountAddress }}</strong>
+        </span>
       </p>
     </div>
 
     <!-- Wallets -->
-    <div class="card-dark p-16 w-1/2">
-      <div class="flex gap-8 justify-between mb-8">
-        <h2 class="mb-2">My wallets</h2>
-
-        <!-- Edit Wallets -->
-        <Btn
-          v-if="editWallets"
-          type="secondary"
-          class="w-auto !text-green bg-bg-dark"
-          locked
-          :loading="loading"
-          @click="saveWallets()"
-        >
-          <span class="font-sans font-normal">Save and deploy</span>
-          <SvgInclude :name="SvgNames.Success" class="ml-2" />
-        </Btn>
-        <Btn
-          v-else
-          type="secondary"
-          class="w-auto text-yellow bg-bg-dark"
-          locked
-          @click="editWallets = true"
-        >
-          <span class="font-sans font-normal">Edit wallets</span>
-          <SvgInclude :name="SvgNames.Pencil" class="ml-2" />
-        </Btn>
+    <div class="card-dark p-4 sm:p-8 md:p-10 lg:p-16 w-full lg:flex-auto">
+      <div v-if="loadingAssetRecipients" class="flex justify-center align-middle">
+        <Spinner />
       </div>
 
-      <table v-if="state.assetRecipients && Object.keys(state.assetRecipients).length > 0">
-        <thead>
-          <tr>
-            <th>Chain</th>
-            <th>Properties</th>
-            <th>Address</th>
-            <th />
-          </tr>
-        </thead>
-        <tbody>
-          <template v-for="(recipients, chainId) in state.assetRecipients" :key="chainId">
-            <tr v-for="(data, recipientAddress) in recipients" :key="recipientAddress">
-              <td>{{ chainIdToName(chainId) }}</td>
-              <td>
-                <ul>
-                  <li v-for="(dataItem, dataId) in data" :key="dataId">
-                    <strong>{{ dataId }}:</strong>
-                    {{ dataItem }}
-                  </li>
-                </ul>
-              </td>
-              <td class="whitespace-nowrap">
-                {{ truncateWallet(recipientAddress) }}
-              </td>
-              <td>
-                <button
-                  v-if="editWallets"
-                  class="p-1 text-white text-base"
-                  @click="removeAssetRecipients(chainId, recipientAddress)"
+      <div v-else-if="!hasLoadedAssetRecipients && !hasAssetRecipients">
+        <div class="max-w-md p-8 mx-auto text-center">
+          <h2>No wallet added.</h2>
+          <p class="my-4"></p>
+          <Btn class="w-auto" type="blue" @click="showModalAddNewWallet()">
+            <span class="flex gap-2 items-center">
+              <SvgInclude :name="SvgNames.Plus" />
+              <span>Add new wallet</span>
+            </span>
+          </Btn>
+        </div>
+      </div>
+
+      <template v-else>
+        <div class="flex gap-8 justify-between mb-8">
+          <h2 class="mb-2">My wallets</h2>
+        </div>
+        <div class="overflow-x-auto">
+          <table>
+            <thead>
+              <tr>
+                <th>Chain</th>
+                <th>Tag</th>
+                <th>Address</th>
+                <th />
+                <th />
+              </tr>
+            </thead>
+            <tbody v-if="hasAssetRecipients">
+              <template v-for="(recipients, chainCaip19) in state.assetRecipients" :key="chainId">
+                <tr
+                  v-for="(data, recipientAddress) in recipients"
+                  :key="recipientAddress"
+                  :class="{ 'text-white': isExistingAddress(chainCaip19, recipientAddress) }"
                 >
-                  <SvgInclude :name="SvgNames.Trash" class="w-4 h-4" />
-                </button>
-                <div v-else class="w-6 h-6"></div>
-              </td>
-            </tr>
-          </template>
-        </tbody>
-      </table>
-      <div v-else-if="!state.account">You don't have any account</div>
+                  <td>{{ chainIdToName(chainCaip19) }}</td>
+                  <td>
+                    <span v-if="data.description">
+                      {{ data.description }}
+                    </span>
+                  </td>
+                  <td class="whitespace-nowrap">
+                    <span class="xl:hidden">{{ truncateWallet(recipientAddress) }}</span>
+                    <span class="hidden xl:inline-block">{{ recipientAddress }}</span>
+                  </td>
+                  <td>
+                    <Tag
+                      v-if="
+                        isExistingAddress(chainCaip19, recipientAddress) ||
+                        deployStep === DeployStep.COMPLETED
+                      "
+                      type="success"
+                    >
+                      Deployed
+                    </Tag>
+                    <Tag v-else type="warning">Undeployed</Tag>
+                  </td>
+                  <td>
+                    <div class="flex gap-4">
+                      <button
+                        class="p-1 text-white text-base"
+                        @click="showModalEditWallet(chainCaip19, recipientAddress)"
+                      >
+                        <SvgInclude :name="SvgNames.Pencil" class="w-4 h-4" />
+                      </button>
+                      <button
+                        class="p-1 text-white text-base"
+                        @click="removeAssetRecipient(chainCaip19, recipientAddress)"
+                      >
+                        <SvgInclude :name="SvgNames.Trash" class="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+            <tbody v-else>
+              <div class="p-3">You removed all accounts, please add some</div>
+            </tbody>
+          </table>
+        </div>
+        <div class="mt-8 flex justify-between">
+          <Btn
+            type="secondary"
+            class="w-auto text-yellow bg-bg-dark"
+            locked
+            @click="showModalAddNewWallet"
+          >
+            <SvgInclude :name="SvgNames.Plus" class="mr-2" />
+            <span class="font-sans font-normal">Add new wallet</span>
+          </Btn>
 
-      <div class="mt-8">
-        <Btn
-          v-if="editWallets"
-          type="secondary"
-          class="w-auto text-yellow bg-bg-dark"
-          locked
-          @click="showModalAddNewWallet"
-        >
-          <SvgInclude :name="SvgNames.Plus" class="mr-2" />
-          <span class="font-sans font-normal">Add new wallet</span>
-        </Btn>
-      </div>
+          <Btn
+            v-if="hasAssetRecipients"
+            type="primary"
+            class="w-auto bg-bg-dark"
+            locked
+            :loading="loading"
+            @click="saveWallets()"
+          >
+            <span class="font-sans">Save and deploy</span>
+          </Btn>
+        </div>
+      </template>
     </div>
-    <div class="absolute left-0 top-1/2 -translate-y-1/2">
+
+    <div class="absolute -left-1 lg:-left-2 xl:-left-4 top-1/2 -translate-x-full -translate-y-1/2">
       <button @click="emit('back')">
         <SvgInclude :name="SvgNames.Arrow" />
       </button>
     </div>
 
     <Modal :show="isAddNewWalletVisible" title="Add new wallet">
-      <WalletAdd @cancel="isAddNewWalletVisible = false" @success="isAddNewWalletVisible = false" />
+      <WalletAdd @close="isAddNewWalletVisible = false" />
+    </Modal>
+    <Modal :show="isEditWalletVisible" title="Edit wallet">
+      <WalletEdit
+        :chainCaip19="editedAccount.chainCaip19"
+        :walletAddress="editedAccount.walletAddress"
+        @close="isEditWalletVisible = false"
+      />
+    </Modal>
+    <Modal :show="isModalDeployVisible" title="Deploy in progress">
+      <Deploy :step="deployStep" :showRemoving="hasLoadedAssetRecipients" />
     </Modal>
   </div>
 </template>
@@ -157,18 +204,20 @@ import {
   disconnect,
 } from '@kiltprotocol/sdk-js';
 import { ApiPromise } from '@polkadot/api';
-import { web3FromAddress } from '@polkadot/extension-dapp';
 import { toast } from 'vue3-toastify';
 
 import { KILT_NETWORK } from '~/config';
+import { DeployStep } from '~/types/index';
 import { SvgNames } from '../SvgInclude.vue';
 import { truncateWallet } from '~/lib/misc-utils';
 import { chainIdToName } from '~/lib/kilt/w3n';
 import { useDid } from '~/composables/useDid';
 import { useState } from '~/composables/useState';
+import { useSporran } from '~/composables/useSporran';
 
 const emit = defineEmits(['back']);
-const { state, setAssetRecipients, removeAssetRecipients } = useState();
+const { sporranErrorMsg } = useSporran();
+const { state, setAssetRecipients, removeAssetRecipient } = useState();
 const {
   getDidDocument,
   openAccountOnBlockChain,
@@ -178,11 +227,19 @@ const {
 } = useDid();
 
 const loading = ref<boolean>(false);
-const editWallets = ref<boolean>(false);
+const loadingAssetRecipients = ref<boolean>(false);
 const isAddNewWalletVisible = ref<boolean>(false);
+const isEditWalletVisible = ref<boolean>(false);
+const isModalDeployVisible = ref<boolean>(false);
 const loadedAssetRecipients = ref<KiltTransferAssetRecipientV2>({});
 const account = ref<KeyringPair>();
 let api: ApiPromise;
+
+const deployStep = ref<number>(DeployStep.FILE_GENERATION);
+const editedAccount = reactive({
+  chainCaip19: '',
+  walletAddress: '',
+});
 
 onMounted(async () => {
   await connect(KILT_NETWORK);
@@ -201,13 +258,39 @@ onUnmounted(() => {
 const accountAddress = computed<string>(() => {
   return account.value?.address || state.sporranAccount.address;
 });
+const hasLoadedAssetRecipients = computed<boolean>(() => {
+  return loadedAssetRecipients.value && Object.keys(loadedAssetRecipients.value).length > 0;
+});
+const hasAssetRecipients = computed<boolean>(() => {
+  return state.assetRecipients && Object.keys(state.assetRecipients).length > 0;
+});
 
 const showModalAddNewWallet = () => {
   isAddNewWalletVisible.value = false;
   setTimeout(() => (isAddNewWalletVisible.value = true), 1);
 };
+const showModalEditWallet = (chainCaip19: string, walletAddress: string) => {
+  editedAccount.chainCaip19 = chainCaip19;
+  editedAccount.walletAddress = walletAddress;
+
+  isEditWalletVisible.value = false;
+  setTimeout(() => (isEditWalletVisible.value = true), 1);
+};
+const showModalDeploy = () => {
+  isModalDeployVisible.value = false;
+  deployStep.value = DeployStep.FILE_GENERATION;
+  setTimeout(() => (isModalDeployVisible.value = true), 1);
+};
+const hideModalDeploy = () => {
+  loading.value = false;
+  isModalDeployVisible.value = false;
+  deployStep.value = DeployStep.IDLE;
+};
 
 const parseAssetRecipients = async () => {
+  loadedAssetRecipients.value = {};
+  loadingAssetRecipients.value = true;
+
   if (state.didDocument?.service) {
     const service = state.didDocument.service.find(item =>
       item.type.includes(KILT_TRANSFER_ASSET_RECIPIENT_V2)
@@ -224,18 +307,47 @@ const parseAssetRecipients = async () => {
           if (data) {
             loadedAssetRecipients.value = { ...loadedAssetRecipients.value, ...data };
             setAssetRecipients(loadedAssetRecipients.value);
+
+            loadingAssetRecipients.value = false;
           }
         } catch (error) {
           console.log(error);
+          toast('Error while fetching asset recipients, please refresh page.', { type: 'error' });
+          loadingAssetRecipients.value = false;
         }
       });
+    } else {
+      loadingAssetRecipients.value = false;
     }
+    setTimeout(() => (loadingAssetRecipients.value = false), 60000);
+  } else {
+    loadingAssetRecipients.value = false;
   }
 };
 
+function isExistingAddress(chainCaip19: string, walletAddress: string) {
+  return (
+    checkIfKeyExist(loadedAssetRecipients.value, chainCaip19) &&
+    checkIfKeyExist(loadedAssetRecipients.value[chainCaip19], walletAddress)
+  );
+}
+
 async function saveWallets() {
+  if (!state.assetRecipients || Object.keys(state.assetRecipients).length === 0) {
+    toast('You need to add at least one wallet.', { type: 'warning' });
+    return;
+  }
   loading.value = true;
-  await uploadAccountsToIpfs();
+
+  const hash = hashKiltTransferAssetRecipient(state.assetRecipients);
+  const service = state.didDocument?.service?.find(item => item.id === `#${hash}`);
+  if (service) {
+    toast('Service with this ID already exists! Please make some changes.', { type: 'warning' });
+    loading.value = false;
+  } else {
+    showModalDeploy();
+    await uploadAccountsToIpfs();
+  }
 }
 
 async function uploadAccountsToIpfs() {
@@ -244,14 +356,11 @@ async function uploadAccountsToIpfs() {
   });
 
   if (error) {
-    toast(error);
-    loading.value = false;
+    toast('Error during file upload, please try again later.', { type: 'error' });
+    hideModalDeploy();
     return null;
   }
-  toast('File successfully created and is uploading to IPFS', {
-    type: 'success',
-    autoClose: 20000,
-  });
+  deployStep.value = DeployStep.FILE_UPLOAD;
 
   return await getFile(data.data.fileUuid);
 }
@@ -262,8 +371,6 @@ async function getFile(fileUuid: string) {
 
     if (fileData && fileData?.file?.CID) {
       clearInterval(getFileInterval);
-
-      toast('File successfully uploaded to IPFS', { type: 'success' });
       submitTransaction(fileData.file.CID);
     }
   }, 5000);
@@ -279,7 +386,6 @@ async function getFilePoll(fileUuid: string) {
 }
 
 async function submitTransaction(fileCid: string) {
-  toast('Transaction has been submitted', { type: 'info' });
   try {
     if (window?.kilt?.sporran && state.sporranAccount.address) {
       await updateFullDidWithSporran(fileCid);
@@ -287,8 +393,7 @@ async function submitTransaction(fileCid: string) {
       await updateFullDid(fileCid);
     }
   } catch (error) {
-    console.warn(error);
-    loading.value = false;
+    transactionErrorWrapper(error);
   }
 }
 
@@ -296,85 +401,82 @@ async function updateFullDidWithSporran(fileCid: string) {
   /** Account from Sporran wallet */
   const account = state.sporranAccount;
 
-  // to be able to retrieve the signer interface from this account
-  // we can use web3FromSource which will return an InjectedExtension type
-  const injector = await web3FromAddress(account.address);
-
   /** Sporran extension */
   const sporranExtension: SporranExtension<PubSubSession> = window.kilt.sporran;
 
   /** Existing "KiltTransferAssetRecipientV2" service Tx on didDocument */
   const existingServiceTx = prepareExistingServiceEndpointTx(api);
-  console.log(existingServiceTx?.toHuman());
 
   if (existingServiceTx) {
-    const extrinsic = await sporranExtension.signExtrinsicWithDid(
-      existingServiceTx.toJSON() as HexString,
-      account.address as KiltAddress,
-      state.didDocument.uri
-    );
+    deployStep.value = DeployStep.CONF_REMOVE;
+    try {
+      const extrinsic = await sporranExtension.signExtrinsicWithDid(
+        existingServiceTx.toJSON() as HexString,
+        account.address as KiltAddress,
+        state.didDocument.uri
+      );
 
-    /** Submit transaction with sporran wallet */
-    await api
-      .tx(extrinsic.signed)
-      .signAndSend(account.address, { signer: injector.signer }, ({ status }) => {
-        if (status.isInBlock) {
-          toast('Old service is successfully removed', { type: 'success' });
-
-          /** Create new service endpoint */
-          createNewServiceEndpointWithSporran(fileCid);
-        }
-      })
-      .catch((error: any) => {
-        console.log('Transaction failed', error);
-        toast('Transaction failed', { type: 'error' });
-        loading.value = false;
-      });
+      /** Submit transaction with sporran wallet */
+      await api
+        .tx(extrinsic.signed)
+        .signAndSend(account.address, { signer: account.signer }, ({ status }) => {
+          console.log(status);
+          if (status.isInBlock) {
+            /** Create new service endpoint */
+            createNewServiceEndpointWithSporran(fileCid);
+          }
+        })
+        .catch((error: any) => {
+          transactionErrorWrapper(error);
+        });
+    } catch (error) {
+      transactionErrorWrapper(error);
+    }
   } else {
     createNewServiceEndpointWithSporran(fileCid);
   }
 }
 
 async function createNewServiceEndpointWithSporran(fileCid: string) {
+  deployStep.value = DeployStep.CONF_SAVE;
+
   /** Account from Sporran wallet */
   const account = state.sporranAccount;
-
-  // to be able to retrieve the signer interface from this account
-  // we can use web3FromSource which will return an InjectedExtension type
-  const injector = await web3FromAddress(account.address);
 
   /** Sporran extension */
   const sporranExtension: SporranExtension<PubSubSession> = window.kilt.sporran;
 
   /** Transaction with new service endpoint */
   const newServiceEndpointTx = prepareNewServiceEndpointTx(api, fileCid);
-  console.log(newServiceEndpointTx.toHuman());
 
   /**
    * Sign extrinsic with DID
    */
-  const { signed } = await sporranExtension.signExtrinsicWithDid(
-    newServiceEndpointTx.toJSON() as HexString,
-    account.address as KiltAddress,
-    state.didDocument.uri
-  );
+  try {
+    const { signed } = await sporranExtension.signExtrinsicWithDid(
+      newServiceEndpointTx.toJSON() as HexString,
+      account.address as KiltAddress,
+      state.didDocument.uri
+    );
 
-  /** Submit transaction with sporran wallet */
-  await api
-    .tx(signed)
-    .signAndSend(account.address, { signer: injector.signer }, ({ status }) => {
-      if (status.isInBlock) {
-        toast('New service is successfully added to DID', { type: 'success' });
-        loading.value = false;
-      }
-    })
-    .catch((error: any) => {
-      console.log('Transaction failed', error);
-      toast('Transaction failed', { type: 'error' });
-      loading.value = false;
-    });
+    /** Submit transaction with sporran wallet */
+    await api
+      .tx(signed)
+      .signAndSend(account.address, { signer: account.signer }, ({ status }) => {
+        if (status.isInBlock) {
+          loading.value = false;
+          deployStep.value = DeployStep.COMPLETED;
+        }
+      })
+      .catch((error: any) => {
+        transactionErrorWrapper(error);
+      });
+  } catch (error) {
+    transactionErrorWrapper(error);
+  }
 
   refreshDidDocument();
+  setTimeout(() => hideModalDeploy(), 1000);
 }
 
 async function updateFullDid(fileCid: string) {
@@ -396,6 +498,8 @@ async function updateFullDid(fileCid: string) {
 
   // If user already has this service, update it with batch
   if (service) {
+    deployStep.value = DeployStep.CONF_REMOVE;
+
     // and then the DID signature around it, which is
     const authorizedTx = await Did.authorizeBatch({
       batchFunction: api.tx.utility.batch,
@@ -404,12 +508,13 @@ async function updateFullDid(fileCid: string) {
       sign: sign,
       submitter: account.address as KiltAddress,
     });
+    deployStep.value = DeployStep.FILE_UPLOAD;
 
     // submit it with
     await Blockchain.signAndSubmitTx(authorizedTx, account);
-
-    toast('Service has been successfully updated', { type: 'success' });
   } else {
+    deployStep.value = DeployStep.CONF_SAVE;
+
     // User doesn't have this service, create service "KiltTransferAssetRecipientV2"
     const authorizedTx = await Did.authorizeTx(
       state.didDocument.uri,
@@ -420,17 +525,24 @@ async function updateFullDid(fileCid: string) {
 
     // submit it with
     await Blockchain.signAndSubmitTx(authorizedTx, account);
-
-    toast('Service has been successfully created', { type: 'success' });
   }
 
-  loading.value = false;
   refreshDidDocument();
+  loading.value = false;
+  deployStep.value = DeployStep.COMPLETED;
+  setTimeout(() => hideModalDeploy(), 1000);
 }
 
 async function refreshDidDocument() {
   if (state.didDocument.uri) {
     getDidDocument(state.didDocument.uri);
   }
+}
+
+function transactionErrorWrapper(error: ReferenceError | TypeError | any = {}) {
+  console.log(error);
+  sporranErrorMsg(error);
+  hideModalDeploy();
+  loading.value = false;
 }
 </script>

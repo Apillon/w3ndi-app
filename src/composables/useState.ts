@@ -1,6 +1,5 @@
-import { DidDocument, DidResourceUri } from '@kiltprotocol/types';
-import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
-import { reactive, readonly, isProxy, toRaw } from 'vue';
+import { DidDocument } from '@kiltprotocol/types';
+import { reactive, readonly } from 'vue';
 import { getWalletBySource } from '~/lib/wallet/wallets';
 
 export const AuthLsKeys = {
@@ -16,18 +15,12 @@ const state = reactive<StateInterface>({
   mnemonic: '',
   wallet: getWalletBySource(localStorage.getItem(AuthLsKeys.WALLET)),
   w3Name: '',
-  sporranAccount: {} as InjectedAccountWithMeta,
-  sporranMessage: {} as SporranMessage,
+  sporranAccount: {} as WalletAccount,
 });
 
 export function useState() {
   const setAccount = async (newAccount: WalletAccount) => {
-    const signature = await getMessageSignature(newAccount.address, 'Connect wallet');
-    if (signature) {
-      state.account = newAccount;
-    } else {
-      state.account = {} as WalletAccount;
-    }
+    state.account = newAccount;
   };
 
   const setName = (walletName: string) => {
@@ -55,14 +48,33 @@ export function useState() {
     state.assetRecipients = recipients;
   };
 
-  const removeAssetRecipients = (chainId: string, account: string) => {
+  /** Remove old wallet address and add new address with account data */
+  const editAssetRecipient = (
+    chainCaip19: string,
+    walletAddress: string,
+    newAddress: string,
+    accountData?: object
+  ) => {
+    const oldAccountData = state.assetRecipients[chainCaip19][walletAddress];
+    removeAssetRecipient(chainCaip19, walletAddress);
+
+    const allAssetRecipients = pushRecipientToAccounts(
+      state.assetRecipients,
+      chainCaip19,
+      newAddress,
+      accountData || oldAccountData
+    );
+    setAssetRecipients(allAssetRecipients);
+  };
+
+  const removeAssetRecipient = (chainCaip19: string, walletAddress: string) => {
     const recipients = JSON.parse(JSON.stringify(state.assetRecipients));
     // Remove account
-    delete recipients[chainId][account];
+    delete recipients[chainCaip19][walletAddress];
 
     // Remove chain if this was only account on chain
-    if (Object.values(recipients[chainId]).length === 0) {
-      delete recipients[chainId];
+    if (Object.values(recipients[chainCaip19]).length === 0) {
+      delete recipients[chainCaip19];
     }
     state.assetRecipients = recipients;
   };
@@ -71,37 +83,9 @@ export function useState() {
     state.mnemonic = mnemonic;
   };
 
-  const setSporranAccount = (account: InjectedAccountWithMeta) => {
+  const setSporranAccount = (account: WalletAccount) => {
     state.sporranAccount = account;
   };
-
-  const setSporranMessage = (message: SporranMessage) => {
-    state.sporranMessage = message;
-  };
-
-  async function getMessageSignature(address: string, msg: string) {
-    const signer = state.wallet?.signer || null;
-
-    if (!signer) {
-      return;
-    }
-
-    if (signer && signer.signRaw) {
-      try {
-        const signPromise = await signer.signRaw({
-          address,
-          data: msg,
-          type: 'bytes',
-        });
-
-        return signPromise.signature;
-      } catch (e) {
-        console.error(e);
-      }
-    }
-
-    return '';
-  }
 
   return {
     state: readonly(state),
@@ -111,9 +95,9 @@ export function useState() {
     setW3Name,
     setDidDocument,
     setAssetRecipients,
-    removeAssetRecipients,
+    editAssetRecipient,
+    removeAssetRecipient,
     setMnemonic,
     setSporranAccount,
-    setSporranMessage,
   };
 }
