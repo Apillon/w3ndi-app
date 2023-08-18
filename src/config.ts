@@ -1,5 +1,4 @@
 const CONFIG = ref(import.meta.env);
-console.log(CONFIG.value);
 
 // Change to test / main as needed
 export const DEV = CONFIG.value.DEV;

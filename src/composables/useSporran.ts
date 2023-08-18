@@ -15,7 +15,7 @@ export const useSporran = () => {
   const accounts = ref<WalletAccount[]>([]);
   const accountLinked = ref<boolean>(true);
 
-  async function initSporran() {  
+  async function initSporran() {
     // returns an array of all the injected sources
     // (this needs to be called first, before other requests)
     sporranWallet.value = getWalletBySource(SPORRAN);
@@ -24,8 +24,7 @@ export const useSporran = () => {
       // returns an array of { address, meta: { name, source } }
       // meta.source contains the name of the extension that provides this account
       accounts.value = (await sporranWallet.value.getAccounts()) || [];
-    }
-    else {
+    } else {
       toast('Please install sporran wallet.', { type: 'warning' });
     }
   }
@@ -43,7 +42,7 @@ export const useSporran = () => {
 
     if (didDetails.isNone) {
       accountLinked.value = false;
-      if(errorMsg){        
+      if (errorMsg) {
         toast('This account is not linked to DID', { type: 'info' });
       }
       return;
@@ -60,9 +59,9 @@ export const useSporran = () => {
       localStorage.setItem(LsKeys.ACCOUNT_ADDRESS, address);
       localStorage.setItem(LsKeys.DID_URI, document.uri);
       localStorage.setItem(LsKeys.W3NAME, web3Name);
-    } else if(document && document?.uri){      
+    } else if (document && document?.uri) {
       toast('Please create web3name in sporran to continue.', { type: 'info' });
-    } else if(errorMsg){      
+    } else if (errorMsg) {
       toast('Your account doesn`t have web3name!', { type: 'error' });
     }
     return web3Name;
@@ -114,7 +113,7 @@ export const useSporran = () => {
           loading.value = false;
         });
     } catch (error: ReferenceError | TypeError | any) {
-      sporranErrorMsg(error)
+      sporranErrorMsg(error);
       loading.value = false;
     }
   }
@@ -130,7 +129,7 @@ export const useSporran = () => {
     }, 5000);
   }
 
-  function sporranErrorMsg(error: ReferenceError | TypeError | any){
+  function sporranErrorMsg(error: ReferenceError | TypeError | any = {}) {
     if (error?.message === 'Rejected') {
       toast('Request was rejected in Sporran', { type: 'info' });
     } else if (error?.message.includes('account balance too low')) {

@@ -66,11 +66,8 @@
 
       <div v-else-if="!hasLoadedAssetRecipients && !hasAssetRecipients">
         <div class="max-w-md p-8 mx-auto text-center">
-          <h2>No wallet added.</h2>
-          <p class="my-4">
-            Morbi malesuada nulla lobortis commodo risus mattis eu. Metus proin nibh scelerisque ac.
-            Est commodo in neque feugiat amet eget sed placerat. Urna quis.
-          </p>
+          <h2>Create a wallet</h2>
+          <p class="my-4">Add wallets to w3ndi and start linking your digital addresses.</p>
           <Btn class="w-auto" type="blue" @click="showModalAddNewWallet()">
             <span class="flex gap-2 items-center">
               <SvgInclude :name="SvgNames.Plus" />
@@ -196,66 +193,45 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  Blockchain,
-  ConfigService,
-  Did,
-  DidResourceUri,
-  KeyringPair,
-  KiltAddress,
-  connect,
-  disconnect,
-} from '@kiltprotocol/sdk-js';
-import { ApiPromise } from '@polkadot/api';
-import { toast } from 'vue3-toastify';
+import { KeyringPair } from '@kiltprotocol/sdk-js';
 
-import { KILT_NETWORK } from '~/config';
-import { DeployStep } from '~/types/index';
 import { SvgNames } from '../SvgInclude.vue';
 import { truncateWallet } from '~/lib/misc-utils';
 import { chainIdToName } from '~/lib/kilt/w3n';
+import { DeployStep } from '~/types/index';
 import { useDid } from '~/composables/useDid';
 import { useState } from '~/composables/useState';
-import { useSporran } from '~/composables/useSporran';
+import useBlockchain from '~/composables/useBlockchain';
 
 const emit = defineEmits(['back']);
-const { sporranErrorMsg } = useSporran();
-const { state, setAssetRecipients, removeAssetRecipient } = useState();
+const { state, removeAssetRecipient } = useState();
+const { openAccountOnBlockChain } = useDid();
 const {
-  getDidDocument,
-  openAccountOnBlockChain,
-  prepareExistingServiceEndpointTx,
-  prepareNewServiceEndpointTx,
-  prepareServiceEndpointTXs,
-} = useDid();
+  deployStep,
+  loading,
+  loadingAssetRecipients,
+  isModalDeployVisible,
+  loadedAssetRecipients,
+  parseAssetRecipients,
+  isExistingAddress,
+  saveWallets,
+} = useBlockchain();
 
-const loading = ref<boolean>(false);
-const loadingAssetRecipients = ref<boolean>(false);
 const isAddNewWalletVisible = ref<boolean>(false);
 const isEditWalletVisible = ref<boolean>(false);
-const isModalDeployVisible = ref<boolean>(false);
-const loadedAssetRecipients = ref<KiltTransferAssetRecipientV2>({});
 const account = ref<KeyringPair>();
-let api: ApiPromise;
 
-const deployStep = ref<number>(DeployStep.FILE_GENERATION);
 const editedAccount = reactive({
   chainCaip19: '',
   walletAddress: '',
 });
 
 onMounted(async () => {
-  await connect(KILT_NETWORK);
-  api = ConfigService.get('api');
   parseAssetRecipients();
 
   if (state.mnemonic) {
     account.value = await generateAccount(state.mnemonic);
   }
-});
-
-onUnmounted(() => {
-  disconnect();
 });
 
 const accountAddress = computed<string>(() => {
@@ -279,261 +255,4 @@ const showModalEditWallet = (chainCaip19: string, walletAddress: string) => {
   isEditWalletVisible.value = false;
   setTimeout(() => (isEditWalletVisible.value = true), 1);
 };
-const showModalDeploy = () => {
-  isModalDeployVisible.value = false;
-  deployStep.value = DeployStep.FILE_GENERATION;
-  setTimeout(() => (isModalDeployVisible.value = true), 1);
-};
-const hideModalDeploy = () => {
-  loading.value = false;
-  isModalDeployVisible.value = false;
-  deployStep.value = DeployStep.IDLE;
-};
-
-const parseAssetRecipients = async () => {
-  loadedAssetRecipients.value = {};
-  loadingAssetRecipients.value = true;
-
-  if (state.didDocument?.service) {
-    const service = state.didDocument.service.find(item =>
-      item.type.includes(KILT_TRANSFER_ASSET_RECIPIENT_V2)
-    );
-    if (service && service.serviceEndpoint?.length) {
-      service.serviceEndpoint.forEach(async item => {
-        try {
-          const response = await fetch(item, {
-            method: 'GET',
-            headers: APISettings.headers,
-          });
-
-          const data = await response.json();
-          if (data) {
-            loadedAssetRecipients.value = { ...loadedAssetRecipients.value, ...data };
-            setAssetRecipients(loadedAssetRecipients.value);
-
-            loadingAssetRecipients.value = false;
-          }
-        } catch (error) {
-          console.log(error);
-          toast('Error while fetching asset recipients, please refresh page.', { type: 'error' });
-          loadingAssetRecipients.value = false;
-        }
-      });
-    } else {
-      loadingAssetRecipients.value = false;
-    }
-    setTimeout(() => (loadingAssetRecipients.value = false), 60000);
-  } else {
-    loadingAssetRecipients.value = false;
-  }
-};
-
-function isExistingAddress(chainCaip19: string, walletAddress: string) {
-  return (
-    checkIfKeyExist(loadedAssetRecipients.value, chainCaip19) &&
-    checkIfKeyExist(loadedAssetRecipients.value[chainCaip19], walletAddress)
-  );
-}
-
-async function saveWallets() {
-  if (!state.assetRecipients || Object.keys(state.assetRecipients).length === 0) {
-    toast('You need to add at least one wallet.', { type: 'warning' });
-    return;
-  }
-  loading.value = true;
-
-  const hash = hashKiltTransferAssetRecipient(state.assetRecipients);
-  const service = state.didDocument?.service?.find(item => item.id === `#${hash}`);
-  if (service) {
-    toast('Service with this ID already exists! Please make some changes.', { type: 'warning' });
-    loading.value = false;
-  } else {
-    showModalDeploy();
-    await uploadAccountsToIpfs();
-  }
-}
-
-async function uploadAccountsToIpfs() {
-  const { data, error }: any = await $api.post(`/w3n-assets`, {
-    assets: state.assetRecipients,
-  });
-
-  if (error) {
-    toast('Error during file upload, please try again later.', { type: 'error' });
-    hideModalDeploy();
-    return null;
-  }
-  deployStep.value = DeployStep.FILE_UPLOAD;
-
-  return await getFile(data.data.fileUuid);
-}
-
-async function getFile(fileUuid: string) {
-  const getFileInterval = setInterval(async () => {
-    const fileData = await getFilePoll(fileUuid);
-
-    if (fileData && fileData?.file?.CID) {
-      clearInterval(getFileInterval);
-      submitTransaction(fileData.file.CID);
-    }
-  }, 5000);
-}
-
-async function getFilePoll(fileUuid: string) {
-  const { data, error } = await $api.get(`/w3n-assets/${fileUuid}`);
-
-  if (data) {
-    return data.data;
-  }
-  return null;
-}
-
-async function submitTransaction(fileCid: string) {
-  try {
-    if (window?.kilt?.sporran && state.sporranAccount.address) {
-      await updateFullDidWithSporran(fileCid);
-    } else {
-      await updateFullDid(fileCid);
-    }
-  } catch (error) {
-    console.warn(error);
-    loading.value = false;
-  }
-}
-
-async function updateFullDidWithSporran(fileCid: string) {
-  /** Account from Sporran wallet */
-  const account = state.sporranAccount;
-
-  /** Sporran extension */
-  const sporranExtension: SporranExtension<PubSubSession> = window.kilt.sporran;
-
-  /** Existing "KiltTransferAssetRecipientV2" service Tx on didDocument */
-  const existingServiceTx = prepareExistingServiceEndpointTx(api);
-
-  if (existingServiceTx) {
-    deployStep.value = DeployStep.CONF_REMOVE;
-    const extrinsic = await sporranExtension.signExtrinsicWithDid(
-      existingServiceTx.toJSON() as HexString,
-      account.address as KiltAddress,
-      state.didDocument.uri
-    );
-
-    /** Submit transaction with sporran wallet */
-    await api
-      .tx(extrinsic.signed)
-      .signAndSend(account.address, { signer: account.signer }, ({ status }) => {
-        if (status.isInBlock) {
-          /** Create new service endpoint */
-          createNewServiceEndpointWithSporran(fileCid);
-        }
-      })
-      .catch((error: any) => {
-        sporranErrorMsg(error);
-        loading.value = false;
-      });
-  } else {
-    createNewServiceEndpointWithSporran(fileCid);
-  }
-}
-
-async function createNewServiceEndpointWithSporran(fileCid: string) {
-  deployStep.value = DeployStep.CONF_SAVE;
-
-  /** Account from Sporran wallet */
-  const account = state.sporranAccount;
-
-  /** Sporran extension */
-  const sporranExtension: SporranExtension<PubSubSession> = window.kilt.sporran;
-
-  /** Transaction with new service endpoint */
-  const newServiceEndpointTx = prepareNewServiceEndpointTx(api, fileCid);
-
-  /**
-   * Sign extrinsic with DID
-   */
-  const { signed } = await sporranExtension.signExtrinsicWithDid(
-    newServiceEndpointTx.toJSON() as HexString,
-    account.address as KiltAddress,
-    state.didDocument.uri
-  );
-
-  /** Submit transaction with sporran wallet */
-  await api
-    .tx(signed)
-    .signAndSend(account.address, { signer: account.signer }, ({ status }) => {
-      if (status.isInBlock) {
-        loading.value = false;
-        deployStep.value = DeployStep.COMPLETED;
-      }
-    })
-    .catch((error: any) => {
-      console.log('Transaction failed', error);
-      sporranErrorMsg(error);
-      loading.value = false;
-    });
-
-  refreshDidDocument();
-  setTimeout(() => hideModalDeploy(), 1000);
-}
-
-async function updateFullDid(fileCid: string) {
-  /** User's account */
-  const account = await generateAccount(state.mnemonic);
-  const { authentication } = await generateKeypairs(state.mnemonic);
-
-  /** Existing "KiltTransferAssetRecipientV2" service on didDocument */
-  const service = state.didDocument?.service?.find(item =>
-    item.type.includes(KILT_TRANSFER_ASSET_RECIPIENT_V2)
-  );
-
-  /** Sign callback */
-  const sign = async ({ data }: SignRequestData) => ({
-    signature: authentication.sign(data, { withType: false }),
-    keyUri: `${state.didDocument.uri}${state.didDocument.authentication[0].id}` as DidResourceUri,
-    keyType: authentication.type,
-  });
-
-  // If user already has this service, update it with batch
-  if (service) {
-    deployStep.value = DeployStep.CONF_REMOVE;
-
-    // and then the DID signature around it, which is
-    const authorizedTx = await Did.authorizeBatch({
-      batchFunction: api.tx.utility.batch,
-      did: state.didDocument.uri,
-      extrinsics: prepareServiceEndpointTXs(api, fileCid),
-      sign: sign,
-      submitter: account.address as KiltAddress,
-    });
-    deployStep.value = DeployStep.FILE_UPLOAD;
-
-    // submit it with
-    await Blockchain.signAndSubmitTx(authorizedTx, account);
-  } else {
-    deployStep.value = DeployStep.CONF_SAVE;
-
-    // User doesn't have this service, create service "KiltTransferAssetRecipientV2"
-    const authorizedTx = await Did.authorizeTx(
-      state.didDocument.uri,
-      prepareNewServiceEndpointTx(api, fileCid),
-      sign,
-      account.address as KiltAddress
-    );
-
-    // submit it with
-    await Blockchain.signAndSubmitTx(authorizedTx, account);
-  }
-
-  refreshDidDocument();
-  loading.value = false;
-  deployStep.value = DeployStep.COMPLETED;
-  setTimeout(() => hideModalDeploy(), 1000);
-}
-
-async function refreshDidDocument() {
-  if (state.didDocument.uri) {
-    getDidDocument(state.didDocument.uri);
-  }
-}
 </script>

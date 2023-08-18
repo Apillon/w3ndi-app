@@ -29,6 +29,7 @@
 </template>
 
 <script lang="ts" setup>
+import chains from '~/lib/data/chains.json';
 import { useState } from '~/composables/useState';
 import { toast } from 'vue3-toastify';
 
@@ -59,18 +60,20 @@ onMounted(() => {
 async function save() {
   if (!formWallet.tag) {
     toast('Please enter tag', { type: 'error' });
-    return;
   } else if (!formWallet.address) {
     toast('Please enter wallet address', { type: 'error' });
-    return;
-  } else if (!validateAddress(props.chainCaip19, formWallet.address)) {
+  } else if (!validateAddress(chainTypeFromCaip19(props.chainCaip19), formWallet.address)) {
     toast('Wallet address is invalid!', { type: 'error' });
-    return;
+  } else {
+    editAssetRecipient(props.chainCaip19, props.walletAddress, formWallet.address, {
+      description: formWallet.tag,
+    });
+    emit('close');
   }
+}
 
-  editAssetRecipient(props.chainCaip19, props.walletAddress, formWallet.address, {
-    description: formWallet.tag,
-  });
-  emit('close');
+function chainTypeFromCaip19(caip19: string) {
+  const chain = chains.find(item => item && item?.caip19 === caip19);
+  return chain?.chainType || ChainType.OTHER;
 }
 </script>

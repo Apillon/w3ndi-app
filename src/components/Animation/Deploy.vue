@@ -6,11 +6,7 @@
       configuration.
     </p>
     <ol class="body-md text-body">
-      <li
-        v-for="(item, key) in steps"
-        class="flex gap-2 items-center my-4"
-        :class="[{ hidden: item?.hide }, { 'text-white': item.id <= step }]"
-      >
+      <li v-for="(item, key) in steps" class="flex gap-2 items-center my-4">
         <SvgInclude v-if="item.id < step" :name="SvgNames.Success" class="w-5 h-5 text-green" />
         <Typing v-else-if="item.id === step" />
         <strong
@@ -37,7 +33,12 @@ const props = defineProps({
 const steps = ref([
   { id: DeployStep.FILE_GENERATION, text: 'Generating IPFS file' },
   { id: DeployStep.FILE_UPLOAD, text: 'Uploading to IPFS' },
-  { id: DeployStep.CONF_REMOVE, text: 'Removing old configuration', hide: !props.showRemoving },
-  { id: DeployStep.CONF_SAVE, text: 'Saving new configuration' },
 ]);
+
+onMounted(() => {
+  if (props.showRemoving) {
+    steps.value.push({ id: DeployStep.CONF_REMOVE, text: 'Removing old configuration' });
+  }
+  steps.value.push({ id: DeployStep.CONF_SAVE, text: 'Saving new configuration' });
+});
 </script>
