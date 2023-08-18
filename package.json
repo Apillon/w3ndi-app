@@ -18,7 +18,6 @@
     "@kiltprotocol/sdk-js": "^0.33.1",
     "@metamask/detect-provider": "^2.0.0",
     "@polkadot/api": "^10.7.1",
-    "@polkadot/extension-dapp": "^0.46.3",
     "@polkadot/ui-shared": "^3.5.1",
     "@polkadot/util": "^12.3.2",
     "@polkadot/util-crypto": "^10.3.2",

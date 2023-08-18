@@ -6,7 +6,13 @@
     <vue-select
       v-bind="$attrs"
       class="h-12 py-3 pl-4 pr-6 bg-bg-light border-1 border-bg-lighter"
-      :class="[selectClass]"
+      :class="[
+        $style.select,
+        {
+          'pointer-events-none pointer-default opacity-60 color-bg-dark border-bg-lighter':
+            props.disabled,
+        },
+      ]"
     ></vue-select>
     <div class="absolute">
       <transition name="slide-fade">
@@ -27,18 +33,7 @@ const props = defineProps({
   labelClass: { type: [String, Array, Object], default: null },
 });
 
-const emit = defineEmits(['update:modelValue']);
-const $style = useCssModule();
-
-const selectClass = computed(() => {
-  return [
-    $style.select,
-    {
-      'pointer-events-none pointer-default opacity-60 color-bg-dark border-bg-lighter':
-        props.disabled,
-    },
-  ];
-});
+defineEmits(['update:modelValue']);
 </script>
 
 <style lang="postcss" module>
