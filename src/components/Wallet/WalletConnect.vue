@@ -11,7 +11,7 @@
   <Btn v-else v-bind="$attrs" type="secondary" @click="showModalWalletSelect">Connect wallet</Btn>
 
   <Modal :show="isWalletSelectVisible" title="Connect wallet">
-    <WalletSelect @connect="isWalletSelectVisible = false" :type="type" />
+    <WalletSelect @connect="onWalletConnected" :type="type" />
   </Modal>
 </template>
 <script lang="ts" setup>
@@ -21,6 +21,7 @@ import useWalletAccounts from '~/composables/useWalletAccounts';
 defineProps({
   type: { type: Number, default: 0 },
 });
+const emit = defineEmits(['connect']);
 
 const { isReady: isWalletReady, disconnectAccount } = useWalletAccounts();
 const { state, setAccount } = useState();
@@ -34,5 +35,10 @@ const showModalWalletSelect = () => {
 function disconnectWallet() {
   setAccount({} as WalletAccount);
   disconnectAccount();
+}
+
+function onWalletConnected(walletAddress: string) {
+  isWalletSelectVisible.value = false;
+  emit('connect', walletAddress);
 }
 </script>

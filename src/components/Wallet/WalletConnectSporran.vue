@@ -28,7 +28,7 @@
           </tr>
         </tbody>
       </table>
-      <div v-if="!accountLinked" class="my-4 text-center">
+      <div v-if="!accountLinked" class="mt-8 text-center">
         <h3>You account is not linked to DID!</h3>
         <p>
           To make use of features such as Web3 name, a DID must be explicitly linked the owner

@@ -114,7 +114,7 @@ defineProps({
 });
 const emit = defineEmits(['connect']);
 
-const { selectProvider } = useProvider();
+const { userAccount, selectProvider } = useProvider();
 const { isReady: isWalletReady, waLoading, connectToAccount } = useWalletAccounts();
 
 const { isLg } = useScreen();
@@ -143,7 +143,7 @@ async function onSelectWallet(wallet: Wallet) {
 }
 function connectAccount(account: WalletAccount) {
   setAccount(account);
-  emit('connect');
+  emit('connect', account.address);
 }
 
 /** Get url by browser or by device, if this install url does not exists, use default value */
@@ -168,7 +168,7 @@ async function connectEthWallet(connector = ProviderConnectors.METAMASK) {
   }
 
   if (isWalletReady.value) {
-    emit('connect');
+    emit('connect', userAccount.value);
   } else if (connector === ProviderConnectors.METAMASK) {
     toast('MetaMask extension must be installed in browser.', { type: 'warning' });
   } else {

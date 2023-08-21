@@ -31,6 +31,7 @@ async function verifyDid() {
     toast('Enter mnemonic!', { type: 'warning' });
     return;
   }
+  loading.value = true;
 
   try {
     const { web3Name, document } = await getDidDocumentFromMnemonic(mnemonic.value);
@@ -51,5 +52,6 @@ async function verifyDid() {
     console.error(error);
     toast('Wrong mnemonic, please provide a valid mnemonic.', { type: 'error' });
   }
+  loading.value = false;
 }
 </script>

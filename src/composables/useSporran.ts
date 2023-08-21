@@ -7,7 +7,7 @@ import { KILT_NETWORK } from '~/config';
 import { LsKeys } from '~/types';
 
 export const useSporran = () => {
-  const { state, setW3Name, setDidDocument, setSporranAccount } = useState();
+  const { state, setW3Name, setDidDocument, setSporranAccount, resetSporranAccount } = useState();
 
   let api: ApiPromise;
   const sporranWallet = ref<Wallet | undefined>();
@@ -102,18 +102,21 @@ export const useSporran = () => {
         .tx(signed)
         .signAndSend(account.address, { signer: account.signer }, ({ status }) => {
           if (status.isInBlock) {
-            toast('DID and account are successfully connected', { type: 'success' });
+            toast('DID and account are connecting', { type: 'info' });
           } else if (status.isFinalized) {
             getW3NamePool(account.address, false);
+            toast('DID and account are successfully connected', { type: 'success' });
           }
         })
         .catch((error: any) => {
           console.log('transaction failed: ', error);
           sporranErrorMsg(error);
+          resetSporranAccount();
           loading.value = false;
         });
     } catch (error: ReferenceError | TypeError | any) {
       sporranErrorMsg(error);
+      resetSporranAccount();
       loading.value = false;
     }
   }
