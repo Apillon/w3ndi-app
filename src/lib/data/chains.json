@@ -15,6 +15,21 @@
     "caip19": "eip155:137/slip44:966"
   },
   {
+    "chainType": 1,
+    "name": "Avalanche C-Chain",
+    "caip19": "eip155:43114/slip44:9005"
+  },
+  {
+    "chainType": 1,
+    "name": "Arbitrum",
+    "caip19": "eip155:42161/slip44:9001"
+  },
+  {
+    "chainType": 1,
+    "name": "Moonbeam",
+    "caip19": "eip155:1284/slip44:1284"
+  },
+  {
     "chainType": 2,
     "name": "Polkadot",
     "caip19": "polkadot:91b171bb158e2d3848fa23a9f1c25182/slip44:354",

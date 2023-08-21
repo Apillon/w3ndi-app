@@ -1,15 +1,16 @@
 <template>
   <div class="flex">
   <div class="max-w-xl flex flex-col justify-center">
-    <h1 class="mb-6">w3ndi</h1>
+    <h1 class="mb-2">w3ndi</h1>
+    <h3 class="mb-6">Your w3n-based decentralized index of digital addresses.</h3>
     <p class="text-body text-base leading-6">
-      Three easy steps:
-      <ol class="list-decimal text-white pl-5 mb-6">
-        <li>Get DID and W3N.</li>
-        <li>Add addresses to your W3N</li>
-        <li>Share your W3N with friends to receive assets via Nova.</li>
+      Send and receive assets via your web3name by KILT.
+      <ol class="list-decimal pl-5 mb-6">
+        <li>Get a DID and w3n by KILT.</li>
+        <li>Add digital addresses to your w3n.</li>
+        <li>Share your w3n with friends and receive assets via Nova Wallet.</li>
       </ol>
-      This app lets you link your web3 name and wallet addresses across various chains. After linking, others can use NOVA wallet with your web3 name to send you funds.
+      Link your web3name and wallet addresses across various chains. Use web3name with Nova Wallet to send and receive funds.
     </p>
     <div class="md:w-1/2 mt-6 ">
       <Btn type="primary" @click="emit('proceed')">Enter now</Btn>

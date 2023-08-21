@@ -48,7 +48,7 @@ async function verifyDid() {
       toast('Invalid identity, please use another mnemonic.', { type: 'warning' });
     }
   } catch (error) {
-    console.log('Mnemonic error: ', error);
+    console.error(error);
     toast('Wrong mnemonic, please provide a valid mnemonic.', { type: 'error' });
   }
 }

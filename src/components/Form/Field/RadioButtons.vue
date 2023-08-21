@@ -1,6 +1,12 @@
 <template>
-  <fieldset class="radio-group relative">
-    <div v-for="option in options" :key="`${option.value}`" class="field radio relative">
+  <fieldset
+    class="relative flex items-center w-full border-1 border-bg-light rounded-[20px] bg-bg-light mb-8 overflow-hidden"
+  >
+    <div
+      v-for="option in options"
+      :key="`${option.value}`"
+      class="w-full rounded-[20px] overflow-hidden radio relative"
+    >
       <input
         class="invisible absolute"
         type="radio"
@@ -9,17 +15,20 @@
         :id="name + '_' + option.value"
         :checked="modelValue === option.value"
         :disabled="option.disabled"
-        @change="$event => $emit('update:modelValue', ($event.target as HTMLInputElement).value)"
+        @change="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
       />
       <label
         :for="name + '_' + option.value"
-        class="body-md block py-1 pl-7 font-normal text-left"
+        class="relative block w-full pl-7 py-2 px-6 mb-0 body-md font-normal text-center text-body cursor-pointer z-1"
         :class="[labelClass]"
       >
         {{ option.label }}
       </label>
     </div>
-    <div class="radio-selected" :style="radioSelectedStyle"></div>
+    <div
+      class="absolute top-0 bottom-0 rounded-[20px] bg-bg-dark transition-all"
+      :style="radioSelectedStyle"
+    ></div>
 
     <div class="absolute">
       <transition name="slide-fade">
@@ -37,14 +46,7 @@ const props = defineProps({
   modelValue: { type: [String, Number], default: '' },
   error: { type: String, default: '' },
 });
-
-const emit = defineEmits(['update:modelValue']);
-watch(
-  () => props.modelValue,
-  val => {
-    console.log(val);
-  }
-);
+defineEmits(['update:modelValue']);
 
 const selectedIndex = computed<number>(() => {
   return props.options.findIndex(item => item.value === props.modelValue);
@@ -61,18 +63,6 @@ const radioSelectedStyle = computed(() => {
 </script>
 
 <style lang="postcss" scoped>
-.radio-group {
-  @apply flex items-center w-full border-1 border-bg-light rounded-[20px] bg-bg-light mb-8 overflow-hidden;
-}
-
-.radio-selected {
-  @apply absolute top-0 bottom-0 rounded-[20px] bg-bg-dark transition-all;
-}
-
-.field {
-  @apply w-full rounded-[20px] overflow-hidden;
-}
-
 input[type='radio'] {
   position: absolute;
   visibility: hidden;
