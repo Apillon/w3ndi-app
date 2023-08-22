@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts" setup>
-import { SvgNames } from '../SvgInclude.vue';
+import { SvgNames } from '../Parts/SvgInclude.vue';
 
 const props = defineProps({
   step: { type: Number, default: 0 },

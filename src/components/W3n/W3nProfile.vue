@@ -224,13 +224,13 @@
 <script lang="ts" setup>
 import { KeyringPair } from '@kiltprotocol/sdk-js';
 
-import { SvgNames } from '../SvgInclude.vue';
 import { truncateWallet } from '~/lib/misc-utils';
 import { chainIdToName } from '~/lib/kilt/w3n';
 import { DeployStep } from '~/types/index';
 import { useDid } from '~/composables/useDid';
 import { useState } from '~/composables/useState';
 import useBlockchain from '~/composables/useBlockchain';
+import { SvgNames } from '../Parts/SvgInclude.vue';
 
 const emit = defineEmits(['back']);
 const {

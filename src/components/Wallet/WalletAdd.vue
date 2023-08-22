@@ -101,7 +101,7 @@ import { useState } from '~/composables/useState';
 import { useProvider } from '~/composables/useProvider';
 import useWalletAccounts from '~/composables/useWalletAccounts';
 import { toast } from 'vue3-toastify';
-import { SvgNames } from '../SvgInclude.vue';
+import { SvgNames } from '../Parts/SvgInclude.vue';
 
 const emit = defineEmits(['close']);
 

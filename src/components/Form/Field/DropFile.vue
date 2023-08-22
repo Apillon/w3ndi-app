@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts" setup>
-import { SvgNames } from '~/components/SvgInclude.vue';
+import { SvgNames } from '~/components/Parts/SvgInclude.vue';
 
 const emit = defineEmits(['uploaded']);
 const isDragging = ref<boolean>(false);

@@ -10,6 +10,9 @@
         </div>
       </div>
     </div>
+    <div ref="footerRef">
+      <Footer />
+    </div>
   </div>
 </template>
 
@@ -33,14 +36,20 @@ Object.defineProperty(window.kilt, 'meta', {
 
 /** Heading height */
 const headerRef = ref<HTMLElement>();
+const footerRef = ref<HTMLElement>();
+
 const contentMinStyle = computed(() => {
+  const hHeight = headerRef.value?.clientHeight || 0;
+  const fHeight = footerRef.value?.clientHeight || 0;
   return {
-    minHeight: `calc(100vh - ${headerRef.value?.clientHeight || 0}px)`,
+    minHeight: `calc(100vh - ${hHeight + fHeight}px)`,
   };
 });
 const contentMaxStyle = computed(() => {
+  const hHeight = headerRef.value?.clientHeight || 0;
+  const fHeight = footerRef.value?.clientHeight || 0;
   return {
-    maxHeight: `calc(100vh - ${headerRef.value?.clientHeight || 0}px)`,
+    maxHeight: `calc(100vh - ${hHeight + fHeight}px)`,
   };
 });
 </script>
