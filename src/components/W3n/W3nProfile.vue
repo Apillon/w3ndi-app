@@ -110,8 +110,18 @@
                     <span class="hidden xl:inline-block">{{ recipientAddress }}</span>
                   </td>
                   <td>
+                    <Tag v-if="data?.deleted" type="error"> Removed </Tag>
                     <Tag
-                      v-if="
+                      v-else-if="
+                        isTagChanged(chainCaip19, recipientAddress, data?.description) &&
+                        deployStep !== DeployStep.COMPLETED
+                      "
+                      type="info"
+                    >
+                      Changed
+                    </Tag>
+                    <Tag
+                      v-else-if="
                         isExistingAddress(chainCaip19, recipientAddress) ||
                         deployStep === DeployStep.COMPLETED
                       "
@@ -124,12 +134,29 @@
                   <td>
                     <div class="flex gap-4">
                       <button
-                        class="p-1 text-white text-base"
+                        class="p-1 text-base"
+                        :class="data?.deleted ? 'text-pink' : 'text-white'"
+                        :disabled="data?.deleted"
                         @click="showModalEditWallet(chainCaip19, recipientAddress)"
                       >
                         <SvgInclude :name="SvgNames.Pencil" class="w-4 h-4" />
                       </button>
                       <button
+                        v-if="data?.deleted"
+                        class="p-1 text-pink text-base"
+                        @click="unmarkDeletedAssetRecipient(chainCaip19, recipientAddress)"
+                      >
+                        <SvgInclude :name="SvgNames.Trash" class="w-4 h-4" />
+                      </button>
+                      <button
+                        v-else-if="isExistingAddress(chainCaip19, recipientAddress)"
+                        class="p-1 text-white text-base"
+                        @click="markDeletedAssetRecipient(chainCaip19, recipientAddress)"
+                      >
+                        <SvgInclude :name="SvgNames.Trash" class="w-4 h-4" />
+                      </button>
+                      <button
+                        v-else
                         class="p-1 text-white text-base"
                         @click="removeAssetRecipient(chainCaip19, recipientAddress)"
                       >
@@ -160,8 +187,10 @@
             v-if="hasAssetRecipients"
             type="primary"
             class="w-auto bg-bg-dark"
+            :class="{ 'cursor-default': !hasUserChangeAssetRecipients }"
             locked
             :loading="loading"
+            :disabled="!hasUserChangeAssetRecipients"
             @click="saveWallets()"
           >
             <span class="font-sans">Save and deploy</span>
@@ -195,16 +224,22 @@
 <script lang="ts" setup>
 import { KeyringPair } from '@kiltprotocol/sdk-js';
 
-import { SvgNames } from '../SvgInclude.vue';
 import { truncateWallet } from '~/lib/misc-utils';
 import { chainIdToName } from '~/lib/kilt/w3n';
 import { DeployStep } from '~/types/index';
 import { useDid } from '~/composables/useDid';
 import { useState } from '~/composables/useState';
 import useBlockchain from '~/composables/useBlockchain';
+import { SvgNames } from '../Parts/SvgInclude.vue';
 
 const emit = defineEmits(['back']);
-const { state, removeAssetRecipient } = useState();
+const {
+  state,
+  markDeletedAssetRecipient,
+  unmarkDeletedAssetRecipient,
+  removeAssetRecipient,
+  resetAssetRecipients,
+} = useState();
 const { openAccountOnBlockChain } = useDid();
 const {
   deployStep,
@@ -214,6 +249,7 @@ const {
   loadedAssetRecipients,
   parseAssetRecipients,
   isExistingAddress,
+  isTagChanged,
   saveWallets,
 } = useBlockchain();
 
@@ -227,6 +263,7 @@ const editedAccount = reactive({
 });
 
 onMounted(async () => {
+  resetAssetRecipients();
   parseAssetRecipients();
 
   if (state.mnemonic) {
@@ -242,6 +279,11 @@ const hasLoadedAssetRecipients = computed<boolean>(() => {
 });
 const hasAssetRecipients = computed<boolean>(() => {
   return state.assetRecipients && Object.keys(state.assetRecipients).length > 0;
+});
+const hasUserChangeAssetRecipients = computed<boolean>(() => {
+  const hash = hashKiltTransferAssetRecipient(state.assetRecipients);
+  const service = state.didDocument?.service?.find(item => item.id === `#${hash}`);
+  return !service;
 });
 
 const showModalAddNewWallet = () => {

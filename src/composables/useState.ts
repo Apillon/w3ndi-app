@@ -19,6 +19,16 @@ const state = reactive<StateInterface>({
 });
 
 export function useState() {
+  const resetState = () => {
+    state.account = {} as WalletAccount;
+    state.accounts = [] as WalletAccount[];
+    state.didDocument = {} as DidDocument;
+    state.assetRecipients = {} as KiltTransferAssetRecipientV2;
+    state.mnemonic = '';
+    state.w3Name = '';
+    state.sporranAccount = {} as WalletAccount;
+  };
+
   const setAccount = async (newAccount: WalletAccount) => {
     state.account = newAccount;
   };
@@ -48,6 +58,10 @@ export function useState() {
     state.assetRecipients = recipients;
   };
 
+  const resetAssetRecipients = () => {
+    state.assetRecipients = {} as KiltTransferAssetRecipientV2;
+  };
+
   /** Remove old wallet address and add new address with account data */
   const editAssetRecipient = (
     chainCaip19: string,
@@ -65,6 +79,25 @@ export function useState() {
       accountData || oldAccountData
     );
     setAssetRecipients(allAssetRecipients);
+  };
+
+  const markDeletedAssetRecipient = (chainCaip19: string, walletAddress: string) => {
+    // Mark recipient as deleted
+    const recipient = state.assetRecipients[chainCaip19][walletAddress];
+    editAssetRecipient(chainCaip19, walletAddress, walletAddress, {
+      ...recipient,
+      deleted: true,
+    });
+  };
+
+  const unmarkDeletedAssetRecipient = (chainCaip19: string, walletAddress: string) => {
+    // Unmark recipient as deleted
+    const recipient = state.assetRecipients[chainCaip19][walletAddress];
+    if (recipient?.deleted) {
+      delete recipient.deleted;
+    }
+
+    editAssetRecipient(chainCaip19, walletAddress, walletAddress, recipient);
   };
 
   const removeAssetRecipient = (chainCaip19: string, walletAddress: string) => {
@@ -87,17 +120,26 @@ export function useState() {
     state.sporranAccount = account;
   };
 
+  const resetSporranAccount = () => {
+    state.sporranAccount = {} as WalletAccount;
+  };
+
   return {
     state: readonly(state),
+    resetState,
     setWallet,
     setAccount,
     setName,
     setW3Name,
     setDidDocument,
     setAssetRecipients,
+    resetAssetRecipients,
     editAssetRecipient,
     removeAssetRecipient,
+    markDeletedAssetRecipient,
+    unmarkDeletedAssetRecipient,
     setMnemonic,
     setSporranAccount,
+    resetSporranAccount,
   };
 }

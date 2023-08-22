@@ -62,7 +62,7 @@ async function save() {
     toast('Please enter tag', { type: 'error' });
   } else if (!formWallet.address) {
     toast('Please enter wallet address', { type: 'error' });
-  } else if (!validateAddress(chainTypeFromCaip19(props.chainCaip19), formWallet.address)) {
+  } else if (!validateAddress(props.chainCaip19, formWallet.address)) {
     toast('Wallet address is invalid!', { type: 'error' });
   } else {
     editAssetRecipient(props.chainCaip19, props.walletAddress, formWallet.address, {
@@ -70,10 +70,5 @@ async function save() {
     });
     emit('close');
   }
-}
-
-function chainTypeFromCaip19(caip19: string) {
-  const chain = chains.find(item => item && item?.caip19 === caip19);
-  return chain?.chainType || ChainType.OTHER;
 }
 </script>

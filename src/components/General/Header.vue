@@ -12,7 +12,7 @@
 </template>
 <script lang="ts" setup>
 import { useState } from '~/composables/useState';
-import { SvgNames } from './SvgInclude.vue';
+import { SvgNames } from '../Parts/SvgInclude.vue';
 
 const { state } = useState();
 </script>

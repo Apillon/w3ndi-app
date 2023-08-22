@@ -4,6 +4,10 @@
   }
   position: relative;
 
+  &.large:after {
+    min-width: 13rem;
+  }
+
   &:before,
   &:after {
     @apply font-sans text-white font-normal text-xs;

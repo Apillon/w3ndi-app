@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full card-dark p-16 text-center max-w-[38rem] mx-auto">
+  <div class="relative w-full card-dark p-16 text-center max-w-[38rem] mx-auto">
     <h2 class="mb-2">Link your DID by KILT</h2>
     <p>
       Enter your DID by KILT via your Sporran wallet. <br />
@@ -19,6 +19,12 @@
         I want to create a DID first
       </Btn>
     </div>
+
+    <div class="absolute -left-2 lg:-left-4 xl:-left-8 top-1/2 -translate-x-full -translate-y-1/2">
+      <button @click="emit('back')">
+        <SvgInclude :name="SvgNames.Arrow" />
+      </button>
+    </div>
   </div>
 
   <Modal :show="isSporranConnectVisible" title="Choose sporran account">
@@ -31,9 +37,11 @@
 </template>
 
 <script lang="ts" setup>
-import { OAUTH_APP_URL } from '~/config';
+import { useState } from '~/composables/useState';
+import { SvgNames } from '../Parts/SvgInclude.vue';
 
 const emit = defineEmits(['proceed', 'back']);
+const { resetState } = useState();
 
 const isSporranConnectVisible = ref<boolean>(false);
 const showModalSporran = () => {
@@ -46,4 +54,8 @@ const showModalUploadDid = () => {
   isUploadDidVisible.value = false;
   setTimeout(() => (isUploadDidVisible.value = true), 1);
 };
+
+onMounted(() => {
+  resetState();
+});
 </script>

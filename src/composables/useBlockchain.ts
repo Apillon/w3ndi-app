@@ -19,7 +19,7 @@ import { DeployStep } from '~/types/index';
 
 export default function useBlockchain() {
   const { sporranErrorMsg } = useSporran();
-  const { state, setAssetRecipients } = useState();
+  const { state, setAssetRecipients, removeAssetRecipient } = useState();
   const {
     getDidDocument,
     prepareExistingServiceEndpointTx,
@@ -100,6 +100,13 @@ export default function useBlockchain() {
     );
   }
 
+  function isTagChanged(chainCaip19: string, walletAddress: string, tag: string) {
+    return (
+      isExistingAddress(chainCaip19, walletAddress) &&
+      loadedAssetRecipients.value[chainCaip19][walletAddress]?.description !== tag
+    );
+  }
+
   async function saveWallets() {
     if (!state.assetRecipients || Object.keys(state.assetRecipients).length === 0) {
       toast('You need to add at least one wallet.', { type: 'warning' });
@@ -118,7 +125,23 @@ export default function useBlockchain() {
     }
   }
 
+  function removeMarkedAccounts() {
+    const assetRecipients = JSON.parse(JSON.stringify(state.assetRecipients));
+
+    Object.entries(assetRecipients).forEach(([chain, accounts]) => {
+      Object.entries(accounts as KiltTransferAssetRecipientAccount).forEach(
+        ([address, account]) => {
+          if (account?.deleted) {
+            removeAssetRecipient(chain, address);
+          }
+        }
+      );
+    });
+  }
+
   async function uploadAccountsToIpfs() {
+    removeMarkedAccounts();
+
     const { data, error }: any = await $api.post(`/w3n-assets`, {
       assets: state.assetRecipients,
     });
@@ -157,8 +180,13 @@ export default function useBlockchain() {
     try {
       if (window?.kilt?.sporran && state.sporranAccount.address) {
         await updateFullDidWithSporran(fileCid);
-      } else {
+      } else if (state.mnemonic) {
         await updateFullDid(fileCid);
+      } else {
+        toast(
+          'Transaction could not be submitted. You need Sporran extension in you need to provide mnemonic.',
+          { type: 'error' }
+        );
       }
     } catch (error) {
       transactionErrorWrapper(error);
@@ -230,9 +258,14 @@ export default function useBlockchain() {
       await api
         .tx(signed)
         .signAndSend(account.address, { signer: account.signer }, ({ status }) => {
-          if (status.isInBlock) {
-            loading.value = false;
+          if (status.isFinalized) {
             deployStep.value = DeployStep.COMPLETED;
+            refreshDidDocument();
+
+            setTimeout(() => {
+              loading.value = false;
+              hideModalDeploy();
+            }, 1000);
           }
         })
         .catch((error: any) => {
@@ -241,9 +274,6 @@ export default function useBlockchain() {
     } catch (error) {
       transactionErrorWrapper(error);
     }
-
-    refreshDidDocument();
-    setTimeout(() => hideModalDeploy(), 1000);
   }
 
   async function updateFullDid(fileCid: string) {
@@ -275,7 +305,7 @@ export default function useBlockchain() {
         sign: sign,
         submitter: account.address as KiltAddress,
       });
-      deployStep.value = DeployStep.FILE_UPLOAD;
+      setTimeout(() => (deployStep.value = DeployStep.CONF_SAVE), 6000);
 
       // submit it with
       await Blockchain.signAndSubmitTx(authorizedTx, account);
@@ -302,7 +332,8 @@ export default function useBlockchain() {
 
   async function refreshDidDocument() {
     if (state.didDocument.uri) {
-      getDidDocument(state.didDocument.uri);
+      await getDidDocument(state.didDocument.uri);
+      parseAssetRecipients();
     }
   }
 
@@ -321,6 +352,7 @@ export default function useBlockchain() {
     loadedAssetRecipients,
     parseAssetRecipients,
     isExistingAddress,
+    isTagChanged,
     saveWallets,
   };
 }

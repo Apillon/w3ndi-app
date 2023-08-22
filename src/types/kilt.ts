@@ -55,22 +55,21 @@ declare global {
 
   interface KiltTransferAssetRecipientV2Data {
     description: string;
+    deleted?: boolean;
     proof?: {
       scheme: string;
       hash: string;
       signature: string;
     };
   }
+  type KiltTransferAssetRecipientAccount = Record<string, KiltTransferAssetRecipientV2Data>;
+  type KiltTransferAssetRecipientV2 = Record<string, KiltTransferAssetRecipientAccount>;
 
   type EncodedVerificationKey = { sr25519: Uint8Array };
   type EncodedEncryptionKey = { x25519: Uint8Array };
   type EncodedKey = EncodedVerificationKey | EncodedEncryptionKey;
   type EncodedSignature = EncodedVerificationKey;
   type IdentitiesMap = Record<string, Identity>;
-  type KiltTransferAssetRecipientV2 = Record<
-    string,
-    Record<string, KiltTransferAssetRecipientV2Data>
-  >;
 
   /** Papa parser */
   type CsvFileData = {
