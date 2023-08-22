@@ -149,9 +149,16 @@
                         <SvgInclude :name="SvgNames.Trash" class="w-4 h-4" />
                       </button>
                       <button
-                        v-else
+                        v-else-if="isExistingAddress(chainCaip19, recipientAddress)"
                         class="p-1 text-white text-base"
                         @click="markDeletedAssetRecipient(chainCaip19, recipientAddress)"
+                      >
+                        <SvgInclude :name="SvgNames.Trash" class="w-4 h-4" />
+                      </button>
+                      <button
+                        v-else
+                        class="p-1 text-white text-base"
+                        @click="removeAssetRecipient(chainCaip19, recipientAddress)"
                       >
                         <SvgInclude :name="SvgNames.Trash" class="w-4 h-4" />
                       </button>
@@ -226,8 +233,13 @@ import { useState } from '~/composables/useState';
 import useBlockchain from '~/composables/useBlockchain';
 
 const emit = defineEmits(['back']);
-const { state, markDeletedAssetRecipient, unmarkDeletedAssetRecipient, resetAssetRecipients } =
-  useState();
+const {
+  state,
+  markDeletedAssetRecipient,
+  unmarkDeletedAssetRecipient,
+  removeAssetRecipient,
+  resetAssetRecipients,
+} = useState();
 const { openAccountOnBlockChain } = useDid();
 const {
   deployStep,

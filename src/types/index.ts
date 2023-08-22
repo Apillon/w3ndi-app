@@ -78,6 +78,11 @@ export enum ChainType {
   EVM = 1,
   SUBSTRATE = 2,
 }
+export enum ChainCaip19 {
+  BITCOIN = 'bip122:000000000019d6689c085ae165831e93/slip44:0',
+  ETHEREUM = 'eip155:1/slip44:60',
+  POLKADOT = 'polkadot:91b171bb158e2d3848fa23a9f1c25182/slip44:354',
+}
 
 /** Local storage keys */
 export enum LsKeys {

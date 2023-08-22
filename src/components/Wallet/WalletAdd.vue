@@ -3,11 +3,12 @@
     <div class="flex gap-8">
       <div class="field relative w-full mb-8 select">
         <label class="mr-2" for="chainType"> Chain </label>
-        <!-- <Tooltip
-          tooltipText="If chain is missing, you can add it <a href='https://github.com/Apillon-web3/w3ndi-app' target='_blank'>here</a>"
+        <Tooltip
+          class="large"
+          tooltipText="If you don't find your desired chain, you have the option to either contribute it to the Apillon GitHub repository under 'w3ndi-app', or you can reach out to us via email at info@apillon.io."
         >
           <svg-include :name="SvgNames.Info" class="w-4 h-4" />
-        </Tooltip> -->
+        </Tooltip>
         <vue-select
           v-model="formWallet.chain"
           :options="chainList"
@@ -204,7 +205,7 @@ async function handleSubmit() {
   } else if (!formWallet.address) {
     toast('Please enter wallet address', { type: 'error' });
     return false;
-  } else if (!validateAddress(formWallet.chain.chainType, formWallet.address)) {
+  } else if (!validateAddress(formWallet.chain.caip19, formWallet.address)) {
     toast('Wallet address is invalid!', { type: 'error' });
     return false;
   }
