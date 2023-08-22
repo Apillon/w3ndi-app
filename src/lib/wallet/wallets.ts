@@ -1,4 +1,4 @@
-import { SvgNames } from '~/components/SvgInclude.vue';
+import { SvgNames } from '~/components/Parts/SvgInclude.vue';
 import { DotSamaWallet } from './DotSamaWallet';
 
 const PREDEFINED_WALLETS: WalletInfo[] = [

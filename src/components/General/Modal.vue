@@ -31,7 +31,7 @@
 
 <script lang="ts" setup>
 import { watch, ref } from 'vue';
-import { SvgNames } from './SvgInclude.vue';
+import { SvgNames } from '../Parts/SvgInclude.vue';
 
 const props = defineProps({
   show: { type: Boolean, default: false },
