@@ -119,6 +119,7 @@ export const useSporran = () => {
       resetSporranAccount();
       loading.value = false;
     }
+    accountLinked.value = true;
   }
 
   function getW3NamePool(address: string, errorMsg: boolean) {

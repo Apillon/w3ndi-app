@@ -19,6 +19,16 @@ const state = reactive<StateInterface>({
 });
 
 export function useState() {
+  const resetState = () => {
+    state.account = {} as WalletAccount;
+    state.accounts = [] as WalletAccount[];
+    state.didDocument = {} as DidDocument;
+    state.assetRecipients = {} as KiltTransferAssetRecipientV2;
+    state.mnemonic = '';
+    state.w3Name = '';
+    state.sporranAccount = {} as WalletAccount;
+  };
+
   const setAccount = async (newAccount: WalletAccount) => {
     state.account = newAccount;
   };
@@ -116,6 +126,7 @@ export function useState() {
 
   return {
     state: readonly(state),
+    resetState,
     setWallet,
     setAccount,
     setName,
