@@ -4,6 +4,7 @@ import { ethers } from 'ethers';
 import { base64urlpad } from 'multiformats/bases/base64';
 import canonicalize from 'canonicalize';
 import chains from '~/lib/data/chains.json';
+import { ChainCaip19 } from '~/types';
 
 export const hashKiltTransferAssetRecipient = (doc: any) => {
   const canonicalJson = canonicalize(doc);
@@ -18,12 +19,21 @@ export const chainIdToName = (chainCaip19: string) => {
   return chain?.name || '';
 };
 
-export function validateAddress(chainType: number, address: string): boolean {
+export function chainTypeFromCaip19(caip19: string) {
+  const chain = chains.find(item => item && item?.caip19 === caip19);
+  return chain?.chainType || ChainType.OTHER;
+}
+
+export function validateAddress(chainCaip19: string, address: string): boolean {
+  const chainType = chainTypeFromCaip19(chainCaip19);
   switch (chainType) {
     case ChainType.EVM:
       return isValidEthereumAddress(address);
     case ChainType.SUBSTRATE:
       return isValidPolkadotAddress(address);
+    case ChainType.OTHER:
+      if (chainCaip19 === ChainCaip19.BITCOIN) return isValidBitcoinAddress(address);
+      else return true;
     default:
       return true;
   }
@@ -43,6 +53,25 @@ export const isValidEthereumAddress = (address: string) => {
   try {
     return ethers.utils.isAddress(address);
   } catch (error) {
+    return false;
+  }
+};
+
+export const isValidBitcoinAddress = (address: string) => {
+  // is empty return false
+  if (!address) {
+    return false;
+  }
+
+  // Regex to check valid
+  // BITCOIN Address
+  let regex = new RegExp(/^(bc1|[13])[a-km-zA-HJ-NP-Z1-9]{25,34}$/);
+
+  // Return true if the address
+  // matched the ReGex
+  if (regex.test(address) == true) {
+    return true;
+  } else {
     return false;
   }
 };

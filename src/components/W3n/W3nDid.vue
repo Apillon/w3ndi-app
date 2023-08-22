@@ -31,8 +31,6 @@
 </template>
 
 <script lang="ts" setup>
-import { OAUTH_APP_URL } from '~/config';
-
 const emit = defineEmits(['proceed', 'back']);
 
 const isSporranConnectVisible = ref<boolean>(false);

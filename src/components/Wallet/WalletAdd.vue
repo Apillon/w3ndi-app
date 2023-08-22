@@ -1,8 +1,14 @@
 <template>
-  <div>
+  <div class="transition-all">
     <div class="flex gap-8">
       <div class="field relative w-full mb-8 select">
-        <label for="chainType"> Chain </label>
+        <label class="mr-2" for="chainType"> Chain </label>
+        <Tooltip
+          class="large"
+          tooltipText="If you don't find your desired chain, you have the option to either contribute it to the Apillon GitHub repository under 'w3ndi-app', or you can reach out to us via email at info@apillon.io."
+        >
+          <svg-include :name="SvgNames.Info" class="w-4 h-4" />
+        </Tooltip>
         <vue-select
           v-model="formWallet.chain"
           :options="chainList"
@@ -25,7 +31,10 @@
       />
     </div>
 
-    <div class="flex gap-8">
+    <div
+      class="flex gap-8 transition-all duration-300"
+      :class="allowAdditionalChains ? 'max-h-20' : 'max-h-0 opacity-0 -z-1'"
+    >
       <RadioButtons v-model="formWallet.inputType" :options="inputTypes" name="inputType" />
     </div>
 
@@ -39,7 +48,11 @@
       />
     </div>
     <div v-else class="flex gap-4">
-      <WalletConnect class="w-auto whitespace-nowrap" :type="formWallet.chain.chainType" />
+      <WalletConnect
+        class="w-auto whitespace-nowrap"
+        :type="formWallet.chain.chainType"
+        @connect="onWalletConnected"
+      />
       <Select
         v-model="formWallet.address"
         :options="addresses"
@@ -50,7 +63,10 @@
     </div>
 
     <!-- MULTIPLE CHAINS -->
-    <div v-if="allowAdditionalChains" class="flex flex-col gap-8 mb-8">
+    <div
+      class="flex flex-col gap-8 mb-8"
+      :class="allowAdditionalChains ? 'max-h-60' : 'max-h-0 opacity-0 -z-1'"
+    >
       <Checkbox
         v-model="formWallet.multipleChains"
         id="multipleChains"
@@ -73,8 +89,8 @@
     </div>
 
     <div class="flex gap-8">
-      <Btn type="secondary" @click="save">Save</Btn>
-      <Btn type="primary" @click="handleSubmit">Save and add another</Btn>
+      <Btn type="secondary" @click="handleSubmit">Save and add another</Btn>
+      <Btn type="primary" @click="save">Save</Btn>
     </div>
   </div>
 </template>
@@ -83,12 +99,15 @@
 import chains from '~/lib/data/chains.json';
 import { useState } from '~/composables/useState';
 import { useProvider } from '~/composables/useProvider';
+import useWalletAccounts from '~/composables/useWalletAccounts';
 import { toast } from 'vue3-toastify';
+import { SvgNames } from '../SvgInclude.vue';
 
 const emit = defineEmits(['close']);
 
-const { state, setAssetRecipients } = useState();
+const { state, setAccount, setAssetRecipients } = useState();
 const { userAccount, walletProvider } = useProvider();
+const { disconnectAccount } = useWalletAccounts();
 
 const formWallet = reactive<FormWallet>({
   chain: {} as ChainOption,
@@ -186,7 +205,7 @@ async function handleSubmit() {
   } else if (!formWallet.address) {
     toast('Please enter wallet address', { type: 'error' });
     return false;
-  } else if (!validateAddress(formWallet.chain.chainType, formWallet.address)) {
+  } else if (!validateAddress(formWallet.chain.caip19, formWallet.address)) {
     toast('Wallet address is invalid!', { type: 'error' });
     return false;
   }
@@ -215,7 +234,12 @@ async function handleSubmit() {
     }
   });
   resetForm();
+  disconnectWallet();
   return true;
+}
+
+function onWalletConnected(walletAddress: string) {
+  formWallet.address = walletAddress;
 }
 
 function resetForm() {
@@ -232,5 +256,10 @@ function chainLabelHtml(chain: SelectOption) {
       <span class="text-body text-xs">${chain.value}</span>
     </div>
   `;
+}
+
+function disconnectWallet() {
+  setAccount({} as WalletAccount);
+  disconnectAccount();
 }
 </script>
