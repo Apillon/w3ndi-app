@@ -260,7 +260,12 @@ export default function useBlockchain() {
         .signAndSend(account.address, { signer: account.signer }, ({ status }) => {
           if (status.isFinalized) {
             deployStep.value = DeployStep.COMPLETED;
-            loading.value = false;
+            refreshDidDocument();
+
+            setTimeout(() => {
+              loading.value = false;
+              hideModalDeploy();
+            }, 1000);
           }
         })
         .catch((error: any) => {
@@ -269,9 +274,6 @@ export default function useBlockchain() {
     } catch (error) {
       transactionErrorWrapper(error);
     }
-
-    refreshDidDocument();
-    setTimeout(() => hideModalDeploy(), 1000);
   }
 
   async function updateFullDid(fileCid: string) {
@@ -330,7 +332,8 @@ export default function useBlockchain() {
 
   async function refreshDidDocument() {
     if (state.didDocument.uri) {
-      getDidDocument(state.didDocument.uri);
+      await getDidDocument(state.didDocument.uri);
+      parseAssetRecipients();
     }
   }
 
