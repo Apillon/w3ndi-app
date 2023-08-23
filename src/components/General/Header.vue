@@ -5,11 +5,12 @@
         <SvgInclude :name="SvgNames.Logo" />
       </RouterLink>
     </div>
-    <div class="py-2">
+    <div>
       <Btn
         v-if="state.sporranAccount?.address"
         v-bind="$attrs"
         type="secondary"
+        size="small"
         class="bg-bg-dark !text-blue"
         @click="disconnectSporran"
       >
