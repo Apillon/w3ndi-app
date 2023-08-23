@@ -19,7 +19,7 @@ import { useSporran } from '~/composables/useSporran';
 import { useState } from '~/composables/useState';
 import { LsKeys, W3nPageStep } from '~/types';
 
-const { setMnemonic } = useState();
+const { state, setMnemonic } = useState();
 const { getDidDocumentFromMnemonic } = useDid();
 const { accounts, initSporran, connectSporranAccount } = useSporran();
 
@@ -61,4 +61,13 @@ onMounted(async () => {
     loading.value = false;
   }
 });
+
+watch(
+  () => state.w3Name,
+  w3Name => {
+    if (!w3Name && pageStep.value === W3nPageStep.PROFILE) {
+      pageStep.value = W3nPageStep.DID;
+    }
+  }
+);
 </script>
