@@ -27,6 +27,11 @@ export function useState() {
     state.mnemonic = '';
     state.w3Name = '';
     state.sporranAccount = {} as WalletAccount;
+
+    /** Remove data from LS */
+    localStorage.removeItem(LsKeys.ACCOUNT_ADDRESS);
+    localStorage.removeItem(LsKeys.DID_URI);
+    localStorage.removeItem(LsKeys.MNEMONIC);
   };
 
   const setAccount = async (newAccount: WalletAccount) => {

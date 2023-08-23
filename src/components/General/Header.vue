@@ -5,8 +5,17 @@
         <SvgInclude :name="SvgNames.Logo" />
       </RouterLink>
     </div>
-    <div class="py-2">
-      <!-- <WalletConnect v-if="state.w3Name" /> -->
+    <div>
+      <Btn
+        v-if="state.sporranAccount?.address"
+        v-bind="$attrs"
+        type="secondary"
+        size="small"
+        class="bg-bg-dark !text-blue"
+        @click="disconnectSporran"
+      >
+        Disconnect Sporran
+      </Btn>
     </div>
   </nav>
 </template>
@@ -14,5 +23,9 @@
 import { useState } from '~/composables/useState';
 import { SvgNames } from '../Parts/SvgInclude.vue';
 
-const { state } = useState();
+const { state, resetState } = useState();
+
+function disconnectSporran() {
+  resetState();
+}
 </script>
