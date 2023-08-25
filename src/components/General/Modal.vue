@@ -17,7 +17,10 @@
           >
             <SvgInclude :name="SvgNames.Close" />
           </button>
-          <div class="max-h-[85vh] overflow-auto card p-10 lg:p-16" v-bind="$attrs">
+          <div
+            class="max-h-[85vh] overflow-auto card py-10 px-4 sm:px-8 md:p-10 lg:p-16"
+            v-bind="$attrs"
+          >
             <div v-if="title" class="mb-8">
               <h3>{{ title }}</h3>
             </div>

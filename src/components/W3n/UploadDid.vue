@@ -44,7 +44,7 @@ async function verifyDid() {
       localStorage.setItem(LsKeys.MNEMONIC, mnemonic.value);
       emit('proceed');
     } else if (document && document?.uri) {
-      toast('Please create web3name in sporran to continue.', { type: 'info' });
+      toast('Please create web3name in Sporran to continue.', { type: 'info' });
     } else {
       toast('Invalid identity, please use another mnemonic.', { type: 'warning' });
     }

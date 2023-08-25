@@ -49,7 +49,7 @@
   },
   {
     "chainType": 2,
-    "name": "Kilt",
+    "name": "KILT",
     "caip19": "polkadot:411f057b9107718c9624d6aa4a3f23c1/slip44:2086",
     "ss58Prefix": 38
   }

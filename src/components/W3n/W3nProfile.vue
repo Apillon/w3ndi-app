@@ -51,7 +51,7 @@
 
       <!-- Address -->
       <p v-if="accountAddress">
-        <small>Kilt address</small>
+        <small>KILT address</small>
         <span class="block overflow-x-auto">
           <strong class="text-white text-xs">{{ accountAddress }}</strong>
         </span>
@@ -172,7 +172,7 @@
             </tbody>
           </table>
         </div>
-        <div class="mt-8 flex justify-between">
+        <div class="mt-8 flex gap-4 flex-col sm:flex-row justify-between">
           <Btn
             type="secondary"
             class="w-auto text-yellow bg-bg-dark"
@@ -215,7 +215,7 @@
         @close="isEditWalletVisible = false"
       />
     </Modal>
-    <Modal :show="isModalDeployVisible" title="Deploy in progress">
+    <Modal :show="isModalDeployVisible" title="Deployment in progress">
       <Deploy :step="deployStep" :showRemoving="hasLoadedAssetRecipients" />
     </Modal>
   </div>

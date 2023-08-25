@@ -25,7 +25,7 @@ export const useSporran = () => {
       // meta.source contains the name of the extension that provides this account
       accounts.value = (await sporranWallet.value.getAccounts()) || [];
     } else {
-      toast('Please install sporran wallet.', { type: 'warning' });
+      toast('Please install Sporran wallet.', { type: 'warning' });
     }
   }
 
@@ -60,7 +60,7 @@ export const useSporran = () => {
       localStorage.setItem(LsKeys.DID_URI, document.uri);
       localStorage.setItem(LsKeys.W3NAME, web3Name);
     } else if (document && document?.uri) {
-      toast('Please create web3name in sporran to continue.', { type: 'info' });
+      toast('Please create web3name in Sporran to continue.', { type: 'info' });
     } else if (errorMsg) {
       toast('Your account doesn`t have web3name!', { type: 'error' });
     }
@@ -96,16 +96,16 @@ export const useSporran = () => {
         account.address as KiltAddress,
         state.didDocument.uri
       );
+      toast('DID and account are connecting', { type: 'info' });
 
       /** Submit transaction with sporran wallet */
       await api
         .tx(signed)
-        .signAndSend(account.address, { signer: account.signer }, ({ status }) => {
-          if (status.isInBlock) {
-            toast('DID and account are connecting', { type: 'info' });
-          } else if (status.isFinalized) {
-            getW3NamePool(account.address, false);
+        .signAndSend(account.address, { signer: account.signer }, async ({ status }) => {
+          if (status.isFinalized) {
+            await getW3NamePool(account.address, false);
             toast('DID and account are successfully connected', { type: 'success' });
+            accountLinked.value = true;
           }
         })
         .catch((error: any) => {
@@ -119,18 +119,20 @@ export const useSporran = () => {
       resetSporranAccount();
       loading.value = false;
     }
-    accountLinked.value = true;
   }
 
-  function getW3NamePool(address: string, errorMsg: boolean) {
-    const getW3NameInterval = setInterval(async () => {
-      const w3Name = await getW3Name(address, errorMsg);
+  async function getW3NamePool(address: string, errorMsg: boolean) {
+    return new Promise(function (resolve) {
+      const getW3NameInterval = setInterval(async () => {
+        const w3Name = await getW3Name(address, errorMsg);
 
-      if (w3Name) {
-        clearInterval(getW3NameInterval);
-        loading.value = false;
-      }
-    }, 5000);
+        if (w3Name) {
+          clearInterval(getW3NameInterval);
+          resolve(w3Name);
+          loading.value = false;
+        }
+      }, 5000);
+    });
   }
 
   function sporranErrorMsg(error: ReferenceError | TypeError | any = {}) {
