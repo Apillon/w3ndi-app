@@ -42,14 +42,14 @@ const contentMinStyle = computed(() => {
   const hHeight = headerRef.value?.clientHeight || 0;
   const fHeight = footerRef.value?.clientHeight || 0;
   return {
-    minHeight: `calc(100vh - ${hHeight + fHeight}px)`,
+    minHeight: `calc(100lvh - ${hHeight + fHeight}px)`,
   };
 });
 const contentMaxStyle = computed(() => {
   const hHeight = headerRef.value?.clientHeight || 0;
   const fHeight = footerRef.value?.clientHeight || 0;
   return {
-    maxHeight: `calc(100vh - ${hHeight + fHeight}px)`,
+    maxHeight: `calc(100lvh - ${hHeight + fHeight}px)`,
   };
 });
 </script>
