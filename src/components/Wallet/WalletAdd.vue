@@ -1,6 +1,6 @@
 <template>
   <div class="transition-all">
-    <div class="flex gap-8">
+    <div class="flex flex-col sm:flex-row sm:gap-8">
       <div class="field relative w-full mb-8 select">
         <label class="mr-2" for="chainType"> Chain </label>
         <Tooltip
@@ -44,6 +44,7 @@
         v-model="formWallet.address"
         id="walletAddress"
         class="w-full"
+        label="Wallet address"
         placeholder="Type wallet address here"
       />
     </div>
@@ -88,7 +89,7 @@
       </div>
     </div>
 
-    <div class="flex gap-8">
+    <div class="flex flex-col sm:flex-row gap-4 sm:gap-8">
       <Btn type="secondary" @click="handleSubmit">Save and add another</Btn>
       <Btn type="primary" @click="save">Save</Btn>
     </div>

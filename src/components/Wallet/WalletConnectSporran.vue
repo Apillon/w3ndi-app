@@ -62,7 +62,6 @@
 import { useState } from '~/composables/useState';
 import { useSporran } from '~/composables/useSporran';
 import { truncateWallet } from '~/lib/misc-utils';
-import { AnimationStep } from 'vue3-toastify';
 
 defineProps({
   actionText: { type: String, default: '' },

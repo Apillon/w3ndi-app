@@ -27,7 +27,7 @@
     </div>
   </div>
 
-  <Modal :show="isSporranConnectVisible" title="Choose sporran account">
+  <Modal :show="isSporranConnectVisible" title="Choose Sporran account">
     <WalletConnectSporran @back="isSporranConnectVisible = false" @proceed="emit('proceed')" />
   </Modal>
 
