@@ -68,7 +68,7 @@ defineProps({
 });
 
 const emit = defineEmits(['proceed']);
-const { state } = useState();
+const { state, resetSporranAccount } = useState();
 const {
   accounts,
   accountLinked,
@@ -82,6 +82,7 @@ const {
 const loadingSporran = ref<boolean>(true);
 
 onMounted(async () => {
+  resetSporranAccount();
   await initSporran();
   loadingSporran.value = false;
 });
