@@ -11,7 +11,7 @@ import { LsKeys } from '~/types';
 
 export const useSporran = () => {
   const { state, setW3Name, setDidDocument, setSporranAccount, resetSporranAccount } = useState();
-  const { loadDidDocument, getDidDocument } = useDid();
+  const { getDidDocument } = useDid();
 
   let api: ApiPromise;
   const sporranWallet = ref<Wallet | undefined>();
@@ -73,35 +73,48 @@ export const useSporran = () => {
     const didDetails = await getDidDetailsFromLinkedAccount(account.address);
 
     if (didDetails.isNone) {
-      /** Sporran extension */
-      const sporranExtension: SporranExtension<PubSubSession> = window.kilt.sporran;
-
-      if (typeof sporranExtension.getDidList === 'function') {
-        try {
-          const didList = await sporranExtension.getDidList();
-
-          if (didList.length && didList[0].did) {
-            const { web3Name } = await getDidDocument(didList[0].did);
-
-            if (web3Name) {
-              return true;
-            }
-          }
-        } catch (error) {
-          console.warn(error);
-          sporranErrorMsg(error);
-        }
-        resetSporranAccount();
-        accountLinked.value = false;
-        return false;
-      } else {
-        toast('This account is not linked to DID', { type: 'info' });
-        accountLinked.value = false;
-        return false;
-      }
+      const w3n = await getW3nameFromDidList(account.name);
+      return !!w3n;
     } else {
       const w3n = await getW3Name(account.address);
       return !!w3n;
+    }
+  }
+
+  async function getW3nameFromDidList(accountName?: string) {
+    /** Sporran extension */
+    const sporranExtension: SporranExtension<PubSubSession> = window.kilt.sporran;
+
+    if (typeof sporranExtension.getDidList === 'function') {
+      try {
+        const didList = await sporranExtension.getDidList();
+        const didItem = didList.find(item => item.name === accountName);
+
+        if (didItem) {
+          const { web3Name } = await getDidDocument(didItem.did);
+
+          if (web3Name) {
+            return web3Name;
+          }
+        } else {
+          toast(
+            'You have to check field "Include names when sharing" in Sporran and you have to select the same identity as you account.',
+            {
+              type: 'warning',
+            }
+          );
+        }
+      } catch (error) {
+        console.warn(error);
+        sporranErrorMsg(error);
+      }
+      resetSporranAccount();
+      accountLinked.value = false;
+      return false;
+    } else {
+      toast('This account is not linked to DID', { type: 'info' });
+      accountLinked.value = false;
+      return false;
     }
   }
 
