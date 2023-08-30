@@ -205,7 +205,7 @@
       </button>
     </div>
 
-    <Modal :show="isAddNewWalletVisible" title="Add new wallet">
+    <Modal :show="isAddNewWalletVisible" title="Add new wallet address">
       <WalletAdd @close="isAddNewWalletVisible = false" />
     </Modal>
     <Modal :show="isEditWalletVisible" title="Edit wallet">

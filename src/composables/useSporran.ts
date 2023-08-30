@@ -53,7 +53,7 @@ export const useSporran = () => {
       localStorage.setItem(LsKeys.ACCOUNT_ADDRESS, address);
       localStorage.setItem(LsKeys.DID_URI, document.uri);
       localStorage.setItem(LsKeys.W3NAME, web3Name);
-    } else if (document && document?.uri) {
+    } else if (document && document?.uri && errorMsg) {
       toast('Please create web3name in Sporran to continue.', { type: 'info' });
       resetSporranAccount();
     } else if (errorMsg) {
@@ -158,7 +158,7 @@ export const useSporran = () => {
           }
         })
         .catch((error: any) => {
-          console.log('transaction failed: ', error);
+          console.warn('transaction failed: ', error);
           sporranErrorMsg(error);
           resetSporranAccount();
           loading.value = false;
