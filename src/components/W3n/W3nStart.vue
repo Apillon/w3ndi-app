@@ -2,13 +2,13 @@
   <div class="flex flex-col md:flex-row">
     <div class="max-w-xl flex flex-col justify-center mb-10 md:mb-0">
       <h1 class="mb-2">w3ndi</h1>
-      <h3 class="mb-6">Your w3n-based decentralized index of digital addresses.</h3>
+      <h3 class="mb-6">Your web3name-based decentralized index of digital addresses.</h3>
       <p class="text-body text-base leading-6">
-        Send and receive assets via your web3name by KILT.
+        Send and receive assets via your KILT web3name.
         <ol class="list-decimal pl-5 mb-6">
-          <li>Get a DID and w3n by KILT.</li>
-          <li>Add digital addresses to your w3n.</li>
-          <li>Share your w3n with friends and receive assets via Nova Wallet.</li>
+          <li>Get a KILT DID and web3name.</li>
+          <li>Link digital addresses to your web3name.</li>
+          <li>Share your web3name with friends and receive assets via Nova Wallet</li>
         </ol>
         Link your web3name and wallet addresses across various chains. Use web3name with Nova Wallet to send and receive funds.
       </p>

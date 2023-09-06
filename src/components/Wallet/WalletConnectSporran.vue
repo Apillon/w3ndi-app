@@ -32,10 +32,10 @@
         </tbody>
       </table>
       <div v-if="!accountLinked" class="mt-8 text-center">
-        <h3>Your account is not yet linked to a DID!</h3>
-        <p>
-          To make use of features such as web3name, a DID must be explicitly linked to the owner
-          account
+        <h3>Now link your DID!</h3>
+        <p class="mb-4">
+          To use the web3name feature, your DID must be explicitly linked to your account by signing
+          twice in Sporran.
         </p>
         <Btn :loading="loading" @click="linkDidToAccount(state.sporranAccount)">Link account</Btn>
       </div>

@@ -1,9 +1,9 @@
 <template>
   <div class="relative w-full card-dark p-16 text-center max-w-[38rem] mx-auto">
-    <h2 class="mb-2">Link your DID by KILT</h2>
+    <h2 class="mb-2">Link your KILT DID</h2>
     <p>
       Enter your DID by KILT via your Sporran wallet. <br />
-      If you don’t have a DID yet, please create one on the link below.
+      If you don’t have a DID yet, please generate one via the link below.
     </p>
     <div class="actions mt-8 flex flex-col gap-8 justify-between">
       <Btn type="primary" @click="showModalSporran"> Connect Sporran wallet </Btn>
@@ -16,7 +16,7 @@
         href="https://kilt-protocol.org/get-did/index.html"
         target="_blank"
       >
-        I want to create a DID first
+        I want to generate a new DID
       </Btn>
     </div>
 
