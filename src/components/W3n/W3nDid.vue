@@ -13,7 +13,7 @@
       <Btn
         type="builders"
         class="bg-bg-dark"
-        :href="`${OAUTH_APP_URL}/registration`"
+        href="https://kilt-protocol.org/get-did/index.html"
         target="_blank"
       >
         I want to generate a new DID
@@ -37,8 +37,6 @@
 </template>
 
 <script lang="ts" setup>
-import { OAUTH_APP_URL } from '~/config';
-
 import { useState } from '~/composables/useState';
 import { SvgNames } from '../Parts/SvgInclude.vue';
 
