@@ -16,9 +16,9 @@
         <Btn type="primary" @click="emit('proceed')">Enter now</Btn>
       </div>
     </div>
-    <div class="relative w-full my-10 md:my-0" :class="$style.mockup">
+    <div class="w-full flex my-10 md:my-0" :class="$style.mockup">
         <video
-          class="h-full w-full transform-gpu object-contain"
+          class="mx-auto md:h-full transform-gpu object-contain rounded-3xl"
           :src="NovaWalletVideo"
           :autoplay="true"
           preload="auto"
@@ -37,20 +37,22 @@ const emit = defineEmits(['proceed']);
 </script>
 
 <style lang="postcss" module>
-.mockup,
-.mockup video {
-  @apply min-h-[25rem] lg:min-h-[30rem];
-  max-height: calc(100lvh - 20rem);
-}
-
 .mockup {
-  @apply relative;
+  @apply relative min-h-[30rem] lg:min-h-[35rem];
+  padding: 7px 0 8px;
+  max-height: calc(100lvh - 20rem);
 
   &::before {    
     content: '';
     @apply absolute left-1/2 top-1/2 w-3/4 h-3/4 max-w-lg max-h-[32rem] block opacity-20 -translate-x-1/2 -translate-y-1/2 -z-1 bg-blue;
     border-radius: 518px;
     filter: blur(70px);
+  }
+  &::after {  
+    content: '';  
+    background-image: url('~/assets/images/android-phone-frame.png');
+    background-size: auto 100%;
+    @apply absolute top-0 left-0 right-0 bottom-0 bg-no-repeat bg-center ;
   }
 }
 </style>
