@@ -271,7 +271,18 @@ onMounted(async () => {
   if (state.mnemonic) {
     account.value = await generateAccount(state.mnemonic);
   }
+  window.addEventListener('beforeunload', onClose);
 });
+
+onUnmounted(() => {
+  window.addEventListener('beforeunload', onClose);
+});
+function onClose(event: BeforeUnloadEvent) {
+  if (hasUserChangeAssetRecipients.value && deployStep.value !== DeployStep.COMPLETED) {
+    event.preventDefault();
+    event.returnValue = '';
+  }
+}
 
 const accountAddress = computed<string>(() => {
   return account.value?.address || state.sporranAccount.address;
