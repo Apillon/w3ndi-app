@@ -17,7 +17,6 @@ declare module 'vue' {
     Header: typeof import('./components/General/Header.vue')['default']
     Input: typeof import('./components/Form/Field/Input.vue')['default']
     Loader: typeof import('./components/Animation/Loader.vue')['default']
-    Mnemonic: typeof import('./components/Mnemonic.vue')['default']
     Modal: typeof import('./components/General/Modal.vue')['default']
     Nav: typeof import('./components/General/Nav.vue')['default']
     RadioButtons: typeof import('./components/Form/Field/RadioButtons.vue')['default']

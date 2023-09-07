@@ -1,6 +1,11 @@
 <template>
   <div>
-    <Input id="mnemonic" label="User Mnemonic" placeholder="Type text here" v-model="mnemonic" />
+    <Input
+      id="mnemonic"
+      label="Enter the 12 words of your mnemonic phrase"
+      placeholder="Type 12 words here"
+      v-model="mnemonic"
+    />
     <Btn
       :loading="loading"
       :disabled="disabled"

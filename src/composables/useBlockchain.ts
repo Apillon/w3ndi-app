@@ -265,6 +265,7 @@ export default function useBlockchain() {
             setTimeout(() => {
               loading.value = false;
               hideModalDeploy();
+              toast('You’re good to receive funds to your w3n in Nova now', { type: 'success' });
             }, 1000);
           }
         })

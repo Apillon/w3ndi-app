@@ -1,8 +1,8 @@
 <template>
   <div>
     <p class="mb-4">
-      To finalize linking addresses to your w3n and deploy new address configuration, authorize and
-      sign the transaction using Sporran wallet.
+      To finalize linking addresses to your web3name and deploy new address configuration, authorize
+      and sign the transaction using Sporran wallet.
     </p>
     <ol class="body-md text-body">
       <li v-for="(item, key) in steps" class="flex gap-2 items-center my-4">
@@ -38,6 +38,6 @@ onMounted(() => {
   if (props.showRemoving) {
     steps.value.push({ id: DeployStep.CONF_REMOVE, text: 'Removing old configuration' });
   }
-  steps.value.push({ id: DeployStep.CONF_SAVE, text: 'Saving w3n configuration' });
+  steps.value.push({ id: DeployStep.CONF_SAVE, text: 'Saving web3name configuration' });
 });
 </script>
