@@ -12,7 +12,7 @@ Here is a list of wallets that support retrieving wallet addresses via web3names
 
 ## Supported wallet chains
 
-A list of the supported chains is available at [`/src/lib/data/chain.json`](src/lib/data/chains.json).
+A list of the supported chains is available at [`/src/lib/data/chains.json`](src/lib/data/chains.json).
 
 To add a chain, open a PR adding it to this file. The file needs to be structured correctly. Each entry has three values: `chainType`, `name`, and `caip19`. Polkadot-based chains also have a parameter: `ss58Prefix`.
 
