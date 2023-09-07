@@ -1,13 +1,17 @@
 import type { ApiPromise } from '@polkadot/api';
+import type { Option } from '@polkadot/types-codec';
+import type { RawDidLinkedInfo } from '@kiltprotocol/augment-api';
 import { ConfigService, Did, KiltAddress, connect } from '@kiltprotocol/sdk-js';
 import { toast } from 'vue3-toastify';
 
 import { useState } from './useState';
+import { useDid } from './useDid';
 import { KILT_NETWORK } from '~/config';
 import { LsKeys } from '~/types';
 
 export const useSporran = () => {
   const { state, setW3Name, setDidDocument, setSporranAccount, resetSporranAccount } = useState();
+  const { getDidDocument } = useDid();
 
   let api: ApiPromise;
   const sporranWallet = ref<Wallet | undefined>();
@@ -25,7 +29,7 @@ export const useSporran = () => {
       // meta.source contains the name of the extension that provides this account
       accounts.value = (await sporranWallet.value.getAccounts()) || [];
     } else {
-      toast('Please install sporran wallet.', { type: 'warning' });
+      toast('Please install Sporran wallet.', { type: 'warning' });
     }
   }
 
@@ -35,19 +39,9 @@ export const useSporran = () => {
     localStorage.removeItem(LsKeys.DID_URI);
     localStorage.removeItem(LsKeys.MNEMONIC);
 
-    await connect(KILT_NETWORK);
-    api = ConfigService.get('api');
-
-    const didDetails = await api.call.did.queryByAccount(Did.accountToChain(address));
-
+    const didDetails = await getDidDetailsFromLinkedAccount(address);
     if (didDetails.isNone) {
-      accountLinked.value = false;
-      if (errorMsg) {
-        toast('This account is not linked to DID', { type: 'info' });
-      }
-      return;
-    } else {
-      accountLinked.value = true;
+      return false;
     }
 
     const { web3Name, document } = Did.linkedInfoFromChain(didDetails);
@@ -59,8 +53,9 @@ export const useSporran = () => {
       localStorage.setItem(LsKeys.ACCOUNT_ADDRESS, address);
       localStorage.setItem(LsKeys.DID_URI, document.uri);
       localStorage.setItem(LsKeys.W3NAME, web3Name);
-    } else if (document && document?.uri) {
-      toast('Please create web3name in sporran to continue.', { type: 'info' });
+    } else if (document && document?.uri && errorMsg) {
+      toast('Please create web3name in Sporran to continue.', { type: 'info' });
+      resetSporranAccount();
     } else if (errorMsg) {
       toast('Your account doesn`t have web3name!', { type: 'error' });
     }
@@ -73,9 +68,62 @@ export const useSporran = () => {
       return false;
     }
     setSporranAccount(account);
+    accountLinked.value = true;
 
-    const w3n = await getW3Name(account.address);
-    return !!w3n;
+    const didDetails = await getDidDetailsFromLinkedAccount(account.address);
+
+    if (didDetails.isNone) {
+      const w3n = await getW3nameFromDidList(account.name);
+      return !!w3n;
+    } else {
+      const w3n = await getW3Name(account.address);
+      return !!w3n;
+    }
+  }
+
+  async function getW3nameFromDidList(accountName?: string) {
+    /** Sporran extension */
+    const sporranExtension: SporranExtension<PubSubSession> = window.kilt.sporran;
+
+    if (typeof sporranExtension.getDidList === 'function') {
+      try {
+        const didList = await sporranExtension.getDidList();
+        const didItem = didList.find(item => item.name === accountName);
+
+        if (didItem) {
+          const { web3Name } = await getDidDocument(didItem.did);
+
+          if (web3Name) {
+            return web3Name;
+          }
+        } else {
+          toast(
+            'You have to check field "Include names when sharing" in Sporran and you have to select the same identity as you account.',
+            {
+              type: 'warning',
+            }
+          );
+        }
+      } catch (error) {
+        console.warn(error);
+        sporranErrorMsg(error);
+      }
+      resetSporranAccount();
+      accountLinked.value = false;
+      return false;
+    } else {
+      toast('This account is not linked to DID', { type: 'info' });
+      accountLinked.value = false;
+      return false;
+    }
+  }
+
+  async function getDidDetailsFromLinkedAccount(
+    address: string
+  ): Promise<Option<RawDidLinkedInfo>> {
+    await connect(KILT_NETWORK);
+    api = ConfigService.get('api');
+    return await api.call.did.queryByAccount(Did.accountToChain(address));
   }
 
   async function linkDidToAccount(account: WalletAccount): Promise<void> {
@@ -100,16 +148,17 @@ export const useSporran = () => {
       /** Submit transaction with sporran wallet */
       await api
         .tx(signed)
-        .signAndSend(account.address, { signer: account.signer }, ({ status }) => {
-          if (status.isInBlock) {
+        .signAndSend(account.address, { signer: account.signer }, async ({ status }) => {
+          if (status.isBroadcast) {
             toast('DID and account are connecting', { type: 'info' });
           } else if (status.isFinalized) {
-            getW3NamePool(account.address, false);
+            await getW3NamePool(account.address, false);
             toast('DID and account are successfully connected', { type: 'success' });
+            accountLinked.value = true;
           }
         })
         .catch((error: any) => {
-          console.log('transaction failed: ', error);
+          console.warn('transaction failed: ', error);
           sporranErrorMsg(error);
           resetSporranAccount();
           loading.value = false;
@@ -119,18 +168,20 @@ export const useSporran = () => {
       resetSporranAccount();
       loading.value = false;
     }
-    accountLinked.value = true;
   }
 
-  function getW3NamePool(address: string, errorMsg: boolean) {
-    const getW3NameInterval = setInterval(async () => {
-      const w3Name = await getW3Name(address, errorMsg);
+  async function getW3NamePool(address: string, errorMsg: boolean) {
+    return new Promise(function (resolve) {
+      const getW3NameInterval = setInterval(async () => {
+        const w3Name = await getW3Name(address, errorMsg);
 
-      if (w3Name) {
-        clearInterval(getW3NameInterval);
-        loading.value = false;
-      }
-    }, 5000);
+        if (w3Name) {
+          clearInterval(getW3NameInterval);
+          resolve(w3Name);
+          loading.value = false;
+        }
+      }, 5000);
+    });
   }
 
   function sporranErrorMsg(error: ReferenceError | TypeError | any = {}) {
@@ -139,7 +190,9 @@ export const useSporran = () => {
     } else if (error?.message.includes('account balance too low')) {
       toast('Your account balance is too low', { type: 'warning' });
     } else if (error?.message.includes('transaction')) {
-      toast('Transaction failed, check console', { type: 'warning' });
+      toast('Transaction could not be submitted', { type: 'warning' });
+    } else if (error?.message.includes('sign')) {
+      toast('Transaction could not be signed', { type: 'warning' });
     } else {
       toast('Sporran error, check console', { type: 'error' });
     }

@@ -1,9 +1,8 @@
 <template>
   <div>
     <p class="mb-4">
-      Deploy in progress To save your w3n address, use Sporran wallet for signing. Sporran wallet
-      will now initialize and you need to sign the transaction to deploy the new address
-      configuration.
+      To finalize linking addresses to your web3name and deploy new address configuration, authorize
+      and sign the transaction using Sporran wallet.
     </p>
     <ol class="body-md text-body">
       <li v-for="(item, key) in steps" class="flex gap-2 items-center my-4">
@@ -39,6 +38,6 @@ onMounted(() => {
   if (props.showRemoving) {
     steps.value.push({ id: DeployStep.CONF_REMOVE, text: 'Removing old configuration' });
   }
-  steps.value.push({ id: DeployStep.CONF_SAVE, text: 'Saving new configuration' });
+  steps.value.push({ id: DeployStep.CONF_SAVE, text: 'Saving web3name configuration' });
 });
 </script>

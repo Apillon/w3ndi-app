@@ -37,7 +37,9 @@ export const useDid = () => {
         localStorage.setItem(LsKeys.DID_URI, didInfo.document.uri);
         localStorage.setItem(LsKeys.W3NAME, didInfo.web3Name);
       } else {
-        toast('Missing Web3Name', { type: 'warning' });
+        toast('Your account doesn`t have web3name! Please create it in Sporran to continue.', {
+          type: 'warning',
+        });
       }
       return didInfo;
     } catch (error) {
@@ -111,6 +113,7 @@ export const useDid = () => {
   }
 
   return {
+    loadDidDocument,
     getDidDocument,
     getDidDocumentFromMnemonic,
     openAccountOnBlockChain,
@@ -119,4 +122,3 @@ export const useDid = () => {
     prepareServiceEndpointTXs,
   };
 };
-

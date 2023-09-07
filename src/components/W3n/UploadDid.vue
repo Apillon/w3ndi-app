@@ -1,6 +1,11 @@
 <template>
   <div>
-    <Input id="mnemonic" label="User Mnemonic" placeholder="Type text here" v-model="mnemonic" />
+    <Input
+      id="mnemonic"
+      label="Enter the 12 words of your mnemonic phrase"
+      placeholder="Type 12 words here"
+      v-model="mnemonic"
+    />
     <Btn
       :loading="loading"
       :disabled="disabled"
@@ -44,7 +49,7 @@ async function verifyDid() {
       localStorage.setItem(LsKeys.MNEMONIC, mnemonic.value);
       emit('proceed');
     } else if (document && document?.uri) {
-      toast('Please create web3name in sporran to continue.', { type: 'info' });
+      toast('Please create web3name in Sporran to continue.', { type: 'info' });
     } else {
       toast('Invalid identity, please use another mnemonic.', { type: 'warning' });
     }

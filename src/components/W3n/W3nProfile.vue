@@ -21,7 +21,7 @@
 
       <!-- W3Name -->
       <p class="mb-4">
-        <small>w3n</small>
+        <small>web3name</small>
         <span class="block overflow-x-auto">
           <strong class="text-white">w3n:{{ state.w3Name }}</strong>
         </span>
@@ -51,7 +51,7 @@
 
       <!-- Address -->
       <p v-if="accountAddress">
-        <small>Kilt address</small>
+        <small>KILT address</small>
         <span class="block overflow-x-auto">
           <strong class="text-white text-xs">{{ accountAddress }}</strong>
         </span>
@@ -66,12 +66,14 @@
 
       <div v-else-if="!hasLoadedAssetRecipients && !hasAssetRecipients">
         <div class="max-w-md p-8 mx-auto text-center">
-          <h2>Create a wallet</h2>
-          <p class="my-4">Add wallets to w3ndi and start linking your digital addresses.</p>
+          <h2>Add a new wallet address</h2>
+          <p class="my-4">
+            Add wallet addresses to w3ndi and start linking your digital addresses.
+          </p>
           <Btn class="w-auto" type="blue" @click="showModalAddNewWallet()">
             <span class="flex gap-2 items-center">
               <SvgInclude :name="SvgNames.Plus" />
-              <span>Add new wallet</span>
+              <span>Add wallet address</span>
             </span>
           </Btn>
         </div>
@@ -172,7 +174,7 @@
             </tbody>
           </table>
         </div>
-        <div class="mt-8 flex justify-between">
+        <div class="mt-8 flex gap-4 flex-col sm:flex-row justify-between">
           <Btn
             type="secondary"
             class="w-auto text-yellow bg-bg-dark"
@@ -205,7 +207,7 @@
       </button>
     </div>
 
-    <Modal :show="isAddNewWalletVisible" title="Add new wallet">
+    <Modal :show="isAddNewWalletVisible" title="Add new wallet address">
       <WalletAdd @close="isAddNewWalletVisible = false" />
     </Modal>
     <Modal :show="isEditWalletVisible" title="Edit wallet">
@@ -215,7 +217,7 @@
         @close="isEditWalletVisible = false"
       />
     </Modal>
-    <Modal :show="isModalDeployVisible" title="Deploy in progress">
+    <Modal :show="isModalDeployVisible" title="Deployment in progress">
       <Deploy :step="deployStep" :showRemoving="hasLoadedAssetRecipients" />
     </Modal>
   </div>
@@ -269,7 +271,18 @@ onMounted(async () => {
   if (state.mnemonic) {
     account.value = await generateAccount(state.mnemonic);
   }
+  window.addEventListener('beforeunload', onClose);
 });
+
+onUnmounted(() => {
+  window.addEventListener('beforeunload', onClose);
+});
+function onClose(event: BeforeUnloadEvent) {
+  if (hasUserChangeAssetRecipients.value && deployStep.value !== DeployStep.COMPLETED) {
+    event.preventDefault();
+    event.returnValue = '';
+  }
+}
 
 const accountAddress = computed<string>(() => {
   return account.value?.address || state.sporranAccount.address;

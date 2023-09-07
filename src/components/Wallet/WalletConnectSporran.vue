@@ -2,7 +2,7 @@
   <div v-if="loadingSporran" class="flex justify-center items-center">
     <Spinner />
   </div>
-  <div v-else-if="sporranExtension && sporranWallet" class="flex flex-col my-8">
+  <div v-else-if="sporranExtension && sporranWallet" class="flex flex-col mt-8">
     <div v-if="accounts && accounts.length > 0">
       <table class="text-left">
         <thead>
@@ -32,10 +32,10 @@
         </tbody>
       </table>
       <div v-if="!accountLinked" class="mt-8 text-center">
-        <h3>You account is not linked to DID!</h3>
-        <p>
-          To make use of features such as Web3 name, a DID must be explicitly linked the owner
-          account.
+        <h3>Now link your DID!</h3>
+        <p class="mb-4">
+          To use the web3name feature, your DID must be explicitly linked to your account by signing
+          twice in Sporran.
         </p>
         <Btn :loading="loading" @click="linkDidToAccount(state.sporranAccount)">Link account</Btn>
       </div>
@@ -62,14 +62,13 @@
 import { useState } from '~/composables/useState';
 import { useSporran } from '~/composables/useSporran';
 import { truncateWallet } from '~/lib/misc-utils';
-import { AnimationStep } from 'vue3-toastify';
 
 defineProps({
   actionText: { type: String, default: '' },
 });
 
 const emit = defineEmits(['proceed']);
-const { state } = useState();
+const { state, resetSporranAccount } = useState();
 const {
   accounts,
   accountLinked,
@@ -83,6 +82,7 @@ const {
 const loadingSporran = ref<boolean>(true);
 
 onMounted(async () => {
+  resetSporranAccount();
   await initSporran();
   loadingSporran.value = false;
 });
