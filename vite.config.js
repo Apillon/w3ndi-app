@@ -1,6 +1,6 @@
 import path from 'path';
 
-import Vue from '@vitejs/plugin-vue'
+import Vue from '@vitejs/plugin-vue';
 import { defineConfig, loadEnv } from 'vite';
 import Pages from 'vite-plugin-pages';
 import legacy from '@vitejs/plugin-legacy';
@@ -40,7 +40,7 @@ export default defineConfig(({ command, mode }) => {
             process: true,
             buffer: true,
           }),
-          NodeModulesPolyfillPlugin(), 
+          NodeModulesPolyfillPlugin(),
         ],
       },
     },
@@ -61,7 +61,7 @@ export default defineConfig(({ command, mode }) => {
       ViteWebfontDownload([
         'https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap',
       ]),
-    ]
+    ],
   };
   const serveConfig = {
     server: {
@@ -70,4 +70,4 @@ export default defineConfig(({ command, mode }) => {
   };
 
   return command === 'serve' ? { ...config, ...serveConfig } : config;
-})
+});

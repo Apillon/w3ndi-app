@@ -160,9 +160,9 @@ export default function useBlockchain() {
     const getFileInterval = setInterval(async () => {
       const fileData = await getFilePoll(fileUuid);
 
-      if (fileData && fileData?.file?.CID) {
+      if (fileData && fileData?.CID) {
         clearInterval(getFileInterval);
-        submitTransaction(fileData.file.CID);
+        submitTransaction(fileData.CID);
       }
     }, 5000);
   }
